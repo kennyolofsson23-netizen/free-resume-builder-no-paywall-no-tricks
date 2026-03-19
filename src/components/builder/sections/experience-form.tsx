@@ -343,7 +343,12 @@ function SortableExperienceEntry({
         onMoveDown={onMoveDown}
         isFirst={isFirst}
         isLast={isLast}
-        dragHandleProps={({ ...attributes, ...listeners } as React.HTMLAttributes<HTMLDivElement>)}
+        dragHandleProps={
+          {
+            ...attributes,
+            ...listeners,
+          } as React.HTMLAttributes<HTMLDivElement>
+        }
         isDragging={Boolean(isDragging) || activeId === exp.id}
       />
     </div>
