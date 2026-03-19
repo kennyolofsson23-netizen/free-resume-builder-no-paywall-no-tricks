@@ -107,16 +107,40 @@ a[href='#main-content'].sr-only:focus {
   font-weight: 600;
 }
 
-/* Print styles */
+/* Enhanced print styles for resume */
 @media print {
-  .no-print {
+  body > *:not(.resume-print-container) {
+    display: none !important;
+  }
+  .resume-print-container {
+    display: block !important;
+  }
+  .no-print,
+  nav,
+  header:not(.resume-header),
+  footer:not(.resume-footer),
+  aside,
+  .builder-toolbar,
+  .form-panel {
     display: none !important;
   }
   .resume-preview {
+    width: 100% !important;
+    max-width: none !important;
     box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   @page {
     size: letter;
     margin: 0.5in;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
