@@ -78,8 +78,14 @@ describe('PDF filename convention', () => {
 
 describe('PDF generation validation', () => {
   it('requires fullName and email to be non-empty', () => {
-    const missingName = { ...sampleResume, personalInfo: { ...sampleResume.personalInfo, fullName: '' } }
-    const missingEmail = { ...sampleResume, personalInfo: { ...sampleResume.personalInfo, email: '' } }
+    const missingName = {
+      ...sampleResume,
+      personalInfo: { ...sampleResume.personalInfo, fullName: '' },
+    }
+    const missingEmail = {
+      ...sampleResume,
+      personalInfo: { ...sampleResume.personalInfo, email: '' },
+    }
 
     expect(missingName.personalInfo.fullName).toBe('')
     expect(missingEmail.personalInfo.email).toBe('')

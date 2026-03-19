@@ -63,7 +63,11 @@ export function usePdfGenerator(): UsePdfGeneratorResult {
         logging: false,
       })
 
-      const pdf = new jsPDF({ format: 'letter', unit: 'in', orientation: 'portrait' })
+      const pdf = new jsPDF({
+        format: 'letter',
+        unit: 'in',
+        orientation: 'portrait',
+      })
       const imgData = canvas.toDataURL('image/png')
       const pageWidth = 8.5
       const pageHeight = 11
@@ -75,7 +79,8 @@ export function usePdfGenerator(): UsePdfGeneratorResult {
         imgWidth = pageHeight * canvasAspect
       }
       const xOffset = (pageWidth - imgWidth) / 2
-      const yOffset = canvasAspect < pageWidth / pageHeight ? (pageHeight - imgHeight) / 2 : 0
+      const yOffset =
+        canvasAspect < pageWidth / pageHeight ? (pageHeight - imgHeight) / 2 : 0
       pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight)
 
       const safeName = fullName.replace(/[^a-z0-9_\- ]/gi, '_').trim()

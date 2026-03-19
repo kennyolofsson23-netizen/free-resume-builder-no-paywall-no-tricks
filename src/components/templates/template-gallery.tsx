@@ -35,8 +35,12 @@ export function TemplateGallery() {
             {/* Template header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">{template.name}</h2>
-                <p className="text-sm text-gray-500 mt-0.5">{template.description}</p>
+                <h2 className="text-xl font-bold text-gray-900">
+                  {template.name}
+                </h2>
+                <p className="text-sm text-gray-500 mt-0.5">
+                  {template.description}
+                </p>
               </div>
               <Link
                 href={`/builder?template=${template.id}`}

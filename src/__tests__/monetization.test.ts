@@ -6,9 +6,15 @@ import { AffiliateBanner } from '@/components/shared/affiliate-banner'
 describe('AffiliateBanner', () => {
   it('renders the partner banner with link', () => {
     render(React.createElement(AffiliateBanner))
-    expect(screen.getByRole('link')).toHaveAttribute('href', expect.stringContaining('kickresume.com'))
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'href',
+      expect.stringContaining('kickresume.com')
+    )
     expect(screen.getByRole('link')).toHaveAttribute('target', '_blank')
-    expect(screen.getByRole('link')).toHaveAttribute('rel', expect.stringContaining('noopener'))
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'rel',
+      expect.stringContaining('noopener')
+    )
   })
 
   it('has Partner label for transparency', () => {

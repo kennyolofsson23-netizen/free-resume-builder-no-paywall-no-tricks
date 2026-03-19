@@ -26,10 +26,14 @@ export function useResumeList() {
       if (stored) {
         setResumeList(JSON.parse(stored))
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, [])
 
-  useEffect(() => { loadList() }, [loadList])
+  useEffect(() => {
+    loadList()
+  }, [loadList])
 
   // Save current resume to the list
   const saveCurrentToList = useCallback(() => {
@@ -42,29 +46,40 @@ export function useResumeList() {
     }
     setResumeList((prev) => {
       const existing = prev.findIndex((r) => r.id === item.id)
-      const next = existing >= 0
-        ? prev.map((r, i) => (i === existing ? item : r))
-        : [...prev, item]
+      const next =
+        existing >= 0
+          ? prev.map((r, i) => (i === existing ? item : r))
+          : [...prev, item]
       localStorage.setItem(RESUMES_STORAGE_KEY, JSON.stringify(next))
       return next
     })
     // Also save full resume data keyed by ID
     try {
-      localStorage.setItem(`resume-${currentResume.id}`, JSON.stringify(currentResume))
-    } catch { /* ignore */ }
+      localStorage.setItem(
+        `resume-${currentResume.id}`,
+        JSON.stringify(currentResume)
+      )
+    } catch {
+      /* ignore */
+    }
   }, [currentResume])
 
   // Switch to a different resume
-  const switchToResume = useCallback((id: string) => {
-    try {
-      const stored = localStorage.getItem(`resume-${id}`)
-      if (stored) {
-        const parsed = JSON.parse(stored) as Resume
-        setResume(parsed)
-        localStorage.setItem(STORAGE_KEY, stored) // update active resume
+  const switchToResume = useCallback(
+    (id: string) => {
+      try {
+        const stored = localStorage.getItem(`resume-${id}`)
+        if (stored) {
+          const parsed = JSON.parse(stored) as Resume
+          setResume(parsed)
+          localStorage.setItem(STORAGE_KEY, stored) // update active resume
+        }
+      } catch {
+        /* ignore */
       }
-    } catch { /* ignore */ }
-  }, [setResume])
+    },
+    [setResume]
+  )
 
   // Delete a resume from the list
   const deleteResume = useCallback((id: string) => {

@@ -33,7 +33,9 @@ export function BuilderToolbar() {
 
   const { generatePdf, isGenerating } = usePdfGenerator()
   const { generateLink, isCopied } = useShareableLink()
-  const { undo, redo, canUndo, canRedo } = useKeyboardShortcuts({ enabled: true })
+  const { undo, redo, canUndo, canRedo } = useKeyboardShortcuts({
+    enabled: true,
+  })
 
   const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     updateTemplate(e.target.value as ResumeTemplate)
@@ -67,7 +69,10 @@ export function BuilderToolbar() {
       const text = ev.target?.result as string
       const success = importFromJSON(text)
       if (success) {
-        toast({ title: 'Resume imported!', description: 'Data loaded successfully.' })
+        toast({
+          title: 'Resume imported!',
+          description: 'Data loaded successfully.',
+        })
       } else {
         toast({
           title: 'Import failed',
@@ -123,7 +128,10 @@ export function BuilderToolbar() {
         </div>
 
         {/* Separator */}
-        <div className="hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+        <div
+          className="hidden h-5 w-px bg-border sm:block"
+          aria-hidden="true"
+        />
 
         {/* Template selector */}
         <div className="flex items-center gap-1.5">
@@ -157,7 +165,10 @@ export function BuilderToolbar() {
         )}
 
         {/* Separator */}
-        <div className="hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+        <div
+          className="hidden h-5 w-px bg-border sm:block"
+          aria-hidden="true"
+        />
 
         {/* Share link */}
         <Button
@@ -229,7 +240,10 @@ export function BuilderToolbar() {
         </Button>
 
         {/* Separator */}
-        <div className="hidden h-5 w-px bg-border sm:block" aria-hidden="true" />
+        <div
+          className="hidden h-5 w-px bg-border sm:block"
+          aria-hidden="true"
+        />
 
         {/* Download PDF button */}
         <Button

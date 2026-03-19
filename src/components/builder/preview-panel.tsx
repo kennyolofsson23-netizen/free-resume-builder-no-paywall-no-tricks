@@ -58,8 +58,12 @@ export function PreviewPanel() {
           className="flex flex-1 items-center justify-center bg-muted/30 p-6"
         >
           <div className="text-center text-muted-foreground">
-            <p className="text-lg font-medium">Your resume preview will appear here</p>
-            <p className="text-sm">Start filling in your information on the left</p>
+            <p className="text-lg font-medium">
+              Your resume preview will appear here
+            </p>
+            <p className="text-sm">
+              Start filling in your information on the left
+            </p>
           </div>
         </div>
       </div>
@@ -89,9 +93,7 @@ export function PreviewPanel() {
             marginRight: scale < 1 ? `${(816 * scale - 816) / 2}px` : 'auto',
           }}
         >
-          <div
-            className="shadow-xl"
-          >
+          <div className="shadow-xl">
             <TemplateRenderer resume={resume} />
           </div>
         </div>

@@ -9,7 +9,20 @@ interface Props {
 function formatDate(dateStr: string | undefined): string {
   if (!dateStr) return 'Present'
   const [year, month] = dateStr.split('-')
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
   const monthName = months[parseInt(month ?? '1') - 1] ?? ''
   return `${monthName} ${year}`
 }
@@ -37,8 +50,17 @@ export function ClassicTemplate({ resume }: Props) {
   if (p.phone) contactParts.push(p.phone)
   if (p.location) contactParts.push(p.location)
   if (p.website) contactParts.push(p.website.replace(/^https?:\/\//, ''))
-  if (p.linkedin) contactParts.push(p.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, 'linkedin.com/in/'))
-  if (p.github) contactParts.push(p.github.replace(/^https?:\/\/(www\.)?github\.com\//, 'github.com/'))
+  if (p.linkedin)
+    contactParts.push(
+      p.linkedin.replace(
+        /^https?:\/\/(www\.)?linkedin\.com\/in\//,
+        'linkedin.com/in/'
+      )
+    )
+  if (p.github)
+    contactParts.push(
+      p.github.replace(/^https?:\/\/(www\.)?github\.com\//, 'github.com/')
+    )
 
   return (
     <div
@@ -86,7 +108,9 @@ export function ClassicTemplate({ resume }: Props) {
         <section style={{ marginBottom: '16px' }}>
           <h2 style={sectionHeaderStyle}>Summary</h2>
           <hr style={sectionHrStyle} />
-          <p style={{ color: '#374151', lineHeight: '1.7', margin: 0 }}>{p.summary}</p>
+          <p style={{ color: '#374151', lineHeight: '1.7', margin: 0 }}>
+            {p.summary}
+          </p>
         </section>
       )}
 
@@ -108,7 +132,9 @@ export function ClassicTemplate({ resume }: Props) {
                   <strong style={{ fontSize: '12px', color: '#111827' }}>
                     {exp.jobTitle}
                   </strong>
-                  <span style={{ fontStyle: 'italic', color: '#374151' }}>, {exp.company}</span>
+                  <span style={{ fontStyle: 'italic', color: '#374151' }}>
+                    , {exp.company}
+                  </span>
                   {exp.location && (
                     <span style={{ color: '#6b7280' }}>, {exp.location}</span>
                   )}
@@ -180,7 +206,8 @@ export function ClassicTemplate({ resume }: Props) {
                     marginLeft: '8px',
                   }}
                 >
-                  {formatDate(edu.startDate)} – {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                  {formatDate(edu.startDate)} –{' '}
+                  {edu.endDate ? formatDate(edu.endDate) : 'Present'}
                 </span>
               </div>
             </div>
@@ -193,12 +220,21 @@ export function ClassicTemplate({ resume }: Props) {
         <section style={{ marginBottom: '16px' }}>
           <h2 style={sectionHeaderStyle}>Skills</h2>
           <hr style={sectionHrStyle} />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 24px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '3px 24px',
+            }}
+          >
             {resume.skills.map((skill) => (
               <div key={skill.id} style={{ color: '#374151' }}>
                 {skill.name}
                 {skill.level && (
-                  <span style={{ color: '#9ca3af', fontSize: '10px' }}> ({skill.level})</span>
+                  <span style={{ color: '#9ca3af', fontSize: '10px' }}>
+                    {' '}
+                    ({skill.level})
+                  </span>
                 )}
               </div>
             ))}
@@ -275,7 +311,9 @@ export function ClassicTemplate({ resume }: Props) {
                 <strong style={{ fontSize: '12px', color: '#111827' }}>
                   {cert.name}
                 </strong>
-                <span style={{ fontStyle: 'italic', color: '#374151' }}>, {cert.issuer}</span>
+                <span style={{ fontStyle: 'italic', color: '#374151' }}>
+                  , {cert.issuer}
+                </span>
               </div>
               <span
                 style={{
@@ -286,7 +324,9 @@ export function ClassicTemplate({ resume }: Props) {
                 }}
               >
                 {formatDate(cert.issueDate)}
-                {cert.expirationDate ? ` – ${formatDate(cert.expirationDate)}` : ''}
+                {cert.expirationDate
+                  ? ` – ${formatDate(cert.expirationDate)}`
+                  : ''}
               </span>
             </div>
           ))}

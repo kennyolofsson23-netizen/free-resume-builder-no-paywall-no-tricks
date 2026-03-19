@@ -9,7 +9,20 @@ interface Props {
 function formatDate(dateStr: string | undefined): string {
   if (!dateStr) return 'Present'
   const [year, month] = dateStr.split('-')
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
   const monthName = months[parseInt(month ?? '1') - 1] ?? ''
   return `${monthName} ${year}`
 }
@@ -33,8 +46,15 @@ export function MinimalTemplate({ resume }: Props) {
     p.phone,
     p.location,
     p.website ? p.website.replace(/^https?:\/\//, '') : '',
-    p.linkedin ? p.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, 'linkedin: ') : '',
-    p.github ? p.github.replace(/^https?:\/\/(www\.)?github\.com\//, 'github: ') : '',
+    p.linkedin
+      ? p.linkedin.replace(
+          /^https?:\/\/(www\.)?linkedin\.com\/in\//,
+          'linkedin: '
+        )
+      : '',
+    p.github
+      ? p.github.replace(/^https?:\/\/(www\.)?github\.com\//, 'github: ')
+      : '',
   ].filter(Boolean)
 
   return (
@@ -189,7 +209,8 @@ export function MinimalTemplate({ resume }: Props) {
                   marginLeft: '12px',
                 }}
               >
-                {formatDate(edu.startDate)} – {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                {formatDate(edu.startDate)} –{' '}
+                {edu.endDate ? formatDate(edu.endDate) : 'Present'}
               </span>
             </div>
           ))}
@@ -291,7 +312,9 @@ export function MinimalTemplate({ resume }: Props) {
                 }}
               >
                 {formatDate(cert.issueDate)}
-                {cert.expirationDate ? ` – ${formatDate(cert.expirationDate)}` : ''}
+                {cert.expirationDate
+                  ? ` – ${formatDate(cert.expirationDate)}`
+                  : ''}
               </span>
             </div>
           ))}

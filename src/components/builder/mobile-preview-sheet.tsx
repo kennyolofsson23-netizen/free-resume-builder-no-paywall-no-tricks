@@ -10,7 +10,10 @@ interface MobilePreviewSheetProps {
   onClose: () => void
 }
 
-export function MobilePreviewSheet({ isOpen, onClose }: MobilePreviewSheetProps) {
+export function MobilePreviewSheet({
+  isOpen,
+  onClose,
+}: MobilePreviewSheetProps) {
   const resume = useResumeStore((state) => state.resume)
 
   if (!isOpen) return null
@@ -19,7 +22,12 @@ export function MobilePreviewSheet({ isOpen, onClose }: MobilePreviewSheetProps)
     <div className="fixed inset-0 z-50 flex flex-col bg-muted/95 md:hidden">
       <div className="flex items-center justify-between border-b border-border bg-background px-4 py-3">
         <h2 className="font-semibold text-foreground">Resume Preview</h2>
-        <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close preview">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          aria-label="Close preview"
+        >
           <X className="h-4 w-4" />
         </Button>
       </div>

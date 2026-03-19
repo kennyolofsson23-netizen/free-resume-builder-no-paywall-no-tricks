@@ -27,8 +27,7 @@ describe('Print-Optimized Stylesheet', () => {
 
   it('sets print page margins', () => {
     const hasMargins =
-      globalsCSS.includes('@page') ||
-      globalsCSS.includes('margin')
+      globalsCSS.includes('@page') || globalsCSS.includes('margin')
     expect(hasMargins).toBe(true)
   })
 

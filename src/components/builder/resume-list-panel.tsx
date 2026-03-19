@@ -85,7 +85,9 @@ export function ResumeListPanel() {
                 key={item.id}
                 className={[
                   'border rounded-lg p-3 bg-card hover:bg-accent/50 transition-colors',
-                  isActive ? 'border-primary ring-1 ring-primary' : 'border-border',
+                  isActive
+                    ? 'border-primary ring-1 ring-primary'
+                    : 'border-border',
                 ].join(' ')}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -133,7 +135,9 @@ export function ResumeListPanel() {
       {/* Delete confirmation dialog */}
       <Dialog
         open={deleteTargetId !== null}
-        onOpenChange={(open) => { if (!open) setDeleteTargetId(null) }}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTargetId(null)
+        }}
       >
         <DialogContent>
           <DialogHeader>
@@ -157,7 +161,9 @@ export function ResumeListPanel() {
       {/* New resume confirmation dialog */}
       <Dialog
         open={showNewConfirm}
-        onOpenChange={(open) => { if (!open) setShowNewConfirm(false) }}
+        onOpenChange={(open) => {
+          if (!open) setShowNewConfirm(false)
+        }}
       >
         <DialogContent>
           <DialogHeader>

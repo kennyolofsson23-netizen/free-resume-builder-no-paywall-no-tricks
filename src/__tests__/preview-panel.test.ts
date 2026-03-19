@@ -49,8 +49,8 @@ describe('PreviewPanel', () => {
   })
 
   it('renders "no resume data" message when resume is null', async () => {
-    mockUseResumeStore.mockImplementation((selector: (s: { resume: null }) => unknown) =>
-      selector({ resume: null })
+    mockUseResumeStore.mockImplementation(
+      (selector: (s: { resume: null }) => unknown) => selector({ resume: null })
     )
 
     const { PreviewPanel } = await import('@/components/builder/preview-panel')

@@ -11,10 +11,13 @@ import * as React from 'react'
 vi.mock('@radix-ui/react-popover', () => ({
   Root: ({ children }: { children: React.ReactNode }) =>
     React.createElement('div', null, children),
-  Trigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) =>
-    asChild
-      ? children
-      : React.createElement('div', null, children),
+  Trigger: ({
+    children,
+    asChild,
+  }: {
+    children: React.ReactNode
+    asChild?: boolean
+  }) => (asChild ? children : React.createElement('div', null, children)),
   Portal: ({ children }: { children: React.ReactNode }) =>
     React.createElement('div', null, children),
   Content: ({ children }: { children: React.ReactNode }) =>
@@ -94,6 +97,8 @@ describe('ColorPicker', () => {
     )
     await act(async () => {})
     // Should show a contrast warning in the popover content
-    expect(screen.getByTestId('popover-content').textContent?.toLowerCase()).toContain('hard to read')
+    expect(
+      screen.getByTestId('popover-content').textContent?.toLowerCase()
+    ).toContain('hard to read')
   })
 })

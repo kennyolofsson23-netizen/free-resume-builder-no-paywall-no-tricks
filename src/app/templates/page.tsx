@@ -28,7 +28,10 @@ export default function TemplatesPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="text-lg font-bold text-blue-600 hover:text-blue-700">
+          <Link
+            href="/"
+            className="text-lg font-bold text-blue-600 hover:text-blue-700"
+          >
             Free Resume Builder
           </Link>
           <Link
@@ -47,11 +50,12 @@ export default function TemplatesPage() {
             5 Free Professional Resume Templates
           </h1>
           <p className="text-xl text-gray-600 mb-6">
-            All templates are ATS-friendly, professionally designed, and 100% free to download.
-            No account. No paywall. No tricks.
+            All templates are ATS-friendly, professionally designed, and 100%
+            free to download. No account. No paywall. No tricks.
           </p>
           <p className="text-sm text-gray-500">
-            Unlike Zety and Resume.io, we never charge you to download your resume.
+            Unlike Zety and Resume.io, we never charge you to download your
+            resume.
           </p>
         </div>
       </div>
@@ -68,7 +72,8 @@ export default function TemplatesPage() {
             Ready to build your resume?
           </h2>
           <p className="text-blue-100 mb-8">
-            Pick a template and start building instantly. Your PDF is free to download — always.
+            Pick a template and start building instantly. Your PDF is free to
+            download — always.
           </p>
           <Link
             href="/builder"

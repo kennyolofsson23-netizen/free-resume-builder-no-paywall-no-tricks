@@ -10,7 +10,20 @@ interface Props {
 function formatDate(dateStr: string | undefined): string {
   if (!dateStr) return 'Present'
   const [year, month] = dateStr.split('-')
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
   const monthName = months[parseInt(month ?? '1') - 1] ?? ''
   return `${monthName} ${year}`
 }
@@ -108,7 +121,10 @@ export function ProfessionalTemplate({ resume }: Props) {
           {p.linkedin && (
             <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
               <Linkedin size={10} />
-              {p.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '')}
+              {p.linkedin.replace(
+                /^https?:\/\/(www\.)?linkedin\.com\/in\//,
+                ''
+              )}
             </span>
           )}
           {p.github && (
