@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useResumeStore } from '@/store/resume-store'
 import { MAX_UNDO_HISTORY } from '@/lib/constants'
 

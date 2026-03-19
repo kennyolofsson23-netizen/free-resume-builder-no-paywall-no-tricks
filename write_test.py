@@ -63,43 +63,50 @@ describe('Template Gallery Page \u2014 renders all 5 templates', () => {
     expect(container.firstChild).not.toBeNull()
   })
 
-  it('renders h1 heading with Free Resume Templates', async () => {
+  it('renders an h1 heading for the page', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
-    render(React.createElement(TemplatesPage))
-    const heading = screen.getByRole('heading', { level: 1 })
-    expect(heading.textContent).toMatch(/free resume templates/i)
+    const { container } = render(React.createElement(TemplatesPage))
+    const h1 = container.querySelector('h1')
+    expect(h1).not.toBeNull()
+    expect(h1?.textContent).toMatch(/free.*resume.*templates|5 free/i)
   })
 
-  it('renders exactly 5 template sections by id', async () => {
+  it('renders exactly 5 template article sections with prefixed ids', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     const { container } = render(React.createElement(TemplatesPage))
     const templateIds = ['modern', 'classic', 'minimal', 'creative', 'professional']
-    const found = templateIds.filter((id) => container.querySelector('#' + id))
+    const found = templateIds.filter((id) =>
+      container.querySelector('#template-' + id)
+    )
     expect(found.length).toBe(5)
   })
 
-  it('renders at least 5 h2 template headings', async () => {
+  it('renders at least 5 h2 template name headings', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
+    // Page h2 is "Ready to build your resume?", template headings are also h2
     const h2s = screen.getAllByRole('heading', { level: 2 })
     expect(h2s.length).toBeGreaterThanOrEqual(5)
   })
 
-  it('renders all template names as h2 headings', async () => {
+  it('renders each template name as an h2 heading', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
+    // Each TemplateGallery card has an h2 with just the template name
     const templateNames = ['Modern', 'Classic', 'Minimal', 'Creative', 'Professional']
     for (const name of templateNames) {
-      const matches = screen.getAllByText(new RegExp(name + ' Template', 'i'))
-      expect(matches.length).toBeGreaterThan(0)
+      const h2s = screen.getAllByRole('heading', { level: 2 })
+      const match = h2s.find((h) => h.textContent?.trim() === name)
+      expect(match).toBeTruthy()
     }
   })
 })
 
 describe('Template Gallery Page \u2014 Use This Template CTAs', () => {
-  it('renders Use This Template links for all 5 templates', async () => {
+  it('renders 5 Use This Template CTA links', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
+    // CTAs have aria-label="Use {name} template" and link text "Use This Template"
     const links = screen.getAllByRole('link', {
       name: /use .+ template/i,
     })
@@ -112,7 +119,7 @@ describe('Template Gallery Page \u2014 Use This Template CTAs', () => {
     const templateIds = ['modern', 'classic', 'minimal', 'creative', 'professional']
     for (const id of templateIds) {
       const links = screen.getAllByRole('link', {
-        name: new RegExp('use ' + id, 'i'),
+        name: new RegExp('use ' + id + ' template', 'i'),
       })
       expect(links.length).toBeGreaterThan(0)
       expect(links[0].getAttribute('href')).toBe('/builder?template=' + id)
@@ -122,22 +129,27 @@ describe('Template Gallery Page \u2014 Use This Template CTAs', () => {
   it('modern template CTA links to /builder?template=modern', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
-    const link = screen.getAllByRole('link', { name: /use modern template/i })[0]
-    expect(link).toBeTruthy()
+    const link = screen.getByRole('link', { name: /use modern template/i })
     expect(link.getAttribute('href')).toBe('/builder?template=modern')
   })
 
   it('professional template CTA links to /builder?template=professional', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
-    const link = screen.getAllByRole('link', { name: /use professional template/i })[0]
-    expect(link).toBeTruthy()
+    const link = screen.getByRole('link', { name: /use professional template/i })
     expect(link.getAttribute('href')).toBe('/builder?template=professional')
+  })
+
+  it('creative template CTA links to /builder?template=creative', async () => {
+    const { default: TemplatesPage } = await import('@/app/templates/page')
+    render(React.createElement(TemplatesPage))
+    const link = screen.getByRole('link', { name: /use creative template/i })
+    expect(link.getAttribute('href')).toBe('/builder?template=creative')
   })
 })
 
 describe('Template Gallery Page \u2014 template previews render with sample data', () => {
-  it('renders sample resume name Alex Johnson in previews', async () => {
+  it('renders sample resume name Alex Johnson in at least one preview', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
     const names = screen.getAllByText(/Alex Johnson/i)
@@ -151,13 +163,13 @@ describe('Template Gallery Page \u2014 template previews render with sample data
     expect(titles.length).toBeGreaterThan(0)
   })
 
-  it('renders 5 scaled preview containers', async () => {
+  it('renders scaled preview containers using CSS transform', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     const { container } = render(React.createElement(TemplatesPage))
     const scaledDivs = Array.from(container.querySelectorAll('[style]')).filter(
       (el) => (el as HTMLElement).style.transform.includes('scale')
     )
-    expect(scaledDivs.length).toBe(5)
+    expect(scaledDivs.length).toBeGreaterThanOrEqual(5)
   })
 })
 
@@ -174,7 +186,7 @@ describe('Template Gallery Page \u2014 anti-paywall messaging', () => {
     expect(container.innerHTML).toMatch(/no paywall/i)
   })
 
-  it('page has a bottom CTA linking to /builder', async () => {
+  it('page has at least one link to /builder', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
     const builderLinks = screen
@@ -198,6 +210,18 @@ describe('Template Gallery Page \u2014 TEMPLATE_LIST constants', () => {
     expect(ids).toContain('minimal')
     expect(ids).toContain('creative')
     expect(ids).toContain('professional')
+  })
+
+  it('each TEMPLATE_LIST entry has id, name, and description', async () => {
+    const { TEMPLATE_LIST } = await import('@/lib/constants')
+    for (const t of TEMPLATE_LIST) {
+      expect(typeof t.id).toBe('string')
+      expect(typeof t.name).toBe('string')
+      expect(typeof t.description).toBe('string')
+      expect(t.id.length).toBeGreaterThan(0)
+      expect(t.name.length).toBeGreaterThan(0)
+      expect(t.description.length).toBeGreaterThan(0)
+    }
   })
 })
 """

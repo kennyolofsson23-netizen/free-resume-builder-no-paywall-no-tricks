@@ -107,33 +107,51 @@ a[href='#main-content'].sr-only:focus {
   font-weight: 600;
 }
 
-/* Enhanced print styles for resume */
+/* Print styles — Ctrl+P prints only the resume */
 @media print {
-  body > *:not(.resume-print-container) {
-    display: none !important;
-  }
-  .resume-print-container {
-    display: block !important;
-  }
+  /* Hide ALL UI chrome */
   .no-print,
+  header,
   nav,
-  header:not(.resume-header),
-  footer:not(.resume-footer),
-  aside,
-  .builder-toolbar,
-  .form-panel {
+  [data-toolbar],
+  [data-form-panel],
+  [data-sidebar] {
     display: none !important;
   }
-  .resume-preview {
-    width: 100% !important;
-    max-width: none !important;
-    box-shadow: none !important;
+
+  /* Show only resume content */
+  body {
+    background: white !important;
     margin: 0 !important;
     padding: 0 !important;
   }
+
+  /* Resume canvas styles for print */
+  .resume-preview {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Page setup — US Letter */
   @page {
     size: letter;
     margin: 0.5in;
+  }
+
+  /* Prevent page breaks inside key elements */
+  .resume-section,
+  .experience-entry,
+  .education-entry {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Ensure colors print correctly */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
 
