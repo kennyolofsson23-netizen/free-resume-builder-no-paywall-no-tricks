@@ -94,7 +94,7 @@ html {
 }
 
 /* Skip link */
-a[href="#main-content"].sr-only:focus {
+a[href='#main-content'].sr-only:focus {
   position: fixed;
   top: 8px;
   left: 8px;
