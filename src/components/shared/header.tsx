@@ -11,9 +11,9 @@ export function Header() {
         <Link
           href="/"
           className="text-lg font-bold text-slate-900 dark:text-white"
-          aria-label="ResumeBuilder  Home"
+          aria-label="Free Resume Builder — Home"
         >
-          ResumeBuilder
+          Free Resume Builder
         </Link>
 
         {/* Main navigation */}
@@ -33,7 +33,7 @@ export function Header() {
             href="/builder"
             className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
           >
-            Build Resume
+            Build My Resume
           </Link>
         </nav>
       </div>

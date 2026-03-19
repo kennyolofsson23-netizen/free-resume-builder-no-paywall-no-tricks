@@ -66,11 +66,10 @@ export default function PreviewPage() {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <h1 className="text-2xl font-bold text-gray-900 mb-3">
-            Resume not found
+            This share link didn't work
           </h1>
           <p className="text-gray-600 mb-6">
-            This link may be invalid, expired, or the resume data could not be
-            decoded. Please ask the sender to generate a new share link.
+            The link may be incomplete or from an older version. Ask the person who shared it to generate a fresh link from their resume builder.
           </p>
           <Link
             href="/builder"
@@ -85,7 +84,7 @@ export default function PreviewPage() {
 
   return (
     <>
-      <title>Resume Preview | Free Resume Builder</title>
+      <title>Resume Preview — Free Resume Builder</title>
       <PreviewCta templateName={templateName} />
       {resume && <PreviewViewer resume={resume} />}
     </>

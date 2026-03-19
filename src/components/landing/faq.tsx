@@ -1,33 +1,38 @@
 const faqs = [
   {
-    question: 'Is this really free?',
+    question: 'Is this actually free, or is there a catch?',
     answer:
-      'Yes. No credit card, no trial, no paywall. The PDF download is free. The templates are free. Everything is free.',
+      "No catch. No credit card. No trial period that auto-renews. The PDF download is free. All five templates are free. Sharing your resume is free. We make money through optional partner links — never by charging you.",
   },
   {
     question: 'Do I need to create an account?',
     answer:
-      "No. The builder works instantly. Your data is saved automatically to your browser's localStorage.",
+      "No. Open the builder and start typing. Your work saves automatically to your browser's local storage, so it's still there when you come back — no login required.",
   },
   {
     question: 'Is my resume data private?',
     answer:
-      'Yes. Your data never leaves your browser. We have no server, no database. We literally cannot see your resume.',
+      "Yes. Your resume lives entirely in your browser. We have no server, no database, and no way to access your data. When you close the tab, your information doesn't go anywhere except your own device.",
   },
   {
-    question: 'What happens to my resume if I close the browser?',
+    question: 'What if I close the tab or lose my internet connection?',
     answer:
-      'It is automatically saved to localStorage and restored when you return.',
+      "Your resume is automatically saved to your browser as you type. When you return to the page — even after closing your laptop — it picks up exactly where you left off. No internet needed after the initial load.",
   },
   {
-    question: 'Can I use the resume for any job?',
+    question: 'Will my resume get past applicant tracking systems (ATS)?',
     answer:
-      'Yes. All templates are ATS-compatible, meaning they work with applicant tracking systems used by most companies.',
+      "Yes. All five templates are ATS-compatible: the text is fully selectable, sections use standard headings, and nothing is rendered as an image. Your resume will parse correctly through systems like Taleo, Greenhouse, Lever, and Workday.",
   },
   {
     question: 'How is this different from Zety or Resume.io?',
     answer:
-      "Zety and Resume.io show you a preview for free, then ask for your credit card to download. We don't do that. Ever.",
+      "Zety and Resume.io let you build your resume for free, then lock the PDF behind a $29.99/month subscription. You only find out at the last step, after you've invested real time. We never do that — the download is always free, no matter what.",
+  },
+  {
+    question: 'Can I share my resume with someone else?',
+    answer:
+      "Yes. Hit the Share button in the builder and a link is generated instantly. Anyone with the link can view your resume — read-only, no account needed. All the data is encoded in the URL itself, so nothing is ever sent to a server.",
   },
 ]
 

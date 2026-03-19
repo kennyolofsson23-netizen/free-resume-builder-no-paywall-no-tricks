@@ -40,7 +40,7 @@ export function useAutoSave(debounceMs = 1000): UseAutoSaveResult {
       } catch {
         toast({
           title: 'Auto-save failed',
-          description: 'Could not save. Storage may be full.',
+          description: 'Your browser storage may be full. Try clearing old data and refreshing.',
           variant: 'destructive',
         })
       } finally {

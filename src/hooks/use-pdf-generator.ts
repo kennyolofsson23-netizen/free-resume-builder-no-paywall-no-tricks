@@ -11,11 +11,11 @@ export function usePdfGenerator() {
   const [status, setStatus] = useState<PDFGeneratorStatus>('idle')
 
   const validateResume = useCallback((): string | null => {
-    if (!resume) return 'No resume data'
+    if (!resume) return 'Add your details in the editor first'
     if (!resume.personalInfo.fullName?.trim())
-      return 'Please enter your full name before downloading'
+      return 'Add your name in the Personal tab before downloading'
     if (!resume.personalInfo.email?.trim())
-      return 'Please enter your email before downloading'
+      return 'Add your email in the Personal tab before downloading'
     return null
   }, [resume])
 
@@ -23,7 +23,7 @@ export function usePdfGenerator() {
     const validationError = validateResume()
     if (validationError) {
       toast({
-        title: 'Cannot download',
+        title: 'Almost ready — one more thing',
         description: validationError,
         variant: 'destructive',
       })
@@ -39,16 +39,16 @@ export function usePdfGenerator() {
       await generatePDF({ elementId: 'resume-preview-container', filename })
       setStatus('success')
       toast({
-        title: 'Downloaded!',
-        description: `${filename} saved to your downloads folder.`,
+        title: 'PDF downloaded!',
+        description: `${filename} is in your downloads folder. No account needed, no tricks.`,
       })
       // Reset status after 2 seconds
       setTimeout(() => setStatus('idle'), 2000)
     } catch (error) {
       setStatus('error')
       toast({
-        title: 'Download failed',
-        description: 'Could not generate PDF. Please try again.',
+        title: 'PDF generation failed',
+        description: 'Something went wrong. Try again in a moment.',
         variant: 'destructive',
       })
       setTimeout(() => setStatus('idle'), 3000)

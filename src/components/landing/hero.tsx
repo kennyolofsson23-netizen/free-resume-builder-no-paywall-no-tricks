@@ -17,31 +17,31 @@ export function Hero() {
           </h1>
 
           <p className="mb-8 text-xl text-slate-300">
-            Professional templates. Real-time preview. Instant PDF download.
+            Five professional templates. Real-time preview. One-click PDF download.
             <br />
-            No email. No account. No &apos;$1.95 trial that auto-renews.&apos;
+            No email. No account. No &ldquo;$1.95 trial&rdquo; that quietly becomes $29.99/month.
           </p>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link
               href="/builder"
-              aria-label="Start Building — Free"
+              aria-label="Start Building — It's Free"
               className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 font-semibold text-slate-900 transition-colors hover:bg-slate-100"
             >
-              Build Your Resume — Free →
+              Build Your Resume — It&apos;s Free
             </Link>
             <Link
               href="/templates"
               className="inline-flex items-center justify-center rounded-lg border border-white px-8 py-3 font-semibold text-white transition-colors hover:bg-white/10"
             >
-              View Templates
+              Browse Templates
             </Link>
           </div>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <span className="text-sm text-slate-400">✓ No account needed</span>
-            <span className="text-sm text-slate-400">✓ 100% client-side</span>
-            <span className="text-sm text-slate-400">✓ Instant download</span>
+            <span className="text-sm text-slate-400">✓ Your data never leaves your browser</span>
+            <span className="text-sm text-slate-400">✓ PDF downloads in seconds</span>
           </div>
         </div>
       </div>

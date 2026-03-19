@@ -75,7 +75,7 @@ export function ResumeListPanel() {
 
       {/* Resume list */}
       {resumeList.length === 0 ? (
-        <p className="text-xs text-muted-foreground">No saved resumes yet.</p>
+        <p className="text-xs text-muted-foreground">No saved resumes yet. Create your first one above.</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {resumeList.map((item) => {
@@ -143,8 +143,7 @@ export function ResumeListPanel() {
           <DialogHeader>
             <DialogTitle>Delete Resume</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this resume? This action cannot be
-              undone.
+              This will permanently remove the resume. You can't undo this.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -167,10 +166,9 @@ export function ResumeListPanel() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Resume</DialogTitle>
+            <DialogTitle>Start a New Resume?</DialogTitle>
             <DialogDescription>
-              Your current resume will be saved to the list. A new blank resume
-              will be created. Continue?
+              Your current resume will stay in the list. A blank resume will open in its place.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

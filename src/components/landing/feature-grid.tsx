@@ -5,7 +5,7 @@ export function FeatureGrid() {
     <section id="features" className="px-4 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-foreground">
-          Everything You Need — Free Resume Builders Done Right
+          Everything You Need to Build a Great Resume
         </h2>
 
         <div className="grid gap-8 md:grid-cols-2">
@@ -81,7 +81,7 @@ export function FeatureGrid() {
               Works Offline
             </h3>
             <p className="text-muted-foreground">
-              Once loaded, ResumeBuilder works offline. Your data is saved to
+              Once loaded, this builder works offline. Your data is saved to
               your browser automatically.
             </p>
           </div>

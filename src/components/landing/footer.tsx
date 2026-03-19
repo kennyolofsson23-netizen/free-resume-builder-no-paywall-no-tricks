@@ -50,7 +50,7 @@ export function Footer() {
         </div>
 
         <p className="mb-3 text-center text-sm text-muted-foreground">
-          © 2025 Free Resume Builder. Built with privacy in mind. Zero data
+          © 2026 Free Resume Builder. Built with privacy in mind. Zero data
           collection.
         </p>
         <p className="text-center text-xs text-muted-foreground">

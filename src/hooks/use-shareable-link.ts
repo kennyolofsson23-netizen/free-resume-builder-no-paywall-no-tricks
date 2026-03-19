@@ -30,8 +30,8 @@ export function useShareableLink(): UseShareableLinkReturn {
 
       if (!url) {
         toast({
-          title: 'Error',
-          description: 'No resume data to share.',
+          title: 'Nothing to share yet',
+          description: 'Add some information to your resume first.',
           variant: 'destructive',
         })
         return
@@ -40,8 +40,8 @@ export function useShareableLink(): UseShareableLinkReturn {
       await navigator.clipboard.writeText(url)
       setIsCopied(true)
       toast({
-        title: 'Link copied to clipboard!',
-        description: 'Share this link to let others view your resume.',
+        title: 'Link copied!',
+        description: 'Anyone with this link can view your resume — no account required.',
       })
 
       setTimeout(() => {
@@ -49,8 +49,8 @@ export function useShareableLink(): UseShareableLinkReturn {
       }, 2000)
     } catch {
       toast({
-        title: 'Error',
-        description: 'Failed to copy link to clipboard.',
+        title: 'Clipboard access denied',
+        description: 'Copy failed. Check your browser permissions and try again.',
         variant: 'destructive',
       })
     }

@@ -39,7 +39,7 @@ export default function BuilderPage() {
         className="flex min-h-screen items-center justify-center bg-background"
       >
         <p className="text-muted-foreground text-sm">
-          Loading resume builder...
+          Setting up your resume builder…
         </p>
       </main>
     )

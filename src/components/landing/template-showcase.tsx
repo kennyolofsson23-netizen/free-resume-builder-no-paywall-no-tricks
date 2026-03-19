@@ -4,34 +4,34 @@ const templates = [
   {
     id: 'modern',
     name: 'Modern',
-    description: 'Clean lines and a bold accent color. Great for tech roles.',
+    description: 'Clean lines, accent color, two-column layout. Ideal for tech and product roles.',
     placeholderClass: 'bg-blue-500',
   },
   {
     id: 'classic',
     name: 'Classic',
     description:
-      'Traditional layout with clear hierarchy. Timeless and ATS-safe.',
+      'Single-column, serif headings, clear hierarchy. Timeless and universally ATS-safe.',
     placeholderClass: 'bg-slate-600',
   },
   {
     id: 'minimal',
     name: 'Minimal',
-    description: 'Lots of white space. Lets your content breathe.',
+    description: 'Maximum white space. Your content does the talking, nothing else.',
     placeholderClass: 'bg-gray-200',
   },
   {
     id: 'creative',
     name: 'Creative',
     description:
-      'A two-column layout with a sidebar. Stands out from the crowd.',
+      'Bold header, icon-enhanced contact info. Stands out without sacrificing readability.',
     placeholderClass: 'bg-purple-500',
   },
   {
     id: 'professional',
     name: 'Professional',
     description:
-      'Structured and formal. Perfect for executive and finance roles.',
+      'Dark sidebar, structured sections. The go-to for finance, law, and executive roles.',
     placeholderClass: 'bg-slate-800',
   },
 ]

@@ -44,7 +44,7 @@ export function BuilderToolbar() {
   }
 
   const handleNewResume = () => {
-    if (confirm('Start a new resume? Your current data will be lost.')) {
+    if (confirm('Start fresh? This will clear your current resume.')) {
       createNewResume()
     }
   }
@@ -60,7 +60,7 @@ export function BuilderToolbar() {
     a.download = `${name.replace(/[^a-z0-9_\- ]/gi, '_')}_resume.json`
     a.click()
     URL.revokeObjectURL(url)
-    toast({ title: 'JSON exported', description: 'Resume data downloaded.' })
+    toast({ title: 'Resume exported', description: 'Your resume data was saved as a JSON file.' })
   }
 
   const handleImportJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,13 +72,13 @@ export function BuilderToolbar() {
       const success = importFromJSON(text)
       if (success) {
         toast({
-          title: 'Resume imported!',
-          description: 'Data loaded successfully.',
+          title: 'Resume imported',
+          description: 'Your resume data has been loaded.',
         })
       } else {
         toast({
           title: 'Import failed',
-          description: 'Invalid JSON file or schema mismatch.',
+          description: 'That file couldn't be read. Make sure it's a valid resume JSON export.',
           variant: 'destructive',
         })
       }
@@ -98,7 +98,7 @@ export function BuilderToolbar() {
       <div className="flex items-center gap-2">
         <FileText className="h-5 w-5 text-primary" aria-hidden="true" />
         <span className="text-sm font-semibold text-foreground hidden sm:inline">
-          Resume Builder
+          Free Resume Builder
         </span>
       </div>
 

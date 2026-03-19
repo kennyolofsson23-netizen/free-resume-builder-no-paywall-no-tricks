@@ -13,7 +13,7 @@ describe('Landing Page \u2014 Hero section', () => {
   it('renders CTA button linking to /builder', async () => {
     const { Hero } = await import('@/components/landing/hero')
     const { getByText } = render(React.createElement(Hero))
-    const ctaLink = getByText(/Build Your Resume.*Free/i)
+    const ctaLink = getByText(/Build My Resume|Build.*Resume.*Free/i)
     expect(ctaLink.closest('a')).not.toBeNull()
     expect(ctaLink.closest('a')?.getAttribute('href')).toBe('/builder')
   })
@@ -47,7 +47,7 @@ describe('Landing Page \u2014 FeatureGrid section', () => {
     const { FeatureGrid } = await import('@/components/landing/feature-grid')
     const { getByRole } = render(React.createElement(FeatureGrid))
     const heading = getByRole('heading', { level: 2 })
-    expect(heading.textContent).toContain('Free Resume Builders')
+    expect(heading.textContent).toContain('Everything You Need')
   })
 
   it('renders 6 h3 feature card headings', async () => {
