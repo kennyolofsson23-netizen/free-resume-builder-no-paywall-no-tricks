@@ -1,5 +1,5 @@
 /**
- * Resume data types
+ * Resume data types - source of truth for all resume data structures
  */
 
 export type ResumeTemplate =
@@ -75,13 +75,11 @@ export interface Resume {
   skills: Skill[]
   projects: Project[]
   certifications: Certification[]
+  accentColor: string
   createdAt: string
   updatedAt: string
 }
 
-/**
- * Form validation schemas
- */
 export const RESUME_TEMPLATES: ResumeTemplate[] = [
   'modern',
   'classic',
@@ -96,3 +94,5 @@ export const SKILL_LEVELS = [
   'advanced',
   'expert',
 ] as const
+
+export type SkillLevel = (typeof SKILL_LEVELS)[number]

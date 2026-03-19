@@ -92,3 +92,31 @@ html {
   clip: auto;
   white-space: normal;
 }
+
+/* Skip link */
+a[href="#main-content"].sr-only:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .resume-preview {
+    box-shadow: none !important;
+  }
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+}
