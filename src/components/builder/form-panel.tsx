@@ -9,6 +9,7 @@ import { EducationForm } from '@/components/builder/sections/education-form'
 import { SkillsForm } from '@/components/builder/sections/skills-form'
 import { ProjectsForm } from '@/components/builder/sections/projects-form'
 import { CertificationsForm } from '@/components/builder/sections/certifications-form'
+import { ResumeListPanel } from '@/components/builder/resume-list-panel'
 
 const TABS = [
   { value: 'personal', label: 'Personal' },
@@ -17,6 +18,7 @@ const TABS = [
   { value: 'skills', label: 'Skills' },
   { value: 'projects', label: 'Projects' },
   { value: 'certifications', label: 'Certifications' },
+  { value: 'resumes', label: 'Resumes' },
 ] as const
 
 export function FormPanel() {
