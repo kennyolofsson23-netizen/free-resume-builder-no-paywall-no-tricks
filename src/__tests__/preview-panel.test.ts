@@ -15,7 +15,8 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 // Mock the Zustand store
 const mockUseResumeStore = vi.fn()
 vi.mock('@/store/resume-store', () => ({
-  useResumeStore: (selector: (s: unknown) => unknown) => mockUseResumeStore(selector),
+  useResumeStore: (selector: (s: unknown) => unknown) =>
+    mockUseResumeStore(selector),
 }))
 
 vi.mock('@/components/templates/template-renderer', () => ({
@@ -31,8 +32,20 @@ vi.mock('lucide-react', () => ({
 }))
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, 'aria-label': ariaLabel }: { children: React.ReactNode; onClick?: () => void; 'aria-label'?: string }) =>
-    React.createElement('button', { onClick, 'aria-label': ariaLabel }, children),
+  Button: ({
+    children,
+    onClick,
+    'aria-label': ariaLabel,
+  }: {
+    children: React.ReactNode
+    onClick?: () => void
+    'aria-label'?: string
+  }) =>
+    React.createElement(
+      'button',
+      { onClick, 'aria-label': ariaLabel },
+      children
+    ),
 }))
 
 const sampleResume = {
@@ -61,7 +74,9 @@ const emptyResume = {
 }
 
 describe('PreviewPanel', () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('renders without crashing when resume is null', async () => {
     mockUseResumeStore.mockImplementation((sel) => sel({ resume: null }))
@@ -84,11 +99,15 @@ describe('PreviewPanel', () => {
     const { PreviewPanel } = await import('@/components/builder/preview-panel')
     const { container } = render(React.createElement(PreviewPanel))
     await act(async () => {})
-    expect(container.textContent).toContain('Your resume preview will appear here')
+    expect(container.textContent).toContain(
+      'Your resume preview will appear here'
+    )
   })
 
   it('renders TemplateRenderer when resume has a fullName', async () => {
-    mockUseResumeStore.mockImplementation((sel) => sel({ resume: sampleResume }))
+    mockUseResumeStore.mockImplementation((sel) =>
+      sel({ resume: sampleResume })
+    )
     const { PreviewPanel } = await import('@/components/builder/preview-panel')
     const { getByTestId } = render(React.createElement(PreviewPanel))
     await act(async () => {})
@@ -96,7 +115,9 @@ describe('PreviewPanel', () => {
   })
 
   it('renders "Live Preview" indicator', async () => {
-    mockUseResumeStore.mockImplementation((sel) => sel({ resume: sampleResume }))
+    mockUseResumeStore.mockImplementation((sel) =>
+      sel({ resume: sampleResume })
+    )
     const { PreviewPanel } = await import('@/components/builder/preview-panel')
     const { container } = render(React.createElement(PreviewPanel))
     await act(async () => {})
@@ -104,54 +125,97 @@ describe('PreviewPanel', () => {
   })
 
   it('passes the resume to TemplateRenderer', async () => {
-    mockUseResumeStore.mockImplementation((sel) => sel({ resume: sampleResume }))
+    mockUseResumeStore.mockImplementation((sel) =>
+      sel({ resume: sampleResume })
+    )
     const { PreviewPanel } = await import('@/components/builder/preview-panel')
     const { getByTestId } = render(React.createElement(PreviewPanel))
     await act(async () => {})
-    expect(getByTestId('template-renderer').getAttribute('data-template')).toBe('modern')
+    expect(getByTestId('template-renderer').getAttribute('data-template')).toBe(
+      'modern'
+    )
   })
 })
 
 describe('MobilePreviewSheet', () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   it('returns null when isOpen is false', async () => {
-    mockUseResumeStore.mockImplementation((sel) => sel({ resume: sampleResume }))
-    const { MobilePreviewSheet } = await import('@/components/builder/mobile-preview-sheet')
-    const { container } = render(React.createElement(MobilePreviewSheet, { isOpen: false, onClose: vi.fn() }))
+    mockUseResumeStore.mockImplementation((sel) =>
+      sel({ resume: sampleResume })
+    )
+    const { MobilePreviewSheet } =
+      await import('@/components/builder/mobile-preview-sheet')
+    const { container } = render(
+      React.createElement(MobilePreviewSheet, {
+        isOpen: false,
+        onClose: vi.fn(),
+      })
+    )
     await act(async () => {})
     expect(container.firstChild).toBeNull()
   })
 
   it('renders when isOpen is true', async () => {
-    mockUseResumeStore.mockImplementation((sel) => sel({ resume: sampleResume }))
-    const { MobilePreviewSheet } = await import('@/components/builder/mobile-preview-sheet')
-    const { container } = render(React.createElement(MobilePreviewSheet, { isOpen: true, onClose: vi.fn() }))
+    mockUseResumeStore.mockImplementation((sel) =>
+      sel({ resume: sampleResume })
+    )
+    const { MobilePreviewSheet } =
+      await import('@/components/builder/mobile-preview-sheet')
+    const { container } = render(
+      React.createElement(MobilePreviewSheet, {
+        isOpen: true,
+        onClose: vi.fn(),
+      })
+    )
     await act(async () => {})
     expect(container.firstChild).not.toBeNull()
   })
 
   it('renders "Resume Preview" heading when isOpen is true', async () => {
-    mockUseResumeStore.mockImplementation((sel) => sel({ resume: sampleResume }))
-    const { MobilePreviewSheet } = await import('@/components/builder/mobile-preview-sheet')
-    const { container } = render(React.createElement(MobilePreviewSheet, { isOpen: true, onClose: vi.fn() }))
+    mockUseResumeStore.mockImplementation((sel) =>
+      sel({ resume: sampleResume })
+    )
+    const { MobilePreviewSheet } =
+      await import('@/components/builder/mobile-preview-sheet')
+    const { container } = render(
+      React.createElement(MobilePreviewSheet, {
+        isOpen: true,
+        onClose: vi.fn(),
+      })
+    )
     await act(async () => {})
     expect(container.textContent).toContain('Resume Preview')
   })
 
   it('renders TemplateRenderer when resume is present and isOpen is true', async () => {
-    mockUseResumeStore.mockImplementation((sel) => sel({ resume: sampleResume }))
-    const { MobilePreviewSheet } = await import('@/components/builder/mobile-preview-sheet')
-    const { getByTestId } = render(React.createElement(MobilePreviewSheet, { isOpen: true, onClose: vi.fn() }))
+    mockUseResumeStore.mockImplementation((sel) =>
+      sel({ resume: sampleResume })
+    )
+    const { MobilePreviewSheet } =
+      await import('@/components/builder/mobile-preview-sheet')
+    const { getByTestId } = render(
+      React.createElement(MobilePreviewSheet, {
+        isOpen: true,
+        onClose: vi.fn(),
+      })
+    )
     await act(async () => {})
     expect(getByTestId('template-renderer')).toBeDefined()
   })
 
   it('calls onClose when close button is clicked', async () => {
-    mockUseResumeStore.mockImplementation((sel) => sel({ resume: sampleResume }))
-    const { MobilePreviewSheet } = await import('@/components/builder/mobile-preview-sheet')
+    mockUseResumeStore.mockImplementation((sel) =>
+      sel({ resume: sampleResume })
+    )
+    const { MobilePreviewSheet } =
+      await import('@/components/builder/mobile-preview-sheet')
     const onClose = vi.fn()
-    const { getByLabelText } = render(React.createElement(MobilePreviewSheet, { isOpen: true, onClose }))
+    const { getByLabelText } = render(
+      React.createElement(MobilePreviewSheet, { isOpen: true, onClose })
+    )
     await act(async () => {})
     getByLabelText('Close preview').click()
     expect(onClose).toHaveBeenCalled()
