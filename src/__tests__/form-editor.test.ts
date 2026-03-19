@@ -92,12 +92,13 @@ describe('Form Editor — Add Experience', () => {
     const experiences = useResumeStore.getState().resume?.experiences ?? []
     expect(experiences).toHaveLength(2)
 
-    const firstId = experiences[0].id
-    useResumeStore.getState().removeExperience(firstId)
+    const firstExp = experiences[0]
+    if (!firstExp) throw new Error('Expected first experience to exist')
+    useResumeStore.getState().removeExperience(firstExp.id)
 
     const remaining = useResumeStore.getState().resume?.experiences ?? []
     expect(remaining).toHaveLength(1)
-    expect(remaining[0].id).not.toBe(firstId)
+    expect(remaining[0]?.id).not.toBe(firstExp.id)
   })
 })
 
@@ -106,13 +107,15 @@ describe('Form Editor — Currently Working checkbox', () => {
     useResumeStore.getState().createNewResume()
     useResumeStore.getState().addExperience()
 
-    const exp = useResumeStore.getState().resume!.experiences[0]
+    const expArr = useResumeStore.getState().resume!.experiences
+    const exp = expArr[0]
+    if (!exp) throw new Error('Expected experience to exist')
 
     // Set an end date first
     useResumeStore.getState().updateExperience(exp.id, { endDate: '2023-12' })
-    expect(useResumeStore.getState().resume?.experiences[0].endDate).toBe(
-      '2023-12'
-    )
+    expect(
+      useResumeStore.getState().resume?.experiences[0]?.endDate
+    ).toBe('2023-12')
 
     // Check "currently working" — should clear end date
     useResumeStore.getState().updateExperience(exp.id, {
@@ -129,7 +132,9 @@ describe('Form Editor — Currently Working checkbox', () => {
     useResumeStore.getState().createNewResume()
     useResumeStore.getState().addExperience()
 
-    const exp = useResumeStore.getState().resume!.experiences[0]
+    const expArr2 = useResumeStore.getState().resume!.experiences
+    const exp = expArr2[0]
+    if (!exp) throw new Error('Expected experience to exist')
 
     // Set currently working
     useResumeStore.getState().updateExperience(exp.id, {

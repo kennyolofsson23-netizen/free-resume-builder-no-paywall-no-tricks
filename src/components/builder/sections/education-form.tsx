@@ -229,17 +229,19 @@ export function EducationForm() {
 
   const handleMoveUp = (index: number) => {
     if (index === 0) return
-    const ids = education.map((e) => e.id)
-    const newIds = [...ids]
-    ;[newIds[index - 1], newIds[index]] = [newIds[index], newIds[index - 1]]
+    const newIds = education.map((e) => e.id)
+    const tmp = newIds[index - 1]!
+    newIds[index - 1] = newIds[index]!
+    newIds[index] = tmp
     reorderEducation(newIds)
   }
 
   const handleMoveDown = (index: number) => {
     if (index === education.length - 1) return
-    const ids = education.map((e) => e.id)
-    const newIds = [...ids]
-    ;[newIds[index], newIds[index + 1]] = [newIds[index + 1], newIds[index]]
+    const newIds = education.map((e) => e.id)
+    const tmp = newIds[index]!
+    newIds[index] = newIds[index + 1]!
+    newIds[index + 1] = tmp
     reorderEducation(newIds)
   }
 

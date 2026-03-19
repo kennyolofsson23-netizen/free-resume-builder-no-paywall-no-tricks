@@ -215,7 +215,7 @@ function ExperienceEntryFields({
             onChange={(e) =>
               onUpdate(exp.id, {
                 currentlyWorking: e.target.checked,
-                endDate: e.target.checked ? '' : exp.endDate,
+                endDate: e.target.checked ? '' : (exp.endDate ?? ''),
               })
             }
             className="h-4 w-4 rounded border-border"
@@ -261,17 +261,19 @@ export function ExperienceForm() {
 
   const handleMoveUp = (index: number) => {
     if (index === 0) return
-    const ids = experiences.map((e) => e.id)
-    const newIds = [...ids]
-    ;[newIds[index - 1], newIds[index]] = [newIds[index], newIds[index - 1]]
+    const newIds = experiences.map((e) => e.id)
+    const tmp = newIds[index - 1]!
+    newIds[index - 1] = newIds[index]!
+    newIds[index] = tmp
     reorderExperiences(newIds)
   }
 
   const handleMoveDown = (index: number) => {
     if (index === experiences.length - 1) return
-    const ids = experiences.map((e) => e.id)
-    const newIds = [...ids]
-    ;[newIds[index], newIds[index + 1]] = [newIds[index + 1], newIds[index]]
+    const newIds = experiences.map((e) => e.id)
+    const tmp = newIds[index]!
+    newIds[index] = newIds[index + 1]!
+    newIds[index + 1] = tmp
     reorderExperiences(newIds)
   }
 

@@ -27,13 +27,14 @@ function SkillRow({ skill, onUpdate, onDelete }: SkillRowProps) {
       />
       <select
         value={skill.level ?? ''}
-        onChange={(e) =>
-          onUpdate(skill.id, {
-            level: e.target.value
-              ? (e.target.value as Skill['level'])
-              : undefined,
-          })
-        }
+        onChange={(e) => {
+          if (e.target.value) {
+            onUpdate(skill.id, { level: e.target.value as NonNullable<Skill['level']> })
+          } else {
+            // Remove level by omitting the field entirely (exactOptionalPropertyTypes)
+            onUpdate(skill.id, { name: skill.name })
+          }
+        }}
         aria-label="Skill level"
         className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
       >
