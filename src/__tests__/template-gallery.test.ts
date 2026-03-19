@@ -121,7 +121,8 @@ describe('Template Gallery Page — Use This Template CTAs', () => {
         name: new RegExp('use ' + id + ' template', 'i'),
       })
       expect(links.length).toBeGreaterThan(0)
-      expect(links[0].getAttribute('href')).toBe('/builder?template=' + id)
+      const firstLink = links[0]
+      expect(firstLink?.getAttribute('href')).toBe('/builder?template=' + id)
     }
   })
 
