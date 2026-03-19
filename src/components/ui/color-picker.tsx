@@ -72,17 +72,17 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
           type="button"
           aria-label={label ?? 'Pick accent color'}
           className={cn(
-            'flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2',
-            'text-sm hover:border-gray-400 transition-colors focus:outline-none',
-            'focus:ring-2 focus:ring-blue-500'
+            'flex items-center gap-2 rounded-md border border-border px-3 py-2',
+            'text-sm hover:border-border/80 transition-colors focus:outline-none',
+            'focus:ring-2 focus:ring-ring'
           )}
         >
           <span
-            className="inline-block h-5 w-5 rounded-full border border-gray-300 flex-shrink-0"
+            className="inline-block h-5 w-5 rounded-full border border-border flex-shrink-0"
             style={{ backgroundColor: value }}
           />
-          {label && <span className="text-gray-700">{label}</span>}
-          <span className="text-gray-500 font-mono text-xs">{value}</span>
+          {label && <span className="text-foreground">{label}</span>}
+          <span className="text-muted-foreground font-mono text-xs">{value}</span>
         </button>
       </Popover.Trigger>
 
@@ -90,14 +90,14 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
         <Popover.Content
           sideOffset={6}
           className={cn(
-            'z-50 w-64 rounded-lg border border-gray-200 bg-white p-4 shadow-lg',
+            'z-50 w-64 rounded-lg border border-border bg-popover p-4 shadow-lg',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
             'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95'
           )}
         >
           <div className="mb-3">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
               Preset Colors
             </p>
             <div className="grid grid-cols-6 gap-2">
@@ -110,7 +110,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
                   aria-label={`Select color ${color}`}
                   className={cn(
                     'relative h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
-                    'focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500',
+                    'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring',
                     value === color ? 'border-gray-800' : 'border-transparent'
                   )}
                   style={{ backgroundColor: color }}
@@ -130,7 +130,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
           <div>
             <label
               htmlFor="hex-color-input"
-              className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1"
+              className="text-xs font-semibold text-muted-foreground uppercase tracking-wide block mb-1"
             >
               Custom Hex
             </label>
@@ -143,10 +143,10 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
               maxLength={7}
               className={cn(
                 'w-full rounded-md border px-3 py-1.5 text-sm font-mono',
-                'focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'focus:outline-none focus:ring-2 focus:ring-ring',
                 hexError
                   ? 'border-red-400 focus:ring-red-400'
-                  : 'border-gray-300'
+                  : 'border-input'
               )}
             />
             {hexError && (
@@ -162,7 +162,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
             </p>
           )}
 
-          <Popover.Arrow className="fill-white stroke-gray-200 stroke-1" />
+          <Popover.Arrow className="fill-popover stroke-border stroke-1" />
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>

@@ -69,10 +69,11 @@ function CertificationEntryFields({
             placeholder="AWS Certified Solutions Architect"
             aria-required="true"
             aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? `cert-name-error-${cert.id}` : undefined}
             className={errors.name ? 'border-destructive' : ''}
           />
           {errors.name && (
-            <p className="text-sm text-destructive">{errors.name}</p>
+            <p id={`cert-name-error-${cert.id}`} className="text-sm text-destructive">{errors.name}</p>
           )}
         </div>
 

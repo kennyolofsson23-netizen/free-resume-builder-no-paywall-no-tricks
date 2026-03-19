@@ -115,10 +115,11 @@ function ExperienceEntryFields({
               placeholder="Software Engineer"
               aria-required="true"
               aria-invalid={!!errors.jobTitle}
+              aria-describedby={errors.jobTitle ? `jobTitle-error-${exp.id}` : undefined}
               className={errors.jobTitle ? 'border-destructive' : ''}
             />
             {errors.jobTitle && (
-              <p className="text-sm text-destructive">{errors.jobTitle}</p>
+              <p id={`jobTitle-error-${exp.id}`} className="text-sm text-destructive">{errors.jobTitle}</p>
             )}
           </div>
 
@@ -139,10 +140,11 @@ function ExperienceEntryFields({
               placeholder="Acme Corp"
               aria-required="true"
               aria-invalid={!!errors.company}
+              aria-describedby={errors.company ? `company-error-${exp.id}` : undefined}
               className={errors.company ? 'border-destructive' : ''}
             />
             {errors.company && (
-              <p className="text-sm text-destructive">{errors.company}</p>
+              <p id={`company-error-${exp.id}`} className="text-sm text-destructive">{errors.company}</p>
             )}
           </div>
         </div>

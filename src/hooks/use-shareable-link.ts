@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useResumeStore } from '@/store/resume-store'
 import { encodeResumeForURL } from '@/lib/sharing/url-codec'
 import { toast } from '@/hooks/use-toast'
@@ -12,6 +12,16 @@ interface UseShareableLinkReturn {
 
 export function useShareableLink(): UseShareableLinkReturn {
   const [isCopied, setIsCopied] = useState(false)
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimerRef.current !== null) {
+        clearTimeout(copiedTimerRef.current)
+      }
+    }
+  }, [])
+
   const resume = useResumeStore((state) => state.resume)
   const generateShareableURL = useResumeStore(
     (state) => state.generateShareableURL
@@ -45,7 +55,7 @@ export function useShareableLink(): UseShareableLinkReturn {
           'Anyone with this link can view your resume — no account required.',
       })
 
-      setTimeout(() => {
+      copiedTimerRef.current = setTimeout(() => {
         setIsCopied(false)
       }, 2000)
     } catch {

@@ -114,10 +114,11 @@ function EducationEntryFields({
             placeholder="University of California"
             aria-required="true"
             aria-invalid={!!errors.school}
+            aria-describedby={errors.school ? `school-error-${edu.id}` : undefined}
             className={errors.school ? 'border-destructive' : ''}
           />
           {errors.school && (
-            <p className="text-sm text-destructive">{errors.school}</p>
+            <p id={`school-error-${edu.id}`} className="text-sm text-destructive">{errors.school}</p>
           )}
         </div>
 

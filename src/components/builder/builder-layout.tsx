@@ -32,7 +32,7 @@ export function BuilderLayout() {
         /* Desktop (≥1024px via useIsMobile cutoff): split-pane layout */
         <div className="flex flex-1 overflow-hidden">
           {/* Left: form panel */}
-          <div className="w-full max-w-[480px] shrink-0 border-r border-border overflow-hidden flex flex-col">
+          <div data-form-panel="" className="w-full max-w-[480px] shrink-0 border-r border-border overflow-hidden flex flex-col">
             <div className="flex-1 overflow-hidden">
               <FormPanel />
             </div>
@@ -72,7 +72,7 @@ export function BuilderLayout() {
               </TabsList>
             </div>
 
-            <TabsContent value="edit" className="m-0 flex-1 overflow-hidden">
+            <TabsContent data-form-panel="" value="edit" className="m-0 flex-1 overflow-hidden">
               <FormPanel />
             </TabsContent>
             <TabsContent value="preview" className="m-0 flex-1 overflow-hidden">
