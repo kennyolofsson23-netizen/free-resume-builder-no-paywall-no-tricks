@@ -13,7 +13,7 @@ export function Header() {
           className="text-lg font-bold text-slate-900 dark:text-white"
           aria-label="Free Resume Builder — Home"
         >
-          ResumeBuilder
+          Free Resume Builder
         </Link>
 
         {/* Nav links — hidden on mobile */}
@@ -22,16 +22,22 @@ export function Header() {
           aria-label="Main navigation"
         >
           <Link
+            href="/"
+            className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+          >
+            Home
+          </Link>
+          <Link
+            href="/builder"
+            className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+          >
+            Builder
+          </Link>
+          <Link
             href="/templates"
             className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
           >
             Templates
-          </Link>
-          <Link
-            href="#how-it-works"
-            className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-          >
-            How It Works
           </Link>
         </nav>
 
@@ -42,7 +48,7 @@ export function Header() {
             href="/builder"
             className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           >
-            Build Free Resume
+            Build My Resume
           </Link>
         </div>
       </div>

@@ -97,11 +97,12 @@ describe('useAutoSave', () => {
     })
 
     // Make saveToLocalStorage throw
-    vi.spyOn(useResumeStore.getState(), 'saveToLocalStorage').mockImplementation(
-      () => {
-        throw new Error('QuotaExceededError')
-      }
-    )
+    vi.spyOn(
+      useResumeStore.getState(),
+      'saveToLocalStorage'
+    ).mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
 
     renderHook(() => useAutoSave(500))
 

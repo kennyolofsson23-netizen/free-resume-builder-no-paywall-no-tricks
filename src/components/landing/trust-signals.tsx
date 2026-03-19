@@ -32,7 +32,9 @@ export function TrustSignals() {
               <h3 className="mb-1 font-semibold text-foreground">
                 {item.title}
               </h3>
-              <p className="text-sm text-muted-foreground">{item.description}</p>
+              <p className="text-sm text-muted-foreground">
+                {item.description}
+              </p>
             </div>
           ))}
         </div>

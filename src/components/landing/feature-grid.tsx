@@ -1,4 +1,13 @@
-import { Download, Eye, Layout, Shield, Share2, Wifi, Check, X } from 'lucide-react'
+import {
+  Download,
+  Eye,
+  Layout,
+  Shield,
+  Share2,
+  Wifi,
+  Check,
+  X,
+} from 'lucide-react'
 import { cn } from '@/lib/cn'
 
 const FEATURES = [
@@ -39,8 +48,7 @@ const FEATURES = [
     iconBg: 'bg-cyan-100 dark:bg-cyan-900/30',
     iconColor: 'text-cyan-600 dark:text-cyan-400',
     title: 'Share a Link',
-    description:
-      'Generate a shareable link to your resume. No account needed.',
+    description: 'Generate a shareable link to your resume. No account needed.',
   },
   {
     icon: Wifi,
@@ -136,25 +144,30 @@ export function FeatureGrid() {
 
         {/* Feature cards grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, iconBg, iconColor, title, description }) => (
-            <div
-              key={title}
-              className="rounded-xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-            >
+          {FEATURES.map(
+            ({ icon: Icon, iconBg, iconColor, title, description }) => (
               <div
-                className={cn(
-                  'mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg',
-                  iconBg
-                )}
+                key={title}
+                className="rounded-xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
               >
-                <Icon className={cn('h-6 w-6', iconColor)} aria-hidden="true" />
+                <div
+                  className={cn(
+                    'mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg',
+                    iconBg
+                  )}
+                >
+                  <Icon
+                    className={cn('h-6 w-6', iconColor)}
+                    aria-hidden="true"
+                  />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-foreground">
+                  {title}
+                </h3>
+                <p className="text-sm text-muted-foreground">{description}</p>
               </div>
-              <h3 className="mb-2 text-lg font-semibold text-foreground">
-                {title}
-              </h3>
-              <p className="text-sm text-muted-foreground">{description}</p>
-            </div>
-          ))}
+            )
+          )}
         </div>
 
         {/* Comparison table */}

@@ -65,10 +65,14 @@ export function SectionEntry({
           )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-foreground">
-              {title || <span className="text-muted-foreground italic">Untitled</span>}
+              {title || (
+                <span className="text-muted-foreground italic">Untitled</span>
+              )}
             </p>
             {subtitle && (
-              <p className="truncate text-xs text-muted-foreground">{subtitle}</p>
+              <p className="truncate text-xs text-muted-foreground">
+                {subtitle}
+              </p>
             )}
           </div>
         </button>
@@ -87,9 +91,7 @@ export function SectionEntry({
       </div>
 
       {isExpanded && (
-        <div className="border-t border-border px-4 pb-4 pt-3">
-          {children}
-        </div>
+        <div className="border-t border-border px-4 pb-4 pt-3">{children}</div>
       )}
     </div>
   )

@@ -11,7 +11,8 @@ const templates = [
   {
     id: 'classic',
     name: 'Classic',
-    description: 'Traditional layout with clear hierarchy. Timeless and ATS-safe.',
+    description:
+      'Traditional layout with clear hierarchy. Timeless and ATS-safe.',
     accentClass: 'border-t-4 border-slate-700',
     bgClass: 'bg-slate-50 dark:bg-slate-900',
   },
@@ -25,14 +26,16 @@ const templates = [
   {
     id: 'creative',
     name: 'Creative',
-    description: 'A two-column layout with a sidebar. Stands out from the crowd.',
+    description:
+      'A two-column layout with a sidebar. Stands out from the crowd.',
     accentClass: 'border-t-4 border-purple-500',
     bgClass: 'bg-purple-50 dark:bg-purple-950',
   },
   {
     id: 'professional',
     name: 'Professional',
-    description: 'Structured and formal. Perfect for executive and finance roles.',
+    description:
+      'Structured and formal. Perfect for executive and finance roles.',
     accentClass: 'border-t-4 border-emerald-600',
     bgClass: 'bg-emerald-50 dark:bg-emerald-950',
   },
@@ -94,9 +97,7 @@ export function TemplateShowcase() {
               </div>
 
               <div className="p-4">
-                <h3 className="mb-1 font-semibold text-foreground">
-                  {t.name}
-                </h3>
+                <h3 className="mb-1 font-semibold text-foreground">{t.name}</h3>
                 <p className="mb-3 text-sm text-muted-foreground">
                   {t.description}
                 </p>

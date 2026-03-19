@@ -10,7 +10,20 @@ interface Props {
 function formatDate(dateStr: string | undefined): string {
   if (!dateStr) return 'Present'
   const [year, month] = dateStr.split('-')
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
   const monthName = months[parseInt(month ?? '1') - 1] ?? ''
   return `${monthName} ${year}`
 }
@@ -32,10 +45,9 @@ export function ModernTemplate({ resume }: Props) {
 
   return (
     <div
-      className="resume-preview bg-white"
+      id="resume-preview"
+      className="resume-preview w-[816px] min-h-[1056px] bg-white"
       style={{
-        width: '816px',
-        minHeight: '1056px',
         fontFamily: 'Inter, Arial, sans-serif',
         fontSize: '12px',
         color: '#111827',
@@ -51,10 +63,25 @@ export function ModernTemplate({ resume }: Props) {
           color: '#fff',
         }}
       >
-        <h1 style={{ fontSize: '28px', fontWeight: '700', margin: '0 0 10px', color: '#fff' }}>
+        <h1
+          style={{
+            fontSize: '28px',
+            fontWeight: '700',
+            margin: '0 0 10px',
+            color: '#fff',
+          }}
+        >
           {p.fullName}
         </h1>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', fontSize: '11px', color: 'rgba(255,255,255,0.9)' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '14px',
+            fontSize: '11px',
+            color: 'rgba(255,255,255,0.9)',
+          }}
+        >
           {p.phone && (
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Phone size={11} />
@@ -82,7 +109,10 @@ export function ModernTemplate({ resume }: Props) {
           {p.linkedin && (
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Linkedin size={11} />
-              {p.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '')}
+              {p.linkedin.replace(
+                /^https?:\/\/(www\.)?linkedin\.com\/in\//,
+                ''
+              )}
             </span>
           )}
           {p.github && (
@@ -100,7 +130,9 @@ export function ModernTemplate({ resume }: Props) {
         {p.summary && (
           <section style={{ marginTop: '22px', marginBottom: '0' }}>
             <h2 style={sectionHeaderStyle}>Summary</h2>
-            <p style={{ color: '#374151', lineHeight: '1.65', margin: 0 }}>{p.summary}</p>
+            <p style={{ color: '#374151', lineHeight: '1.65', margin: 0 }}>
+              {p.summary}
+            </p>
           </section>
         )}
 
@@ -114,18 +146,55 @@ export function ModernTemplate({ resume }: Props) {
                 <h2 style={sectionHeaderStyle}>Experience</h2>
                 {resume.experiences.map((exp) => (
                   <div key={exp.id} style={{ marginBottom: '14px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                      }}
+                    >
                       <div>
-                        <span style={{ fontWeight: '700', fontSize: '13px', color: '#111827' }}>{exp.jobTitle}</span>
-                        <span style={{ color: '#6b7280' }}> — {exp.company}</span>
-                        {exp.location && <span style={{ color: '#9ca3af' }}>, {exp.location}</span>}
+                        <span
+                          style={{
+                            fontWeight: '700',
+                            fontSize: '13px',
+                            color: '#111827',
+                          }}
+                        >
+                          {exp.jobTitle}
+                        </span>
+                        <span style={{ color: '#6b7280' }}>
+                          {' '}
+                          — {exp.company}
+                        </span>
+                        {exp.location && (
+                          <span style={{ color: '#9ca3af' }}>
+                            , {exp.location}
+                          </span>
+                        )}
                       </div>
-                      <span style={{ color: '#6b7280', whiteSpace: 'nowrap', marginLeft: '8px', fontSize: '11px' }}>
-                        {formatDate(exp.startDate)} – {exp.currentlyWorking ? 'Present' : formatDate(exp.endDate)}
+                      <span
+                        style={{
+                          color: '#6b7280',
+                          whiteSpace: 'nowrap',
+                          marginLeft: '8px',
+                          fontSize: '11px',
+                        }}
+                      >
+                        {formatDate(exp.startDate)} –{' '}
+                        {exp.currentlyWorking
+                          ? 'Present'
+                          : formatDate(exp.endDate)}
                       </span>
                     </div>
                     {exp.description && (
-                      <div style={{ marginTop: '5px', color: '#374151', lineHeight: '1.6' }}>
+                      <div
+                        style={{
+                          marginTop: '5px',
+                          color: '#374151',
+                          lineHeight: '1.6',
+                        }}
+                      >
                         {exp.description.split('\n').map((line, i) => (
                           <div key={i}>{line}</div>
                         ))}
@@ -142,25 +211,60 @@ export function ModernTemplate({ resume }: Props) {
                 <h2 style={sectionHeaderStyle}>Projects</h2>
                 {resume.projects.map((proj) => (
                   <div key={proj.id} style={{ marginBottom: '12px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                      }}
+                    >
                       <div>
-                        <span style={{ fontWeight: '700', fontSize: '13px', color: '#111827' }}>{proj.title}</span>
+                        <span
+                          style={{
+                            fontWeight: '700',
+                            fontSize: '13px',
+                            color: '#111827',
+                          }}
+                        >
+                          {proj.title}
+                        </span>
                         {proj.link && (
-                          <span style={{ color: accentColor, marginLeft: '6px', fontSize: '10px' }}>
+                          <span
+                            style={{
+                              color: accentColor,
+                              marginLeft: '6px',
+                              fontSize: '10px',
+                            }}
+                          >
                             {proj.link.replace(/^https?:\/\//, '')}
                           </span>
                         )}
                       </div>
                       {(proj.startDate ?? proj.endDate) && (
-                        <span style={{ color: '#6b7280', whiteSpace: 'nowrap', marginLeft: '8px', fontSize: '11px' }}>
+                        <span
+                          style={{
+                            color: '#6b7280',
+                            whiteSpace: 'nowrap',
+                            marginLeft: '8px',
+                            fontSize: '11px',
+                          }}
+                        >
                           {proj.startDate ? formatDate(proj.startDate) : ''}
                           {proj.endDate ? ` – ${formatDate(proj.endDate)}` : ''}
                         </span>
                       )}
                     </div>
-                    <div style={{ marginTop: '4px', color: '#374151' }}>{proj.description}</div>
+                    <div style={{ marginTop: '4px', color: '#374151' }}>
+                      {proj.description}
+                    </div>
                     {proj.technologies && proj.technologies.length > 0 && (
-                      <div style={{ marginTop: '4px', color: '#6b7280', fontSize: '10px' }}>
+                      <div
+                        style={{
+                          marginTop: '4px',
+                          color: '#6b7280',
+                          fontSize: '10px',
+                        }}
+                      >
                         {proj.technologies.join(' · ')}
                       </div>
                     )}
@@ -175,14 +279,39 @@ export function ModernTemplate({ resume }: Props) {
                 <h2 style={sectionHeaderStyle}>Certifications</h2>
                 {resume.certifications.map((cert) => (
                   <div key={cert.id} style={{ marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
                       <div>
-                        <span style={{ fontWeight: '600', fontSize: '12px', color: '#111827' }}>{cert.name}</span>
-                        <span style={{ color: '#6b7280' }}> — {cert.issuer}</span>
+                        <span
+                          style={{
+                            fontWeight: '600',
+                            fontSize: '12px',
+                            color: '#111827',
+                          }}
+                        >
+                          {cert.name}
+                        </span>
+                        <span style={{ color: '#6b7280' }}>
+                          {' '}
+                          — {cert.issuer}
+                        </span>
                       </div>
-                      <span style={{ color: '#6b7280', whiteSpace: 'nowrap', marginLeft: '8px', fontSize: '11px' }}>
+                      <span
+                        style={{
+                          color: '#6b7280',
+                          whiteSpace: 'nowrap',
+                          marginLeft: '8px',
+                          fontSize: '11px',
+                        }}
+                      >
                         {formatDate(cert.issueDate)}
-                        {cert.expirationDate ? ` – ${formatDate(cert.expirationDate)}` : ''}
+                        {cert.expirationDate
+                          ? ` – ${formatDate(cert.expirationDate)}`
+                          : ''}
                       </span>
                     </div>
                   </div>
@@ -199,15 +328,27 @@ export function ModernTemplate({ resume }: Props) {
                 <h2 style={sectionHeaderStyle}>Education</h2>
                 {resume.education.map((edu) => (
                   <div key={edu.id} style={{ marginBottom: '12px' }}>
-                    <div style={{ fontWeight: '700', fontSize: '12px', color: '#111827' }}>{edu.school}</div>
+                    <div
+                      style={{
+                        fontWeight: '700',
+                        fontSize: '12px',
+                        color: '#111827',
+                      }}
+                    >
+                      {edu.school}
+                    </div>
                     <div style={{ color: '#374151' }}>
-                      {edu.degree}{edu.field ? ` in ${edu.field}` : ''}
+                      {edu.degree}
+                      {edu.field ? ` in ${edu.field}` : ''}
                     </div>
                     {edu.gpa && (
-                      <div style={{ color: '#6b7280', fontSize: '11px' }}>GPA: {edu.gpa}</div>
+                      <div style={{ color: '#6b7280', fontSize: '11px' }}>
+                        GPA: {edu.gpa}
+                      </div>
                     )}
                     <div style={{ color: '#6b7280', fontSize: '11px' }}>
-                      {formatDate(edu.startDate)} – {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                      {formatDate(edu.startDate)} –{' '}
+                      {edu.endDate ? formatDate(edu.endDate) : 'Present'}
                     </div>
                   </div>
                 ))}
@@ -234,7 +375,9 @@ export function ModernTemplate({ resume }: Props) {
                     >
                       {skill.name}
                       {skill.level && (
-                        <span style={{ opacity: 0.7, marginLeft: '4px' }}>· {skill.level}</span>
+                        <span style={{ opacity: 0.7, marginLeft: '4px' }}>
+                          · {skill.level}
+                        </span>
                       )}
                     </span>
                   ))}

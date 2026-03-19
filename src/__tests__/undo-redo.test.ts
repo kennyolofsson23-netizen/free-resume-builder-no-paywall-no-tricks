@@ -73,7 +73,9 @@ describe('Undo/Redo — multiple operations', () => {
     )
 
     useResumeStore.getState().undo()
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('First')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'First'
+    )
 
     useResumeStore.getState().undo()
     expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('')

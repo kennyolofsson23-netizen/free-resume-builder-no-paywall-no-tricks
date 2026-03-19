@@ -20,7 +20,9 @@ export function Hero() {
           {/* Subtitle */}
           <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 sm:text-xl">
             Professional templates. Real-time preview. Instant PDF download.{' '}
-            <span className="font-medium text-slate-100">No email. No account.</span>{' '}
+            <span className="font-medium text-slate-100">
+              No email. No account.
+            </span>{' '}
             No &ldquo;$1.95 trial&rdquo; that auto-renews at $25.90/month.
           </p>
 
@@ -48,7 +50,10 @@ export function Hero() {
               'No credit card',
               'Download PDF instantly',
             ].map((item) => (
-              <div key={item} className="flex items-center gap-2 text-slate-300">
+              <div
+                key={item}
+                className="flex items-center gap-2 text-slate-300"
+              >
                 <Check
                   className="h-4 w-4 flex-shrink-0 text-green-400"
                   aria-hidden="true"

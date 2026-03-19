@@ -43,7 +43,8 @@ function ExperienceEntryFields({
     if (!value.trim()) {
       if (field === 'jobTitle') newErrors.jobTitle = 'Job title is required'
       else if (field === 'company') newErrors.company = 'Company is required'
-      else if (field === 'startDate') newErrors.startDate = 'Start date is required'
+      else if (field === 'startDate')
+        newErrors.startDate = 'Start date is required'
     } else {
       delete newErrors[field]
     }
@@ -60,8 +61,14 @@ function ExperienceEntryFields({
       onDelete={() => onDelete(exp.id)}
       dragHandleProps={{
         onKeyDown: (e) => {
-          if (e.key === 'ArrowUp') { e.preventDefault(); onMoveUp() }
-          if (e.key === 'ArrowDown') { e.preventDefault(); onMoveDown() }
+          if (e.key === 'ArrowUp') {
+            e.preventDefault()
+            onMoveUp()
+          }
+          if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            onMoveDown()
+          }
         },
       }}
     >
@@ -93,7 +100,10 @@ function ExperienceEntryFields({
         <div className="grid grid-cols-2 gap-3">
           {/* Job Title */}
           <div className="space-y-1.5">
-            <Label htmlFor={`jobTitle-${exp.id}`} className="text-sm font-medium">
+            <Label
+              htmlFor={`jobTitle-${exp.id}`}
+              className="text-sm font-medium"
+            >
               Job Title <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -114,7 +124,10 @@ function ExperienceEntryFields({
 
           {/* Company */}
           <div className="space-y-1.5">
-            <Label htmlFor={`company-${exp.id}`} className="text-sm font-medium">
+            <Label
+              htmlFor={`company-${exp.id}`}
+              className="text-sm font-medium"
+            >
               Company <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -136,7 +149,10 @@ function ExperienceEntryFields({
 
         {/* Location */}
         <div className="space-y-1.5">
-          <Label htmlFor={`exp-location-${exp.id}`} className="text-sm font-medium">
+          <Label
+            htmlFor={`exp-location-${exp.id}`}
+            className="text-sm font-medium"
+          >
             Location
           </Label>
           <Input
@@ -151,7 +167,10 @@ function ExperienceEntryFields({
         <div className="grid grid-cols-2 gap-3">
           {/* Start Date */}
           <div className="space-y-1.5">
-            <Label htmlFor={`startDate-${exp.id}`} className="text-sm font-medium">
+            <Label
+              htmlFor={`startDate-${exp.id}`}
+              className="text-sm font-medium"
+            >
               Start Date
             </Label>
             <Input
@@ -171,7 +190,10 @@ function ExperienceEntryFields({
           {/* End Date */}
           {!exp.currentlyWorking && (
             <div className="space-y-1.5">
-              <Label htmlFor={`endDate-${exp.id}`} className="text-sm font-medium">
+              <Label
+                htmlFor={`endDate-${exp.id}`}
+                className="text-sm font-medium"
+              >
                 End Date
               </Label>
               <Input
@@ -198,7 +220,10 @@ function ExperienceEntryFields({
             }
             className="h-4 w-4 rounded border-border"
           />
-          <Label htmlFor={`currentlyWorking-${exp.id}`} className="text-sm font-medium cursor-pointer">
+          <Label
+            htmlFor={`currentlyWorking-${exp.id}`}
+            className="text-sm font-medium cursor-pointer"
+          >
             Currently Working Here
           </Label>
         </div>
@@ -254,7 +279,8 @@ export function ExperienceForm() {
     <div className="space-y-3">
       {experiences.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No experience entries yet. Click &quot;Add Experience&quot; to get started.
+          No experience entries yet. Click &quot;Add Experience&quot; to get
+          started.
         </p>
       )}
 

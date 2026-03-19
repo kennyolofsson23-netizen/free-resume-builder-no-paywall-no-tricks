@@ -13,7 +13,6 @@ import type { Project } from '@/types/resume'
 
 interface ProjectFieldErrors {
   title?: string
-  link?: string
 }
 
 interface ProjectEntryProps {
@@ -22,25 +21,17 @@ interface ProjectEntryProps {
   onDelete: (id: string) => void
 }
 
-function isValidUrl(value: string): boolean {
-  if (!value) return true
-  try {
-    new URL(value)
-    return true
-  } catch {
-    return false
-  }
-}
-
-function ProjectEntryFields({ project, onUpdate, onDelete }: ProjectEntryProps) {
+function ProjectEntryFields({
+  project,
+  onUpdate,
+  onDelete,
+}: ProjectEntryProps) {
   const [errors, setErrors] = React.useState<ProjectFieldErrors>({})
 
   const handleBlur = (field: keyof ProjectFieldErrors, value: string) => {
     const newErrors = { ...errors }
-    if (field === 'title' && !value.trim()) {
+    if (!value.trim() && field === 'title') {
       newErrors.title = 'Project title is required'
-    } else if (field === 'link' && value && !isValidUrl(value)) {
-      newErrors.link = 'Invalid URL'
     } else {
       delete newErrors[field]
     }
@@ -50,11 +41,11 @@ function ProjectEntryFields({ project, onUpdate, onDelete }: ProjectEntryProps) 
   const technologiesString = project.technologies?.join(', ') ?? ''
 
   const handleTechnologiesChange = (value: string) => {
-    const techs = value
+    const technologies = value
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean)
-    onUpdate(project.id, { technologies: techs })
+    onUpdate(project.id, { technologies })
   }
 
   return (
@@ -63,10 +54,13 @@ function ProjectEntryFields({ project, onUpdate, onDelete }: ProjectEntryProps) 
       onDelete={() => onDelete(project.id)}
     >
       <div className="space-y-4">
-        {/* Title */}
+        {/* Project Title */}
         <div className="space-y-1.5">
-          <Label htmlFor={`proj-title-${project.id}`} className="text-sm font-medium">
-            Title <span className="text-destructive">*</span>
+          <Label
+            htmlFor={`proj-title-${project.id}`}
+            className="text-sm font-medium"
+          >
+            Project Title <span className="text-destructive">*</span>
           </Label>
           <Input
             id={`proj-title-${project.id}`}
@@ -86,15 +80,20 @@ function ProjectEntryFields({ project, onUpdate, onDelete }: ProjectEntryProps) 
 
         {/* Description */}
         <div className="space-y-1.5">
-          <Label htmlFor={`proj-desc-${project.id}`} className="text-sm font-medium">
+          <Label
+            htmlFor={`proj-desc-${project.id}`}
+            className="text-sm font-medium"
+          >
             Description
           </Label>
           <Textarea
             id={`proj-desc-${project.id}`}
             value={project.description}
             maxLength={FIELD_LIMITS.projectDescription}
-            onChange={(e) => onUpdate(project.id, { description: e.target.value })}
-            placeholder="Describe what this project does..."
+            onChange={(e) =>
+              onUpdate(project.id, { description: e.target.value })
+            }
+            placeholder="Describe the project, its goals, and your contributions..."
             rows={3}
           />
           <p className="text-xs text-muted-foreground text-right">
@@ -102,10 +101,13 @@ function ProjectEntryFields({ project, onUpdate, onDelete }: ProjectEntryProps) 
           </p>
         </div>
 
-        {/* Link */}
+        {/* Link URL */}
         <div className="space-y-1.5">
-          <Label htmlFor={`proj-link-${project.id}`} className="text-sm font-medium">
-            Link
+          <Label
+            htmlFor={`proj-link-${project.id}`}
+            className="text-sm font-medium"
+          >
+            Link URL
           </Label>
           <Input
             id={`proj-link-${project.id}`}
@@ -113,20 +115,20 @@ function ProjectEntryFields({ project, onUpdate, onDelete }: ProjectEntryProps) 
             value={project.link ?? ''}
             maxLength={FIELD_LIMITS.url}
             onChange={(e) => onUpdate(project.id, { link: e.target.value })}
-            onBlur={(e) => handleBlur('link', e.target.value)}
             placeholder="https://github.com/you/project"
-            aria-invalid={!!errors.link}
-            className={errors.link ? 'border-destructive' : ''}
           />
-          {errors.link && (
-            <p className="text-sm text-destructive">{errors.link}</p>
-          )}
         </div>
 
         {/* Technologies */}
         <div className="space-y-1.5">
-          <Label htmlFor={`proj-tech-${project.id}`} className="text-sm font-medium">
-            Technologies
+          <Label
+            htmlFor={`proj-tech-${project.id}`}
+            className="text-sm font-medium"
+          >
+            Technologies{' '}
+            <span className="text-xs text-muted-foreground">
+              (comma-separated)
+            </span>
           </Label>
           <Input
             id={`proj-tech-${project.id}`}
@@ -134,35 +136,42 @@ function ProjectEntryFields({ project, onUpdate, onDelete }: ProjectEntryProps) 
             onChange={(e) => handleTechnologiesChange(e.target.value)}
             placeholder="React, TypeScript, Node.js"
           />
-          <p className="text-xs text-muted-foreground">
-            Separate technologies with commas
-          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           {/* Start Date */}
           <div className="space-y-1.5">
-            <Label htmlFor={`proj-start-${project.id}`} className="text-sm font-medium">
+            <Label
+              htmlFor={`proj-startDate-${project.id}`}
+              className="text-sm font-medium"
+            >
               Start Date
             </Label>
             <Input
-              id={`proj-start-${project.id}`}
+              id={`proj-startDate-${project.id}`}
               type="month"
               value={project.startDate ?? ''}
-              onChange={(e) => onUpdate(project.id, { startDate: e.target.value })}
+              onChange={(e) =>
+                onUpdate(project.id, { startDate: e.target.value })
+              }
             />
           </div>
 
           {/* End Date */}
           <div className="space-y-1.5">
-            <Label htmlFor={`proj-end-${project.id}`} className="text-sm font-medium">
+            <Label
+              htmlFor={`proj-endDate-${project.id}`}
+              className="text-sm font-medium"
+            >
               End Date
             </Label>
             <Input
-              id={`proj-end-${project.id}`}
+              id={`proj-endDate-${project.id}`}
               type="month"
               value={project.endDate ?? ''}
-              onChange={(e) => onUpdate(project.id, { endDate: e.target.value })}
+              onChange={(e) =>
+                onUpdate(project.id, { endDate: e.target.value })
+              }
             />
           </div>
         </div>

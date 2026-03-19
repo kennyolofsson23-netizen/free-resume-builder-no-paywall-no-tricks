@@ -187,7 +187,9 @@ describe('Resume Store — importFromJSON', () => {
   it('imports valid JSON', () => {
     const success = useResumeStore.getState().importFromJSON(validResumeJSON)
     expect(success).toBe(true)
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('John Doe')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'John Doe'
+    )
   })
 
   it('rejects invalid JSON', () => {
@@ -232,7 +234,9 @@ describe('Resume Store — education CRUD', () => {
     useResumeStore.getState().createNewResume()
     useResumeStore.getState().addEducation()
     const id = useResumeStore.getState().resume!.education[0]!.id
-    useResumeStore.getState().updateEducation(id, { school: 'MIT', degree: 'BS' })
+    useResumeStore
+      .getState()
+      .updateEducation(id, { school: 'MIT', degree: 'BS' })
     expect(useResumeStore.getState().resume?.education[0]?.school).toBe('MIT')
   })
 
@@ -293,8 +297,12 @@ describe('Resume Store — certifications CRUD', () => {
     useResumeStore.getState().createNewResume()
     useResumeStore.getState().addCertification()
     const id = useResumeStore.getState().resume!.certifications[0]!.id
-    useResumeStore.getState().updateCertification(id, { name: 'AWS', issuer: 'Amazon' })
-    expect(useResumeStore.getState().resume?.certifications[0]?.name).toBe('AWS')
+    useResumeStore
+      .getState()
+      .updateCertification(id, { name: 'AWS', issuer: 'Amazon' })
+    expect(useResumeStore.getState().resume?.certifications[0]?.name).toBe(
+      'AWS'
+    )
   })
 })
 
@@ -323,11 +331,15 @@ describe('Resume Store — loadFromShareableURL', () => {
     useResumeStore.setState({ resume: null, pastStates: [], futureStates: [] })
     const result = useResumeStore.getState().loadFromShareableURL(hash)
     expect(result).toBe(true)
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('John Doe')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'John Doe'
+    )
   })
 
   it('returns false for an invalid hash', () => {
-    const result = useResumeStore.getState().loadFromShareableURL('!!! not base64 !!!')
+    const result = useResumeStore
+      .getState()
+      .loadFromShareableURL('!!! not base64 !!!')
     expect(result).toBe(false)
   })
 

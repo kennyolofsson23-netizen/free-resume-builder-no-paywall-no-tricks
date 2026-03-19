@@ -46,7 +46,7 @@ export async function generatePDF(
 
   // Center horizontally if narrower than page
   const xOffset = (pageWidth - imgWidth) / 2
-  const yOffset = (pageAspect > canvasAspect ? (pageHeight - imgHeight) / 2 : 0)
+  const yOffset = pageAspect > canvasAspect ? (pageHeight - imgHeight) / 2 : 0
 
   pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight)
   pdf.save(filename)

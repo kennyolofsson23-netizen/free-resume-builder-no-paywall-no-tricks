@@ -42,7 +42,8 @@ function EducationEntryFields({
     if (!value.trim()) {
       if (field === 'school') newErrors.school = 'School is required'
       else if (field === 'degree') newErrors.degree = 'Degree is required'
-      else if (field === 'startDate') newErrors.startDate = 'Start date is required'
+      else if (field === 'startDate')
+        newErrors.startDate = 'Start date is required'
     } else {
       delete newErrors[field]
     }
@@ -63,8 +64,14 @@ function EducationEntryFields({
       onDelete={() => onDelete(edu.id)}
       dragHandleProps={{
         onKeyDown: (e) => {
-          if (e.key === 'ArrowUp') { e.preventDefault(); onMoveUp() }
-          if (e.key === 'ArrowDown') { e.preventDefault(); onMoveDown() }
+          if (e.key === 'ArrowUp') {
+            e.preventDefault()
+            onMoveUp()
+          }
+          if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            onMoveDown()
+          }
         },
       }}
     >
@@ -154,7 +161,10 @@ function EducationEntryFields({
         <div className="grid grid-cols-2 gap-3">
           {/* Start Date */}
           <div className="space-y-1.5">
-            <Label htmlFor={`edu-startDate-${edu.id}`} className="text-sm font-medium">
+            <Label
+              htmlFor={`edu-startDate-${edu.id}`}
+              className="text-sm font-medium"
+            >
               Start Date
             </Label>
             <Input
@@ -173,7 +183,10 @@ function EducationEntryFields({
 
           {/* End Date */}
           <div className="space-y-1.5">
-            <Label htmlFor={`edu-endDate-${edu.id}`} className="text-sm font-medium">
+            <Label
+              htmlFor={`edu-endDate-${edu.id}`}
+              className="text-sm font-medium"
+            >
               End Date
             </Label>
             <Input
@@ -188,7 +201,8 @@ function EducationEntryFields({
         {/* GPA */}
         <div className="space-y-1.5">
           <Label htmlFor={`gpa-${edu.id}`} className="text-sm font-medium">
-            GPA <span className="text-xs text-muted-foreground">(optional)</span>
+            GPA{' '}
+            <span className="text-xs text-muted-foreground">(optional)</span>
           </Label>
           <Input
             id={`gpa-${edu.id}`}
@@ -233,7 +247,8 @@ export function EducationForm() {
     <div className="space-y-3">
       {education.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No education entries yet. Click &quot;Add Education&quot; to get started.
+          No education entries yet. Click &quot;Add Education&quot; to get
+          started.
         </p>
       )}
 

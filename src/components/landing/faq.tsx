@@ -13,7 +13,7 @@ const faqs = [
   {
     question: 'How is my resume data stored?',
     answer:
-      'Your resume data is stored in your browser\'s localStorage only. It is never sent to a server, never uploaded to the cloud, and never shared with third parties. Clearing your browser data will remove it — we recommend downloading your PDF regularly.',
+      "Your resume data is stored in your browser's localStorage only. It is never sent to a server, never uploaded to the cloud, and never shared with third parties. Clearing your browser data will remove it — we recommend downloading your PDF regularly.",
   },
   {
     question: 'Is this better than Zety?',
