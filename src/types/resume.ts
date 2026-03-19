@@ -15,19 +15,19 @@ export interface PersonalInfo {
   email: string
   phone: string
   location: string
-  website?: string
-  linkedin?: string
-  github?: string
-  summary?: string
+  website?: string | undefined
+  linkedin?: string | undefined
+  github?: string | undefined
+  summary?: string | undefined
 }
 
 export interface Experience {
   id: string
   jobTitle: string
   company: string
-  location?: string
+  location?: string | undefined
   startDate: string
-  endDate?: string
+  endDate?: string | undefined
   currentlyWorking: boolean
   description: string
 }
@@ -38,24 +38,24 @@ export interface Education {
   degree: string
   field: string
   startDate: string
-  endDate?: string
-  gpa?: string
+  endDate?: string | undefined
+  gpa?: string | undefined
 }
 
 export interface Skill {
   id: string
   name: string
-  level?: 'beginner' | 'intermediate' | 'advanced' | 'expert'
+  level?: 'beginner' | 'intermediate' | 'advanced' | 'expert' | undefined
 }
 
 export interface Project {
   id: string
   title: string
   description: string
-  link?: string
-  technologies?: string[]
-  startDate?: string
-  endDate?: string
+  link?: string | undefined
+  technologies: string[]
+  startDate?: string | undefined
+  endDate?: string | undefined
 }
 
 export interface Certification {
@@ -63,8 +63,8 @@ export interface Certification {
   name: string
   issuer: string
   issueDate: string
-  expirationDate?: string
-  credentialUrl?: string
+  expirationDate?: string | undefined
+  credentialUrl?: string | undefined
 }
 
 // Resume is the canonical validated shape inferred from the Zod schema,

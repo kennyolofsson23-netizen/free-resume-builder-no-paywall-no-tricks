@@ -17,6 +17,14 @@ import {
 import { useResumeStore } from '@/store/resume-store'
 import { TEMPLATE_LIST } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from '@/components/ui/dialog'
 import { ColorPicker } from '@/components/ui/color-picker'
 import { usePdfGenerator } from '@/hooks/use-pdf-generator'
 import { useShareableLink } from '@/hooks/use-shareable-link'
@@ -32,6 +40,7 @@ export function BuilderToolbar() {
   const exportAsJSON = useResumeStore((state) => state.exportAsJSON)
   const importFromJSON = useResumeStore((state) => state.importFromJSON)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [showNewResumeConfirm, setShowNewResumeConfirm] = React.useState(false)
 
   const { downloadPDF, status: pdfStatus, isGenerating } = usePdfGenerator()
   const { generateLink, isCopied } = useShareableLink()
@@ -44,13 +53,7 @@ export function BuilderToolbar() {
   }
 
   const handleNewResume = () => {
-    if (
-      confirm(
-        'Start a new resume? Your current resume will be saved in the list — nothing will be lost.'
-      )
-    ) {
-      createNewResume()
-    }
+    setShowNewResumeConfirm(true)
   }
 
   const handleExportJSON = () => {
@@ -104,9 +107,9 @@ export function BuilderToolbar() {
     }
     reader.onerror = () => {
       toast({
-        title: 'Import failed',
+        title: 'File read failed',
         description:
-          'That file couldn\u2019t be read. Make sure it\u2019s a JSON file exported from this builder \u2014 nothing else was changed.',
+          'Could not read the file. Check your permissions and try again.',
         variant: 'destructive',
       })
     }
@@ -211,12 +214,12 @@ export function BuilderToolbar() {
           {isCopied ? (
             <>
               <LinkIcon className="mr-1.5 h-4 w-4" />
-              <span className="hidden sm:inline">Copied!</span>
+              <span>Copied!</span>
             </>
           ) : (
             <>
               <Share2 className="mr-1.5 h-4 w-4" />
-              <span className="hidden sm:inline">Share</span>
+              <span>Share</span>
             </>
           )}
         </Button>
@@ -239,7 +242,7 @@ export function BuilderToolbar() {
           title="Import resume from JSON file"
         >
           <Upload className="mr-1.5 h-4 w-4" />
-          <span className="hidden md:inline">Import</span>
+          <span>Import</span>
         </Button>
 
         {/* Export JSON */}
@@ -252,7 +255,7 @@ export function BuilderToolbar() {
           title="Export resume as JSON backup"
         >
           <FileDown className="mr-1.5 h-4 w-4" />
-          <span className="hidden md:inline">Export</span>
+          <span>Export</span>
         </Button>
 
         {/* New Resume */}
@@ -265,7 +268,7 @@ export function BuilderToolbar() {
           title="Create a new resume"
         >
           <Plus className="mr-1.5 h-4 w-4" />
-          <span className="hidden md:inline">New</span>
+          <span>New</span>
         </Button>
 
         {/* Separator */}
@@ -289,7 +292,7 @@ export function BuilderToolbar() {
           {(pdfStatus === 'idle' || pdfStatus === 'error') && (
             <Download className="mr-1.5 h-4 w-4" />
           )}
-          <span className="hidden sm:inline">
+          <span>
             {pdfStatus === 'generating'
               ? 'Building your PDF…'
               : pdfStatus === 'success'
@@ -298,9 +301,42 @@ export function BuilderToolbar() {
                   ? 'Try again'
                   : 'Download PDF'}
           </span>
-          <span className="sm:hidden">PDF</span>
         </Button>
       </div>
+
+      {/* New resume confirmation dialog */}
+      <Dialog
+        open={showNewResumeConfirm}
+        onOpenChange={(open) => {
+          if (!open) setShowNewResumeConfirm(false)
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Start a new resume?</DialogTitle>
+            <DialogDescription>
+              Your current resume stays saved — you can switch back to it
+              anytime from the Resumes tab.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowNewResumeConfirm(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                setShowNewResumeConfirm(false)
+                createNewResume()
+              }}
+            >
+              Create New
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </header>
   )
 }

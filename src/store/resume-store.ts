@@ -475,6 +475,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
   updateAccentColor: (color: string) =>
     set((state) => {
       if (!state.resume) return state
+      if (!/^#[0-9a-fA-F]{6}$/.test(color)) return state
       return {
         resume: {
           ...state.resume,
@@ -565,7 +566,28 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
   importFromJSON: (json: string): boolean => {
     try {
       const parsed = JSON.parse(json)
-      const result = resumeSchema.safeParse(parsed)
+      // Use lenient schema so in-progress resumes (with empty required fields) can be imported
+      const lenientPersonalInfoSchema = resumeSchema.shape.personalInfo.extend({
+        fullName: z.string().default(''),
+        email: z.string().default(''),
+      })
+      const lenientSkillSchema = z.object({
+        id: z.string(),
+        name: z.string().default(''),
+        level: z
+          .enum(['beginner', 'intermediate', 'advanced', 'expert'])
+          .optional(),
+      })
+      const lenientSchema = resumeSchema.extend({
+        personalInfo: lenientPersonalInfoSchema,
+        skills: z.array(lenientSkillSchema).default([]),
+        template: resumeTemplateSchema.default('modern'),
+        accentColor: z
+          .string()
+          .regex(/^#[0-9a-fA-F]{6}$/)
+          .default(DEFAULT_ACCENT_COLOR),
+      })
+      const result = lenientSchema.safeParse(parsed)
       if (result.success) {
         set({
           resume: result.data as Resume,
