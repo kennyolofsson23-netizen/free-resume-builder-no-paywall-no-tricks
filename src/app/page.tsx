@@ -14,7 +14,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-4xl">
           <div className="text-center">
             <div className="mb-6 inline-block rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700">
-              Unlike Zety — we don't lock your PDF behind a subscription
+              Unlike Zety — we don&apos;t lock your PDF behind a subscription
             </div>
 
             <h1 className="mb-6 text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
@@ -24,7 +24,7 @@ export default function HomePage() {
             <p className="mb-8 text-xl text-slate-300">
               Professional templates. Real-time preview. Instant PDF download.
               <br />
-              No email. No account. No '$1.95 trial that auto-renews.'
+              No email. No account. No &apos;$1.95 trial that auto-renews.&apos;
             </p>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
