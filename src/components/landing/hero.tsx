@@ -27,7 +27,7 @@ export function Hero() {
               href="/builder"
               className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 font-semibold text-slate-900 transition-colors hover:bg-slate-100"
             >
-              Build Your Resume — It&apos;s Free →
+              Start Building — It&apos;s Free →
             </Link>
             <Link
               href="/templates"

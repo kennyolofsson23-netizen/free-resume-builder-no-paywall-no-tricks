@@ -5,7 +5,7 @@ export function FeatureGrid() {
     <section id="features" className="px-4 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-foreground">
-          Everything Free Resume Builders Should Be
+          Everything You Need — Free Resume Builder Done Right
         </h2>
 
         <div className="grid gap-8 md:grid-cols-2">
