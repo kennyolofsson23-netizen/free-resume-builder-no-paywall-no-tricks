@@ -1,7 +1,12 @@
-const nextConfig = require('eslint-config-next/core-web-vitals')
+const { FlatCompat } = require('@eslint/eslintrc')
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  resolvePluginsRelativeTo: __dirname,
+})
 
 module.exports = [
-  ...nextConfig,
+  ...compat.extends('next/core-web-vitals'),
   {
     rules: {
       '@next/next/no-html-link-for-pages': 'off',
