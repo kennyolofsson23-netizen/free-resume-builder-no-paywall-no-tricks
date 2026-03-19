@@ -10,29 +10,31 @@ export const TEMPLATE_LIST: Array<{
     id: 'modern',
     name: 'Modern',
     description:
-      'Clean sans-serif, subtle accent color, two-column skills sidebar',
+      'Clean lines, accent color, two-column layout. Ideal for tech and product roles.',
   },
   {
     id: 'classic',
     name: 'Classic',
     description:
-      'Traditional single-column, serif headings, horizontal rule separators',
+      'Single-column, serif headings, clear hierarchy. Timeless and universally ATS-safe.',
   },
   {
     id: 'minimal',
     name: 'Minimal',
-    description: 'Maximum whitespace, single-column, no color except black',
+    description:
+      'Maximum white space. Your content does the talking, nothing else.',
   },
   {
     id: 'creative',
     name: 'Creative',
     description:
-      'Bold accent header, icon-enhanced contact info, modern layout',
+      'Bold header, icon-enhanced contact info. Stands out without sacrificing readability.',
   },
   {
     id: 'professional',
     name: 'Professional',
-    description: 'Corporate two-column, dark sidebar with contact info',
+    description:
+      'Dark sidebar, structured sections. The go-to for finance, law, and executive roles.',
   },
 ]
 
