@@ -76,6 +76,9 @@ export function FormPanel() {
           <TabsContent value="certifications" className="m-0 p-4">
             <CertificationsForm />
           </TabsContent>
+          <TabsContent value="resumes" className="m-0">
+            <ResumeListPanel />
+          </TabsContent>
         </div>
       </Tabs>
     </div>

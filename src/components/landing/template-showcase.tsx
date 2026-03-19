@@ -1,42 +1,18 @@
-import Link from 'next/link'
+'use client'
 
-const templates = [
-  {
-    id: 'modern',
-    name: 'Modern',
-    description:
-      'Clean lines, accent color, two-column layout. Ideal for tech and product roles.',
-    placeholderClass: 'bg-blue-500',
-  },
-  {
-    id: 'classic',
-    name: 'Classic',
-    description:
-      'Single-column, serif headings, clear hierarchy. Timeless and universally ATS-safe.',
-    placeholderClass: 'bg-slate-600',
-  },
-  {
-    id: 'minimal',
-    name: 'Minimal',
-    description:
-      'Maximum white space. Your content does the talking, nothing else.',
-    placeholderClass: 'bg-gray-200',
-  },
-  {
-    id: 'creative',
-    name: 'Creative',
-    description:
-      'Bold header, icon-enhanced contact info. Stands out without sacrificing readability.',
-    placeholderClass: 'bg-purple-500',
-  },
-  {
-    id: 'professional',
-    name: 'Professional',
-    description:
-      'Dark sidebar, structured sections. The go-to for finance, law, and executive roles.',
-    placeholderClass: 'bg-slate-800',
-  },
-]
+import Link from 'next/link'
+import { TemplateRenderer } from '@/components/templates/template-renderer'
+import { sampleResume } from '@/lib/templates/sample-data'
+import { TEMPLATE_LIST } from '@/lib/constants'
+import type { ResumeTemplate } from '@/types/resume'
+
+const TEMPLATE_ACCENT_COLORS: Record<ResumeTemplate, string> = {
+  modern: '#2563eb',
+  classic: '#1e3a5f',
+  minimal: '#111827',
+  creative: '#7c3aed',
+  professional: '#1e3a5f',
+}
 
 export function TemplateShowcase() {
   return (
@@ -51,36 +27,48 @@ export function TemplateShowcase() {
         </p>
 
         <div className="flex gap-6 overflow-x-auto pb-4">
-          {templates.map((t) => (
-            <div
-              key={t.id}
-              className="w-56 flex-shrink-0 overflow-hidden rounded-lg border border-border bg-card"
-            >
-              <div
-                className={[
-                  `flex h-48 items-center justify-center`,
-                  t.placeholderClass,
-                ].join(' ')}
-              >
-                <span className="rounded bg-black/20 px-2 py-1 text-sm font-semibold text-white">
-                  {t.name}
-                </span>
-              </div>
+          {TEMPLATE_LIST.map((t) => {
+            const resume = {
+              ...sampleResume,
+              id: `showcase-${t.id}`,
+              template: t.id,
+              accentColor: TEMPLATE_ACCENT_COLORS[t.id] ?? '#2563eb',
+            }
 
-              <div className="p-4">
-                <h3 className="mb-1 font-semibold text-foreground">{t.name}</h3>
-                <p className="mb-3 text-sm text-muted-foreground">
-                  {t.description}
-                </p>
-                <Link
-                  href={'/builder?template=' + t.id}
-                  className="inline-block text-sm font-medium text-foreground underline-offset-4 hover:underline"
-                >
-                  Use This Template &rarr;
-                </Link>
+            return (
+              <div
+                key={t.id}
+                className="w-56 flex-shrink-0 overflow-hidden rounded-lg border border-border bg-card"
+              >
+                {/* Scaled template preview */}
+                <div className="h-48 overflow-hidden bg-white relative">
+                  <div
+                    style={{
+                      transform: 'scale(0.29)',
+                      transformOrigin: 'top left',
+                      width: '816px',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    <TemplateRenderer resume={resume} />
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <h3 className="mb-1 font-semibold text-foreground">{t.name}</h3>
+                  <p className="mb-3 text-sm text-muted-foreground">
+                    {t.description}
+                  </p>
+                  <Link
+                    href={'/builder?template=' + t.id}
+                    className="inline-block text-sm font-medium text-foreground underline-offset-4 hover:underline"
+                  >
+                    Use This Template &rarr;
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

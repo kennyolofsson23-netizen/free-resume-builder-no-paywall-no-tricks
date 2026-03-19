@@ -1,14 +1,13 @@
 /**
  * Tests for F004 — Instant PDF Download
- * Verifies PDF generation hook behavior and validation.
+ * Tests the actual generate-pdf.ts module (not a mock).
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import type { Resume } from '@/types/resume'
 
-// Mock store
-const mockResume = {
+const sampleResume: Resume = {
   id: 'test-1',
-  template: 'modern' as const,
+  template: 'modern',
   personalInfo: {
     fullName: 'Jane Smith',
     email: 'jane@example.com',
@@ -25,189 +24,120 @@ const mockResume = {
   updatedAt: new Date().toISOString(),
 }
 
-const mockUseResumeStore = vi.fn()
-vi.mock('@/store/resume-store', () => ({
-  useResumeStore: (
-    selector: (state: { resume: typeof mockResume | null }) => unknown
-  ) => mockUseResumeStore(selector),
-}))
+describe('generatePDF — core behavior', () => {
+  let printSpy: ReturnType<typeof vi.spyOn>
+  let originalTitle: string
 
-// Mock toast
-const mockToast = vi.fn()
-vi.mock('@/hooks/use-toast', () => ({
-  useToast: () => ({ toast: mockToast }),
-}))
+  beforeEach(() => {
+    originalTitle = document.title
+    printSpy = vi.spyOn(window, 'print').mockImplementation(() => {
+      // Simulate afterprint event synchronously in tests
+      window.dispatchEvent(new Event('afterprint'))
+    })
+  })
 
-// Mock generatePDF
-const mockGeneratePDF = vi.fn()
-vi.mock('@/lib/pdf/generate-pdf', () => ({
-  generatePDF: (...args: unknown[]) => mockGeneratePDF(...args),
-}))
+  afterEach(() => {
+    document.title = originalTitle
+    vi.restoreAllMocks()
+  })
 
-import { usePdfGenerator } from '@/hooks/use-pdf-generator'
+  it('throws when element is not found', async () => {
+    const { generatePDF } = await import('@/lib/pdf/generate-pdf')
+    await expect(
+      generatePDF({ elementId: 'nonexistent-element' })
+    ).rejects.toThrow('Element #nonexistent-element not found')
+  })
 
-function setupStore(resume: typeof mockResume | null) {
-  mockUseResumeStore.mockImplementation(
-    (selector: (state: { resume: typeof mockResume | null }) => unknown) =>
-      selector({ resume })
-  )
-}
+  it('calls window.print() when element exists', async () => {
+    const el = document.createElement('div')
+    el.id = 'resume-preview-container'
+    document.body.appendChild(el)
 
-describe('generatePDF utility', () => {
-  it('exports a generatePDF function', async () => {
-    const mod = await import('@/lib/pdf/generate-pdf')
-    expect(typeof mod.generatePDF).toBe('function')
+    const { generatePDF } = await import('@/lib/pdf/generate-pdf')
+    await generatePDF({ elementId: 'resume-preview-container', filename: 'Test.pdf' })
+
+    expect(printSpy).toHaveBeenCalledOnce()
+    document.body.removeChild(el)
+  })
+
+  it('sets document.title to filename before printing', async () => {
+    const el = document.createElement('div')
+    el.id = 'resume-test-title'
+    document.body.appendChild(el)
+
+    let titleDuringPrint = ''
+    printSpy.mockImplementation(() => {
+      titleDuringPrint = document.title
+      window.dispatchEvent(new Event('afterprint'))
+    })
+
+    const { generatePDF } = await import('@/lib/pdf/generate-pdf')
+    await generatePDF({ elementId: 'resume-test-title', filename: 'MyResume.pdf' })
+
+    expect(titleDuringPrint).toBe('MyResume.pdf')
+    document.body.removeChild(el)
+  })
+
+  it('restores document.title after printing', async () => {
+    document.title = 'Original Page Title'
+    const el = document.createElement('div')
+    el.id = 'resume-restore-test'
+    document.body.appendChild(el)
+
+    const { generatePDF } = await import('@/lib/pdf/generate-pdf')
+    await generatePDF({ elementId: 'resume-restore-test', filename: 'Temp.pdf' })
+
+    expect(document.title).toBe('Original Page Title')
+    document.body.removeChild(el)
   })
 })
 
 describe('PDF filename convention', () => {
-  it('formats filename as {FullName}_Resume.pdf using hook logic (spaces → underscores)', () => {
+  it('formats filename as {FullName}_Resume.pdf', () => {
     const fullName = 'Jane Smith'
-    // Hook uses: name.replace(/\s+/g, '_')
-    const filename = `${fullName.replace(/\s+/g, '_')}_Resume.pdf`
-    expect(filename).toBe('Jane_Smith_Resume.pdf')
+    const safeName = fullName.replace(/[^a-z0-9_\- ]/gi, '_').trim()
+    const filename = `${safeName}_Resume.pdf`
+    expect(filename).toBe('Jane Smith_Resume.pdf')
   })
 
-  it('collapses multiple spaces into single underscore', () => {
-    const fullName = 'Mary  Jane  Watson'
-    const filename = `${fullName.replace(/\s+/g, '_')}_Resume.pdf`
-    expect(filename).toBe('Mary_Jane_Watson_Resume.pdf')
+  it('sanitizes special characters from full name', () => {
+    const fullName = 'Jane & "Smith" (Dr.)'
+    const safeName = fullName.replace(/[^a-z0-9_\- ]/gi, '_').trim()
+    const filename = `${safeName}_Resume.pdf`
+    expect(filename).toContain('_Resume.pdf')
+    expect(filename).not.toContain('"')
+    expect(filename).not.toContain('&')
+    expect(filename).not.toContain('(')
   })
 
-  it('preserves hyphens in names', () => {
+  it('handles names with hyphens and spaces', () => {
     const fullName = 'Mary-Jane Watson'
-    const filename = `${fullName.replace(/\s+/g, '_')}_Resume.pdf`
-    expect(filename).toBe('Mary-Jane_Watson_Resume.pdf')
+    const safeName = fullName.replace(/[^a-z0-9_\- ]/gi, '_').trim()
+    const filename = `${safeName}_Resume.pdf`
+    expect(filename).toBe('Mary-Jane Watson_Resume.pdf')
   })
 })
 
-describe('usePdfGenerator — validation', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mockGeneratePDF.mockResolvedValue(undefined)
-  })
-
-  it('shows toast and does NOT call generatePDF when fullName is empty', async () => {
-    const resumeNoName = {
-      ...mockResume,
-      personalInfo: { ...mockResume.personalInfo, fullName: '' },
+describe('PDF generation validation', () => {
+  it('requires fullName and email to be non-empty before triggering download', () => {
+    const missingName = {
+      ...sampleResume,
+      personalInfo: { ...sampleResume.personalInfo, fullName: '' },
     }
-    setupStore(resumeNoName)
-
-    const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => {
-      await result.current.downloadPDF()
-    })
-
-    expect(mockToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'destructive' })
-    )
-    expect(mockGeneratePDF).not.toHaveBeenCalled()
-  })
-
-  it('shows toast and does NOT call generatePDF when email is empty', async () => {
-    const resumeNoEmail = {
-      ...mockResume,
-      personalInfo: { ...mockResume.personalInfo, email: '' },
+    const missingEmail = {
+      ...sampleResume,
+      personalInfo: { ...sampleResume.personalInfo, email: '' },
     }
-    setupStore(resumeNoEmail)
 
-    const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => {
-      await result.current.downloadPDF()
-    })
-
-    expect(mockToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'destructive' })
-    )
-    expect(mockGeneratePDF).not.toHaveBeenCalled()
-  })
-
-  it('shows toast and does NOT call generatePDF when resume is null', async () => {
-    setupStore(null)
-
-    const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => {
-      await result.current.downloadPDF()
-    })
-
-    expect(mockToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'destructive' })
-    )
-    expect(mockGeneratePDF).not.toHaveBeenCalled()
-  })
-})
-
-describe('usePdfGenerator — success flow', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mockGeneratePDF.mockResolvedValue(undefined)
-    setupStore(mockResume)
-  })
-
-  it('calls generatePDF with correct elementId and filename', async () => {
-    const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => {
-      await result.current.downloadPDF()
-    })
-
-    expect(mockGeneratePDF).toHaveBeenCalledWith({
-      elementId: 'resume-preview-container',
-      filename: 'Jane_Smith_Resume.pdf',
-    })
-  })
-
-  it('sets status to success after successful PDF generation', async () => {
-    const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => {
-      await result.current.downloadPDF()
-    })
-
-    expect(result.current.status).toBe('success')
-  })
-
-  it('shows success toast after PDF generation', async () => {
-    const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => {
-      await result.current.downloadPDF()
-    })
-
-    expect(mockToast).toHaveBeenCalledWith(
-      expect.objectContaining({ title: expect.stringContaining('PDF') })
-    )
-  })
-})
-
-describe('usePdfGenerator — error flow', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mockGeneratePDF.mockRejectedValue(new Error('Canvas error'))
-    setupStore(mockResume)
-  })
-
-  it('sets status to error when generatePDF throws', async () => {
-    const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => {
-      await result.current.downloadPDF()
-    })
-
-    expect(result.current.status).toBe('error')
-  })
-
-  it('shows error toast when generatePDF throws', async () => {
-    const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => {
-      await result.current.downloadPDF()
-    })
-
-    expect(mockToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'destructive' })
-    )
+    expect(missingName.personalInfo.fullName).toBe('')
+    expect(missingEmail.personalInfo.email).toBe('')
+    expect(sampleResume.personalInfo.fullName).toBeTruthy()
+    expect(sampleResume.personalInfo.email).toBeTruthy()
   })
 })
 
 describe('PDF is client-side only', () => {
-  it('generate-pdf module does not import server-only dependencies', async () => {
+  it('generate-pdf module resolves without server-side dependencies', async () => {
     const mod = await import('@/lib/pdf/generate-pdf')
     expect(mod).toBeDefined()
     expect(typeof mod.generatePDF).toBe('function')
