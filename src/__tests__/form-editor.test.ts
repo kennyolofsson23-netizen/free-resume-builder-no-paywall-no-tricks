@@ -113,9 +113,9 @@ describe('Form Editor — Currently Working checkbox', () => {
 
     // Set an end date first
     useResumeStore.getState().updateExperience(exp.id, { endDate: '2023-12' })
-    expect(
-      useResumeStore.getState().resume?.experiences[0]?.endDate
-    ).toBe('2023-12')
+    expect(useResumeStore.getState().resume?.experiences[0]?.endDate).toBe(
+      '2023-12'
+    )
 
     // Check "currently working" — should clear end date
     useResumeStore.getState().updateExperience(exp.id, {

@@ -34,8 +34,13 @@ export default function BuilderPage() {
 
   if (!resume) {
     return (
-      <main id="main-content" className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-muted-foreground text-sm">Loading resume builder...</p>
+      <main
+        id="main-content"
+        className="flex min-h-screen items-center justify-center bg-background"
+      >
+        <p className="text-muted-foreground text-sm">
+          Loading resume builder...
+        </p>
       </main>
     )
   }

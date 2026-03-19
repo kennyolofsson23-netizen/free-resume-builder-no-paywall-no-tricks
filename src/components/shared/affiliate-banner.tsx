@@ -1,107 +1,47 @@
 'use client'
-
-import { useState, useEffect } from 'react'
-import { X } from 'lucide-react'
+import { useState } from 'react'
+import { X, ExternalLink } from 'lucide-react'
 import { cn } from '@/lib/cn'
 
-const DISMISSED_KEY = 'affiliate-banner-dismissed'
-
 interface AffiliateBannerProps {
-  variant?: 'sidebar' | 'inline'
+  className?: string
 }
 
-export function AffiliateBanner({ variant = 'inline' }: AffiliateBannerProps) {
-  const [dismissed, setDismissed] = useState(true) // start hidden to avoid layout shift
+export function AffiliateBanner({ className }: AffiliateBannerProps) {
+  const [dismissed, setDismissed] = useState(false)
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(DISMISSED_KEY)
-      if (!stored) {
-        setDismissed(false)
-      }
-    } catch {
-      // localStorage may not be available
-    }
-  }, [])
+  if (dismissed) return null
 
-  const handleDismiss = () => {
-    try {
-      localStorage.setItem(DISMISSED_KEY, '1')
-    } catch {
-      // ignore
-    }
-    setDismissed(true)
-  }
-
-  if (dismissed) {
-    return null
-  }
-
-  if (variant === 'sidebar') {
-    return (
-      <div
-        className={cn(
-          'relative rounded-lg border border-gray-200 bg-gray-50 p-4',
-          'flex flex-col gap-2 text-sm'
-        )}
-      >
-        <button
-          type="button"
-          onClick={handleDismiss}
-          aria-label="Dismiss banner"
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          <X size={14} />
-        </button>
-        <p className="font-medium text-gray-800 pr-5">
-          Want AI-powered writing suggestions?
-        </p>
-        <a
-          href="https://www.kickresume.com/?utm_source=free-resume-builder&utm_medium=affiliate"
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-semibold transition-colors"
-        >
-          Try Kickresume &rarr;
-        </a>
-        <p className="text-xs text-gray-400">
-          Affiliate link — helps keep this tool free
-        </p>
-      </div>
-    )
-  }
-
-  // inline variant
   return (
     <div
       className={cn(
-        'relative rounded-lg border border-gray-200 bg-gray-50 px-4 py-3',
-        'flex flex-row items-center justify-between gap-4 text-sm'
+        'flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/50 px-4 py-2 text-sm',
+        className
       )}
     >
-      <div className="flex flex-row items-center gap-4 min-w-0">
-        <p className="font-medium text-gray-800 whitespace-nowrap">
-          Want AI-powered writing suggestions?
-        </p>
-        <a
-          href="https://www.kickresume.com/?utm_source=free-resume-builder&utm_medium=affiliate"
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className="text-blue-600 hover:text-blue-700 font-semibold transition-colors whitespace-nowrap"
-        >
-          Try Kickresume &rarr;
-        </a>
-        <p className="text-xs text-gray-400 hidden sm:block">
-          Affiliate link — helps keep this tool free
-        </p>
+      <div className="flex items-center gap-2 min-w-0">
+        <span className="text-xs text-muted-foreground shrink-0">
+          [Partner]
+        </span>
+        <span className="text-muted-foreground">
+          Need more resume help?{' '}
+          <a
+            href="https://kickresume.com/?ref=freeresumebuilder"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="font-medium text-foreground underline-offset-2 hover:underline"
+          >
+            Try Kickresume — AI-powered resume builder
+            <ExternalLink className="ml-1 inline h-3 w-3" />
+          </a>
+        </span>
       </div>
       <button
-        type="button"
-        onClick={handleDismiss}
-        aria-label="Dismiss banner"
-        className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+        onClick={() => setDismissed(true)}
+        aria-label="Dismiss partner banner"
+        className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <X size={16} />
+        <X className="h-4 w-4" />
       </button>
     </div>
   )

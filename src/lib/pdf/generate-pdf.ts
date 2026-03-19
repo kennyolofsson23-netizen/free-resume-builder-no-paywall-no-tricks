@@ -7,8 +7,12 @@ export async function generatePDF(
   filename: string
 ): Promise<void> {
   // html2canvas lacks NodeNext-compatible type exports; cast to its actual signature
-  type Html2CanvasFn = (element: HTMLElement, options?: object) => Promise<HTMLCanvasElement>
-  const html2canvas = (await import('html2canvas')).default as unknown as Html2CanvasFn
+  type Html2CanvasFn = (
+    element: HTMLElement,
+    options?: object
+  ) => Promise<HTMLCanvasElement>
+  const html2canvas = (await import('html2canvas'))
+    .default as unknown as Html2CanvasFn
   const { jsPDF } = await import('jspdf')
 
   const element = document.getElementById(elementId)

@@ -37,7 +37,10 @@ export function TemplateRenderer({ resume, className }: Props) {
   }
 
   return (
-    <div id="resume-preview" className={`resume-preview bg-white${className ? ' ' + className : ''}`}>
+    <div
+      id="resume-preview"
+      className={`resume-preview bg-white${className ? ' ' + className : ''}`}
+    >
       {content}
     </div>
   )

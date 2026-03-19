@@ -29,7 +29,9 @@ function SkillRow({ skill, onUpdate, onDelete }: SkillRowProps) {
         value={skill.level ?? ''}
         onChange={(e) => {
           if (e.target.value) {
-            onUpdate(skill.id, { level: e.target.value as NonNullable<Skill['level']> })
+            onUpdate(skill.id, {
+              level: e.target.value as NonNullable<Skill['level']>,
+            })
           } else {
             // Remove level by omitting the field entirely (exactOptionalPropertyTypes)
             onUpdate(skill.id, { name: skill.name })
