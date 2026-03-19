@@ -9,10 +9,7 @@ function toBase64Url(bytes: Uint8Array): string {
   for (let i = 0; i < bytes.byteLength; i++) {
     binary += String.fromCharCode(bytes[i]!)
   }
-  return btoa(binary)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '')
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
 }
 
 function fromBase64Url(str: string): string {
@@ -75,10 +72,7 @@ export function encodeResumeForURL(data: object): string {
     }
     return (
       'z:' +
-      btoa(binary)
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=/g, '')
+      btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
     )
   } else {
     const encoded2 = new TextEncoder().encode(json)

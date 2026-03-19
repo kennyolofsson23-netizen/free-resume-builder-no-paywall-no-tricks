@@ -11,7 +11,10 @@ import type {
   Certification,
 } from '@/types/resume'
 import { resumeSchema, resumeTemplateSchema } from '@/lib/schemas/resume-schema'
-import { encodeResumeForURL, decodeResumeFromURL } from '@/lib/sharing/url-codec'
+import {
+  encodeResumeForURL,
+  decodeResumeFromURL,
+} from '@/lib/sharing/url-codec'
 import {
   DEFAULT_ACCENT_COLOR,
   MAX_UNDO_HISTORY,
