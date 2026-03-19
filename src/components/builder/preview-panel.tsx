@@ -29,7 +29,7 @@ export function PreviewPanel() {
         {/* Scale indicator */}
         <div className="shrink-0 border-b border-border bg-background px-4 py-2">
           <p className="text-xs text-muted-foreground">
-            Live Preview &mdash; Scale to fit
+            Live Preview &mdash; exactly what you&apos;ll download
           </p>
         </div>
         <div
@@ -37,7 +37,7 @@ export function PreviewPanel() {
           className="flex flex-1 items-center justify-center bg-muted/30 p-6"
         >
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-muted-foreground">No resume data yet</p>
+            <p className="text-sm text-muted-foreground">Start typing — your resume will appear here instantly</p>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@ export function PreviewPanel() {
         {/* Scale indicator */}
         <div className="shrink-0 border-b border-border bg-background px-4 py-2">
           <p className="text-xs text-muted-foreground">
-            Live Preview &mdash; Scale to fit
+            Live Preview &mdash; exactly what you&apos;ll download
           </p>
         </div>
         <div
@@ -59,10 +59,10 @@ export function PreviewPanel() {
         >
           <div className="text-center text-muted-foreground">
             <p className="text-lg font-medium">
-              Your resume preview will appear here
+              Your resume updates as you type
             </p>
             <p className="text-sm">
-              Add your name in the Personal tab to get started
+              Enter your name in the Personal tab to see it take shape
             </p>
           </div>
         </div>
