@@ -45,14 +45,15 @@ export function ModernTemplate({ resume }: Props) {
 
   return (
     <div
-      id="resume-preview"
-      className="resume-preview w-[816px] min-h-[1056px] bg-white"
       style={{
+        width: '816px',
+        minHeight: '1056px',
         fontFamily: 'Inter, Arial, sans-serif',
         fontSize: '12px',
         color: '#111827',
         lineHeight: '1.5',
         boxSizing: 'border-box',
+        backgroundColor: '#fff',
       }}
     >
       {/* Header strip */}

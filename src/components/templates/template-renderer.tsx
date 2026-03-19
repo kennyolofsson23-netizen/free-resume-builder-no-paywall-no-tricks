@@ -1,5 +1,6 @@
 'use client'
 
+import * as React from 'react'
 import type { Resume } from '@/types/resume'
 import { ModernTemplate } from './modern-template'
 import { ClassicTemplate } from './classic-template'
@@ -9,39 +10,43 @@ import { ProfessionalTemplate } from './professional-template'
 
 interface Props {
   resume: Resume
-  className?: string
+  scale?: number
 }
 
-export function TemplateRenderer({ resume, className }: Props) {
-  const templateProps = { resume, accentColor: resume.accentColor }
-
+export function TemplateRenderer({ resume, scale }: Props) {
   let content: React.ReactNode
 
   switch (resume.template) {
     case 'classic':
-      content = <ClassicTemplate {...templateProps} />
+      content = <ClassicTemplate resume={resume} />
       break
     case 'minimal':
-      content = <MinimalTemplate {...templateProps} />
+      content = <MinimalTemplate resume={resume} />
       break
     case 'creative':
-      content = <CreativeTemplate {...templateProps} />
+      content = <CreativeTemplate resume={resume} />
       break
     case 'professional':
-      content = <ProfessionalTemplate {...templateProps} />
+      content = <ProfessionalTemplate resume={resume} />
       break
     case 'modern':
     default:
-      content = <ModernTemplate {...templateProps} />
+      content = <ModernTemplate resume={resume} />
       break
   }
 
   return (
     <div
-      id="resume-preview"
-      className={`resume-preview bg-white${className ? ' ' + className : ''}`}
+      id="resume-preview-container"
+      style={
+        scale !== undefined
+          ? { transform: `scale(${scale})`, transformOrigin: 'top left' }
+          : undefined
+      }
     >
-      {content}
+      <div id="resume-preview" className="resume-preview bg-white">
+        {content}
+      </div>
     </div>
   )
 }

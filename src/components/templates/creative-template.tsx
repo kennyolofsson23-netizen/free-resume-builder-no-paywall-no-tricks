@@ -7,37 +7,68 @@ interface Props {
   resume: Resume
 }
 
+function formatDate(dateStr: string | undefined): string {
+  if (!dateStr) return 'Present'
+  const [year, month] = dateStr.split('-')
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const monthName = months[parseInt(month ?? '1') - 1] ?? ''
+  return `${monthName} ${year}`
+}
+
 export function CreativeTemplate({ resume }: Props) {
   const { personalInfo: p, accentColor } = resume
 
+  const sidebarSectionHeaderStyle: React.CSSProperties = {
+    fontSize: '9px',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: '0.15em',
+    color: 'rgba(255,255,255,0.7)',
+    margin: '0 0 10px',
+    borderBottom: '1px solid rgba(255,255,255,0.25)',
+    paddingBottom: '6px',
+  }
+
+  const mainSectionHeaderStyle: React.CSSProperties = {
+    fontSize: '13px',
+    fontWeight: '700',
+    color: accentColor,
+    margin: '0 0 10px',
+    borderBottom: `2px solid ${accentColor}`,
+    paddingBottom: '4px',
+  }
+
   return (
     <div
-      className="bg-white"
       style={{
+        width: '816px',
+        minHeight: '1056px',
         fontFamily: 'Inter, system-ui, sans-serif',
         fontSize: '11px',
         color: '#111',
         lineHeight: '1.5',
         display: 'flex',
-        minHeight: '100%',
+        boxSizing: 'border-box',
+        backgroundColor: '#fff',
       }}
     >
-      {/* Sidebar */}
+      {/* Sidebar — 220px */}
       <div
         style={{
-          width: '30%',
+          width: '220px',
+          flexShrink: 0,
           backgroundColor: accentColor,
           color: '#fff',
           padding: '32px 20px',
-          flexShrink: 0,
         }}
       >
+        {/* Name */}
         <div style={{ marginBottom: '28px' }}>
           <h1
             style={{
               fontSize: '20px',
               fontWeight: '800',
-              margin: '0 0 4px',
+              margin: '0',
               color: '#fff',
               lineHeight: '1.2',
             }}
@@ -48,20 +79,7 @@ export function CreativeTemplate({ resume }: Props) {
 
         {/* Contact */}
         <div style={{ marginBottom: '28px' }}>
-          <h2
-            style={{
-              fontSize: '9px',
-              fontWeight: '700',
-              textTransform: 'uppercase',
-              letterSpacing: '0.15em',
-              color: 'rgba(255,255,255,0.7)',
-              margin: '0 0 10px',
-              borderBottom: '1px solid rgba(255,255,255,0.25)',
-              paddingBottom: '6px',
-            }}
-          >
-            Contact
-          </h2>
+          <h2 style={sidebarSectionHeaderStyle}>Contact</h2>
           <div
             style={{
               display: 'flex',
@@ -117,6 +135,7 @@ export function CreativeTemplate({ resume }: Props) {
                   alignItems: 'flex-start',
                   gap: '6px',
                   color: 'rgba(255,255,255,0.9)',
+                  wordBreak: 'break-all',
                 }}
               >
                 <Globe size={11} style={{ flexShrink: 0, marginTop: '1px' }} />
@@ -130,16 +149,11 @@ export function CreativeTemplate({ resume }: Props) {
                   alignItems: 'flex-start',
                   gap: '6px',
                   color: 'rgba(255,255,255,0.9)',
+                  wordBreak: 'break-all',
                 }}
               >
-                <Linkedin
-                  size={11}
-                  style={{ flexShrink: 0, marginTop: '1px' }}
-                />
-                {p.linkedin.replace(
-                  /^https?:\/\/(www\.)?linkedin\.com\/in\//,
-                  ''
-                )}
+                <Linkedin size={11} style={{ flexShrink: 0, marginTop: '1px' }} />
+                {p.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '')}
               </span>
             )}
             {p.github && (
@@ -149,6 +163,7 @@ export function CreativeTemplate({ resume }: Props) {
                   alignItems: 'flex-start',
                   gap: '6px',
                   color: 'rgba(255,255,255,0.9)',
+                  wordBreak: 'break-all',
                 }}
               >
                 <Github size={11} style={{ flexShrink: 0, marginTop: '1px' }} />
@@ -161,44 +176,64 @@ export function CreativeTemplate({ resume }: Props) {
         {/* Skills */}
         {resume.skills.length > 0 && (
           <div style={{ marginBottom: '28px' }}>
-            <h2
-              style={{
-                fontSize: '9px',
-                fontWeight: '700',
-                textTransform: 'uppercase',
-                letterSpacing: '0.15em',
-                color: 'rgba(255,255,255,0.7)',
-                margin: '0 0 10px',
-                borderBottom: '1px solid rgba(255,255,255,0.25)',
-                paddingBottom: '6px',
-              }}
-            >
-              Skills
-            </h2>
+            <h2 style={sidebarSectionHeaderStyle}>Skills</h2>
             <div
               style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}
             >
               {resume.skills.map((skill) => (
                 <div key={skill.id}>
-                  <span
+                  <div
                     style={{
-                      color: '#fff',
-                      fontSize: '10px',
-                      fontWeight: '500',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '2px',
                     }}
                   >
-                    {skill.name}
-                  </span>
-                  {skill.level && (
                     <span
                       style={{
-                        fontSize: '9px',
-                        color: 'rgba(255,255,255,0.6)',
-                        marginLeft: '4px',
+                        color: '#fff',
+                        fontSize: '10px',
+                        fontWeight: '500',
                       }}
                     >
-                      {skill.level}
+                      {skill.name}
                     </span>
+                    {skill.level && (
+                      <span
+                        style={{
+                          fontSize: '9px',
+                          color: 'rgba(255,255,255,0.6)',
+                        }}
+                      >
+                        {skill.level}
+                      </span>
+                    )}
+                  </div>
+                  {skill.level && (
+                    <div
+                      style={{
+                        height: '3px',
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        borderRadius: '2px',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: '100%',
+                          backgroundColor: 'rgba(255,255,255,0.8)',
+                          width:
+                            skill.level === 'expert'
+                              ? '100%'
+                              : skill.level === 'advanced'
+                                ? '75%'
+                                : skill.level === 'intermediate'
+                                  ? '50%'
+                                  : '25%',
+                        }}
+                      />
+                    </div>
                   )}
                 </div>
               ))}
@@ -209,20 +244,7 @@ export function CreativeTemplate({ resume }: Props) {
         {/* Certifications */}
         {resume.certifications.length > 0 && (
           <div>
-            <h2
-              style={{
-                fontSize: '9px',
-                fontWeight: '700',
-                textTransform: 'uppercase',
-                letterSpacing: '0.15em',
-                color: 'rgba(255,255,255,0.7)',
-                margin: '0 0 10px',
-                borderBottom: '1px solid rgba(255,255,255,0.25)',
-                paddingBottom: '6px',
-              }}
-            >
-              Certifications
-            </h2>
+            <h2 style={sidebarSectionHeaderStyle}>Certifications</h2>
             <div
               style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
             >
@@ -238,14 +260,23 @@ export function CreativeTemplate({ resume }: Props) {
                     {cert.name}
                   </div>
                   <div
-                    style={{ color: 'rgba(255,255,255,0.7)', fontSize: '9px' }}
+                    style={{
+                      color: 'rgba(255,255,255,0.7)',
+                      fontSize: '9px',
+                    }}
                   >
                     {cert.issuer}
                   </div>
                   <div
-                    style={{ color: 'rgba(255,255,255,0.6)', fontSize: '9px' }}
+                    style={{
+                      color: 'rgba(255,255,255,0.6)',
+                      fontSize: '9px',
+                    }}
                   >
-                    {cert.issueDate}
+                    {formatDate(cert.issueDate)}
+                    {cert.expirationDate
+                      ? ` – ${formatDate(cert.expirationDate)}`
+                      : ''}
                   </div>
                 </div>
               ))}
@@ -254,40 +285,22 @@ export function CreativeTemplate({ resume }: Props) {
         )}
       </div>
 
-      {/* Main */}
-      <div style={{ flex: 1, padding: '32px 28px' }}>
+      {/* Main content */}
+      <div style={{ flex: 1, padding: '32px 28px', backgroundColor: '#fff' }}>
+        {/* Summary */}
         {p.summary && (
           <section style={{ marginBottom: '20px' }}>
-            <h2
-              style={{
-                fontSize: '13px',
-                fontWeight: '700',
-                color: accentColor,
-                margin: '0 0 6px',
-                borderBottom: `2px solid ${accentColor}`,
-                paddingBottom: '4px',
-              }}
-            >
-              About
-            </h2>
-            <p style={{ color: '#334155', lineHeight: '1.6' }}>{p.summary}</p>
+            <h2 style={mainSectionHeaderStyle}>About</h2>
+            <p style={{ color: '#334155', lineHeight: '1.65', margin: 0 }}>
+              {p.summary}
+            </p>
           </section>
         )}
 
+        {/* Experience */}
         {resume.experiences.length > 0 && (
           <section style={{ marginBottom: '20px' }}>
-            <h2
-              style={{
-                fontSize: '13px',
-                fontWeight: '700',
-                color: accentColor,
-                margin: '0 0 10px',
-                borderBottom: `2px solid ${accentColor}`,
-                paddingBottom: '4px',
-              }}
-            >
-              Experience
-            </h2>
+            <h2 style={mainSectionHeaderStyle}>Experience</h2>
             {resume.experiences.map((exp) => (
               <div key={exp.id} style={{ marginBottom: '14px' }}>
                 <div
@@ -320,8 +333,8 @@ export function CreativeTemplate({ resume }: Props) {
                       marginLeft: '8px',
                     }}
                   >
-                    {exp.startDate} –{' '}
-                    {exp.currentlyWorking ? 'Present' : exp.endDate}
+                    {formatDate(exp.startDate)} –{' '}
+                    {exp.currentlyWorking ? 'Present' : formatDate(exp.endDate)}
                   </span>
                 </div>
                 {exp.description && (
@@ -333,10 +346,7 @@ export function CreativeTemplate({ resume }: Props) {
                     }}
                   >
                     {exp.description.split('\n').map((line, i) => (
-                      <span key={i}>
-                        {line}
-                        <br />
-                      </span>
+                      <div key={i}>{line}</div>
                     ))}
                   </div>
                 )}
@@ -345,20 +355,10 @@ export function CreativeTemplate({ resume }: Props) {
           </section>
         )}
 
+        {/* Education */}
         {resume.education.length > 0 && (
           <section style={{ marginBottom: '20px' }}>
-            <h2
-              style={{
-                fontSize: '13px',
-                fontWeight: '700',
-                color: accentColor,
-                margin: '0 0 10px',
-                borderBottom: `2px solid ${accentColor}`,
-                paddingBottom: '4px',
-              }}
-            >
-              Education
-            </h2>
+            <h2 style={mainSectionHeaderStyle}>Education</h2>
             {resume.education.map((edu) => (
               <div key={edu.id} style={{ marginBottom: '10px' }}>
                 <div
@@ -393,7 +393,8 @@ export function CreativeTemplate({ resume }: Props) {
                       marginLeft: '8px',
                     }}
                   >
-                    {edu.startDate} – {edu.endDate ?? ''}
+                    {formatDate(edu.startDate)} –{' '}
+                    {edu.endDate ? formatDate(edu.endDate) : 'Present'}
                   </span>
                 </div>
               </div>
@@ -401,35 +402,38 @@ export function CreativeTemplate({ resume }: Props) {
           </section>
         )}
 
+        {/* Projects */}
         {resume.projects.length > 0 && (
           <section style={{ marginBottom: '20px' }}>
-            <h2
-              style={{
-                fontSize: '13px',
-                fontWeight: '700',
-                color: accentColor,
-                margin: '0 0 10px',
-                borderBottom: `2px solid ${accentColor}`,
-                paddingBottom: '4px',
-              }}
-            >
-              Projects
-            </h2>
+            <h2 style={mainSectionHeaderStyle}>Projects</h2>
             {resume.projects.map((proj) => (
               <div key={proj.id} style={{ marginBottom: '12px' }}>
                 <div
                   style={{ display: 'flex', justifyContent: 'space-between' }}
                 >
-                  <span
-                    style={{
-                      fontWeight: '700',
-                      fontSize: '12px',
-                      color: '#0f172a',
-                    }}
-                  >
-                    {proj.title}
-                  </span>
-                  {proj.startDate && (
+                  <div>
+                    <span
+                      style={{
+                        fontWeight: '700',
+                        fontSize: '12px',
+                        color: '#0f172a',
+                      }}
+                    >
+                      {proj.title}
+                    </span>
+                    {proj.link && (
+                      <span
+                        style={{
+                          color: accentColor,
+                          fontSize: '10px',
+                          marginLeft: '6px',
+                        }}
+                      >
+                        {proj.link.replace(/^https?:\/\//, '')}
+                      </span>
+                    )}
+                  </div>
+                  {(proj.startDate ?? proj.endDate) && (
                     <span
                       style={{
                         color: '#64748b',
@@ -438,8 +442,8 @@ export function CreativeTemplate({ resume }: Props) {
                         marginLeft: '8px',
                       }}
                     >
-                      {proj.startDate}
-                      {proj.endDate ? ` – ${proj.endDate}` : ''}
+                      {proj.startDate ? formatDate(proj.startDate) : ''}
+                      {proj.endDate ? ` – ${formatDate(proj.endDate)}` : ''}
                     </span>
                   )}
                 </div>
