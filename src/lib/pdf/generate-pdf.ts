@@ -67,19 +67,20 @@ export async function generatePDF(
       pageCanvas.width = canvasWidth
       pageCanvas.height = sourceH
       const ctx = pageCanvas.getContext('2d')
-      if (ctx) {
-        ctx.drawImage(
-          canvas,
-          0,
-          sourceY,
-          canvasWidth,
-          sourceH,
-          0,
-          0,
-          canvasWidth,
-          sourceH
-        )
+      if (!ctx) {
+        throw new Error('Failed to get 2D context for page canvas')
       }
+      ctx.drawImage(
+        canvas,
+        0,
+        sourceY,
+        canvasWidth,
+        sourceH,
+        0,
+        0,
+        canvasWidth,
+        sourceH
+      )
 
       const pageImgData = pageCanvas.toDataURL('image/jpeg', 0.95)
       const pageImgHeight = (sourceH / canvasWidth) * pdfWidth

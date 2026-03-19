@@ -5,7 +5,11 @@ import pako from 'pako'
 import { SHARE_COMPRESSION_THRESHOLD } from '@/lib/constants'
 
 function toBase64Url(bytes: Uint8Array): string {
-  return btoa(String.fromCharCode(...bytes))
+  let binary = ''
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]!)
+  }
+  return btoa(binary)
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=/g, '')
@@ -65,15 +69,24 @@ export function encodeResumeForURL(data: object): string {
 
   if (jsonBytes.length > SHARE_COMPRESSION_THRESHOLD) {
     const compressed = pako.deflate(json)
+    let binary = ''
+    for (let i = 0; i < compressed.byteLength; i++) {
+      binary += String.fromCharCode(compressed[i]!)
+    }
     return (
       'z:' +
-      btoa(String.fromCharCode(...compressed))
+      btoa(binary)
         .replace(/\+/g, '-')
         .replace(/\//g, '_')
         .replace(/=/g, '')
     )
   } else {
-    return btoa(unescape(encodeURIComponent(json)))
+    const encoded2 = new TextEncoder().encode(json)
+    let binary2 = ''
+    for (let i = 0; i < encoded2.byteLength; i++) {
+      binary2 += String.fromCharCode(encoded2[i]!)
+    }
+    return btoa(binary2)
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=/g, '')
@@ -97,7 +110,12 @@ export function decodeResumeFromURL(hash: string): object | null {
       return JSON.parse(decompressed)
     } else {
       const b64 = hash.replace(/-/g, '+').replace(/_/g, '/')
-      const json = decodeURIComponent(escape(atob(b64)))
+      const binaryStr = atob(b64)
+      const bytes2 = new Uint8Array(binaryStr.length)
+      for (let i = 0; i < binaryStr.length; i++) {
+        bytes2[i] = binaryStr.charCodeAt(i)
+      }
+      const json = new TextDecoder().decode(bytes2)
       return JSON.parse(json)
     }
   } catch {

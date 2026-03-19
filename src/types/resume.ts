@@ -1,6 +1,7 @@
 /**
  * Resume data types - source of truth for all resume data structures
  */
+import type { ResumeData } from '@/lib/schemas/resume-schema'
 
 export type ResumeTemplate =
   | 'modern'
@@ -66,19 +67,9 @@ export interface Certification {
   credentialUrl?: string
 }
 
-export interface Resume {
-  id: string
-  template: ResumeTemplate
-  personalInfo: PersonalInfo
-  experiences: Experience[]
-  education: Education[]
-  skills: Skill[]
-  projects: Project[]
-  certifications: Certification[]
-  accentColor: string
-  createdAt: string
-  updatedAt: string
-}
+// Resume is the canonical validated shape inferred from the Zod schema,
+// ensuring runtime validation and TypeScript types stay in sync.
+export type Resume = ResumeData
 
 export const RESUME_TEMPLATES: ResumeTemplate[] = [
   'modern',

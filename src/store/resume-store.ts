@@ -11,6 +11,7 @@ import type {
   Certification,
 } from '@/types/resume'
 import { resumeSchema, resumeTemplateSchema } from '@/lib/schemas/resume-schema'
+import { encodeResumeForURL, decodeResumeFromURL } from '@/lib/sharing/url-codec'
 import {
   DEFAULT_ACCENT_COLOR,
   MAX_UNDO_HISTORY,
@@ -523,7 +524,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
         const result = lenientSchema.safeParse(parsed)
         if (result.success) {
           set({
-            resume: result.data as unknown as Resume,
+            resume: result.data as Resume,
             pastStates: [],
             futureStates: [],
           })
@@ -548,7 +549,6 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
         JSON.stringify({ ...resume, updatedAt: new Date().toISOString() })
       )
     } catch (error) {
-      console.error('Failed to save to localStorage:', error)
       throw error
     }
   },
@@ -565,7 +565,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       const result = resumeSchema.safeParse(parsed)
       if (result.success) {
         set({
-          resume: result.data as unknown as Resume,
+          resume: result.data as Resume,
           pastStates: [],
           futureStates: [],
         })
@@ -581,8 +581,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
     const { resume } = get()
     if (!resume || typeof window === 'undefined') return ''
     try {
-      const json = JSON.stringify(resume)
-      const encoded = btoa(unescape(encodeURIComponent(json)))
+      const encoded = encodeResumeForURL(resume)
       return `${window.location.origin}/preview#${encoded}`
     } catch {
       return ''
@@ -591,12 +590,11 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
 
   loadFromShareableURL: (hash: string): boolean => {
     try {
-      const decoded = decodeURIComponent(escape(atob(hash)))
-      const parsed = JSON.parse(decoded)
-      const result = resumeSchema.safeParse(parsed)
+      const decoded = decodeResumeFromURL(hash)
+      const result = resumeSchema.safeParse(decoded)
       if (result.success) {
         set({
-          resume: result.data as unknown as Resume,
+          resume: result.data as Resume,
           pastStates: [],
           futureStates: [],
         })

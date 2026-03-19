@@ -30,7 +30,10 @@ const localStorageMock = {
     Object.keys(localStorageStore).forEach((k) => delete localStorageStore[k])
   }),
 }
-global.localStorage = localStorageMock as any
+Object.defineProperty(global, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+})
 
 // Mock ResizeObserver (not available in jsdom)
 global.ResizeObserver = vi.fn().mockImplementation(() => ({

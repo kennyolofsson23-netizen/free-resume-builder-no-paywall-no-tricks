@@ -35,7 +35,7 @@ export default function PreviewPage() {
       const result = resumeSchema.safeParse(decoded)
 
       if (result.success) {
-        setResume(result.data as unknown as Resume)
+        setResume(result.data as Resume)
         setState('valid')
       } else {
         setState('invalid')

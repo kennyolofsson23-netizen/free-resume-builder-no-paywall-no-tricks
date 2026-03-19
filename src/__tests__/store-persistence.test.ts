@@ -7,6 +7,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useResumeStore } from '@/store/resume-store'
 import { STORAGE_KEY } from '@/lib/constants'
+import type { Resume } from '@/types/resume'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -131,9 +132,9 @@ describe('loadFromLocalStorage — valid stored data', () => {
   it('clears undo/redo history after successful load', () => {
     // Put something in history first
     useResumeStore.setState({
-      resume: makeValidStoredResume() as any,
-      pastStates: [makeValidStoredResume() as any],
-      futureStates: [makeValidStoredResume() as any],
+      resume: makeValidStoredResume() as Resume,
+      pastStates: [makeValidStoredResume() as Resume],
+      futureStates: [makeValidStoredResume() as Resume],
     })
 
     localStorage.setItem(

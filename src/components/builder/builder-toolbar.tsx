@@ -76,8 +76,17 @@ export function BuilderToolbar() {
     if (!file) return
     const reader = new FileReader()
     reader.onload = (ev) => {
-      const text = ev.target?.result as string
-      const success = importFromJSON(text)
+      const result = ev.target?.result
+      if (typeof result !== 'string') {
+        toast({
+          title: 'Import failed',
+          description:
+            'That file couldn\u2019t be read. Make sure it\u2019s a JSON file exported from this builder \u2014 nothing else was changed.',
+          variant: 'destructive',
+        })
+        return
+      }
+      const success = importFromJSON(result)
       if (success) {
         toast({
           title: 'Resume imported',
@@ -92,6 +101,14 @@ export function BuilderToolbar() {
           variant: 'destructive',
         })
       }
+    }
+    reader.onerror = () => {
+      toast({
+        title: 'Import failed',
+        description:
+          'That file couldn\u2019t be read. Make sure it\u2019s a JSON file exported from this builder \u2014 nothing else was changed.',
+        variant: 'destructive',
+      })
     }
     reader.readAsText(file)
     // Reset input so same file can be imported again
