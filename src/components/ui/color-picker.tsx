@@ -82,7 +82,9 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
             style={{ backgroundColor: value }}
           />
           {label && <span className="text-foreground">{label}</span>}
-          <span className="text-muted-foreground font-mono text-xs">{value}</span>
+          <span className="text-muted-foreground font-mono text-xs">
+            {value}
+          </span>
         </button>
       </Popover.Trigger>
 
@@ -144,9 +146,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
               className={cn(
                 'w-full rounded-md border px-3 py-1.5 text-sm font-mono',
                 'focus:outline-none focus:ring-2 focus:ring-ring',
-                hexError
-                  ? 'border-red-400 focus:ring-red-400'
-                  : 'border-input'
+                hexError ? 'border-red-400 focus:ring-red-400' : 'border-input'
               )}
             />
             {hexError && (

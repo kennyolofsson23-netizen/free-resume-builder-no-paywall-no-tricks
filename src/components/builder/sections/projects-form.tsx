@@ -71,11 +71,18 @@ function ProjectEntryFields({
             placeholder="e.g. Portfolio Website, Inventory App, Open Source CLI Tool"
             aria-required="true"
             aria-invalid={!!errors.title}
-            aria-describedby={errors.title ? `proj-title-error-${project.id}` : undefined}
+            aria-describedby={
+              errors.title ? `proj-title-error-${project.id}` : undefined
+            }
             className={errors.title ? 'border-destructive' : ''}
           />
           {errors.title && (
-            <p id={`proj-title-error-${project.id}`} className="text-sm text-destructive">{errors.title}</p>
+            <p
+              id={`proj-title-error-${project.id}`}
+              className="text-sm text-destructive"
+            >
+              {errors.title}
+            </p>
           )}
         </div>
 

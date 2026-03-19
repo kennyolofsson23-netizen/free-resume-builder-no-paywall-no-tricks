@@ -114,11 +114,18 @@ function EducationEntryFields({
             placeholder="University of California"
             aria-required="true"
             aria-invalid={!!errors.school}
-            aria-describedby={errors.school ? `school-error-${edu.id}` : undefined}
+            aria-describedby={
+              errors.school ? `school-error-${edu.id}` : undefined
+            }
             className={errors.school ? 'border-destructive' : ''}
           />
           {errors.school && (
-            <p id={`school-error-${edu.id}`} className="text-sm text-destructive">{errors.school}</p>
+            <p
+              id={`school-error-${edu.id}`}
+              className="text-sm text-destructive"
+            >
+              {errors.school}
+            </p>
           )}
         </div>
 
@@ -137,10 +144,18 @@ function EducationEntryFields({
               placeholder="Bachelor of Science"
               aria-required="true"
               aria-invalid={!!errors.degree}
+              aria-describedby={
+                errors.degree ? `degree-error-${edu.id}` : undefined
+              }
               className={errors.degree ? 'border-destructive' : ''}
             />
             {errors.degree && (
-              <p className="text-sm text-destructive">{errors.degree}</p>
+              <p
+                id={`degree-error-${edu.id}`}
+                className="text-sm text-destructive"
+              >
+                {errors.degree}
+              </p>
             )}
           </div>
 
@@ -175,10 +190,18 @@ function EducationEntryFields({
               onChange={(e) => onUpdate(edu.id, { startDate: e.target.value })}
               onBlur={(e) => handleBlur('startDate', e.target.value)}
               aria-invalid={!!errors.startDate}
+              aria-describedby={
+                errors.startDate ? `edu-startDate-error-${edu.id}` : undefined
+              }
               className={errors.startDate ? 'border-destructive' : ''}
             />
             {errors.startDate && (
-              <p className="text-sm text-destructive">{errors.startDate}</p>
+              <p
+                id={`edu-startDate-error-${edu.id}`}
+                className="text-sm text-destructive"
+              >
+                {errors.startDate}
+              </p>
             )}
           </div>
 

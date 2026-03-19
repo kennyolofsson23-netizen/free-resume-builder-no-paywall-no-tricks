@@ -27,8 +27,9 @@ const mockResume = {
 
 const mockUseResumeStore = vi.fn()
 vi.mock('@/store/resume-store', () => ({
-  useResumeStore: (selector: (state: { resume: typeof mockResume | null }) => unknown) =>
-    mockUseResumeStore(selector),
+  useResumeStore: (
+    selector: (state: { resume: typeof mockResume | null }) => unknown
+  ) => mockUseResumeStore(selector),
 }))
 
 // Mock toast
@@ -87,11 +88,16 @@ describe('usePdfGenerator — validation', () => {
   })
 
   it('shows toast and does NOT call generatePDF when fullName is empty', async () => {
-    const resumeNoName = { ...mockResume, personalInfo: { ...mockResume.personalInfo, fullName: '' } }
+    const resumeNoName = {
+      ...mockResume,
+      personalInfo: { ...mockResume.personalInfo, fullName: '' },
+    }
     setupStore(resumeNoName)
 
     const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => { await result.current.downloadPDF() })
+    await act(async () => {
+      await result.current.downloadPDF()
+    })
 
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({ variant: 'destructive' })
@@ -100,11 +106,16 @@ describe('usePdfGenerator — validation', () => {
   })
 
   it('shows toast and does NOT call generatePDF when email is empty', async () => {
-    const resumeNoEmail = { ...mockResume, personalInfo: { ...mockResume.personalInfo, email: '' } }
+    const resumeNoEmail = {
+      ...mockResume,
+      personalInfo: { ...mockResume.personalInfo, email: '' },
+    }
     setupStore(resumeNoEmail)
 
     const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => { await result.current.downloadPDF() })
+    await act(async () => {
+      await result.current.downloadPDF()
+    })
 
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({ variant: 'destructive' })
@@ -116,7 +127,9 @@ describe('usePdfGenerator — validation', () => {
     setupStore(null)
 
     const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => { await result.current.downloadPDF() })
+    await act(async () => {
+      await result.current.downloadPDF()
+    })
 
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({ variant: 'destructive' })
@@ -134,7 +147,9 @@ describe('usePdfGenerator — success flow', () => {
 
   it('calls generatePDF with correct elementId and filename', async () => {
     const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => { await result.current.downloadPDF() })
+    await act(async () => {
+      await result.current.downloadPDF()
+    })
 
     expect(mockGeneratePDF).toHaveBeenCalledWith({
       elementId: 'resume-preview-container',
@@ -144,14 +159,18 @@ describe('usePdfGenerator — success flow', () => {
 
   it('sets status to success after successful PDF generation', async () => {
     const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => { await result.current.downloadPDF() })
+    await act(async () => {
+      await result.current.downloadPDF()
+    })
 
     expect(result.current.status).toBe('success')
   })
 
   it('shows success toast after PDF generation', async () => {
     const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => { await result.current.downloadPDF() })
+    await act(async () => {
+      await result.current.downloadPDF()
+    })
 
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({ title: expect.stringContaining('PDF') })
@@ -168,14 +187,18 @@ describe('usePdfGenerator — error flow', () => {
 
   it('sets status to error when generatePDF throws', async () => {
     const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => { await result.current.downloadPDF() })
+    await act(async () => {
+      await result.current.downloadPDF()
+    })
 
     expect(result.current.status).toBe('error')
   })
 
   it('shows error toast when generatePDF throws', async () => {
     const { result } = renderHook(() => usePdfGenerator())
-    await act(async () => { await result.current.downloadPDF() })
+    await act(async () => {
+      await result.current.downloadPDF()
+    })
 
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({ variant: 'destructive' })

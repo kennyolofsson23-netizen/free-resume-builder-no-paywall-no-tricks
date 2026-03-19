@@ -115,11 +115,18 @@ function ExperienceEntryFields({
               placeholder="Software Engineer"
               aria-required="true"
               aria-invalid={!!errors.jobTitle}
-              aria-describedby={errors.jobTitle ? `jobTitle-error-${exp.id}` : undefined}
+              aria-describedby={
+                errors.jobTitle ? `jobTitle-error-${exp.id}` : undefined
+              }
               className={errors.jobTitle ? 'border-destructive' : ''}
             />
             {errors.jobTitle && (
-              <p id={`jobTitle-error-${exp.id}`} className="text-sm text-destructive">{errors.jobTitle}</p>
+              <p
+                id={`jobTitle-error-${exp.id}`}
+                className="text-sm text-destructive"
+              >
+                {errors.jobTitle}
+              </p>
             )}
           </div>
 
@@ -140,11 +147,18 @@ function ExperienceEntryFields({
               placeholder="Acme Corp"
               aria-required="true"
               aria-invalid={!!errors.company}
-              aria-describedby={errors.company ? `company-error-${exp.id}` : undefined}
+              aria-describedby={
+                errors.company ? `company-error-${exp.id}` : undefined
+              }
               className={errors.company ? 'border-destructive' : ''}
             />
             {errors.company && (
-              <p id={`company-error-${exp.id}`} className="text-sm text-destructive">{errors.company}</p>
+              <p
+                id={`company-error-${exp.id}`}
+                className="text-sm text-destructive"
+              >
+                {errors.company}
+              </p>
             )}
           </div>
         </div>
@@ -182,10 +196,18 @@ function ExperienceEntryFields({
               onChange={(e) => onUpdate(exp.id, { startDate: e.target.value })}
               onBlur={(e) => handleBlur('startDate', e.target.value)}
               aria-invalid={!!errors.startDate}
+              aria-describedby={
+                errors.startDate ? `startDate-error-${exp.id}` : undefined
+              }
               className={errors.startDate ? 'border-destructive' : ''}
             />
             {errors.startDate && (
-              <p className="text-sm text-destructive">{errors.startDate}</p>
+              <p
+                id={`startDate-error-${exp.id}`}
+                className="text-sm text-destructive"
+              >
+                {errors.startDate}
+              </p>
             )}
           </div>
 

@@ -69,11 +69,18 @@ function CertificationEntryFields({
             placeholder="AWS Certified Solutions Architect"
             aria-required="true"
             aria-invalid={!!errors.name}
-            aria-describedby={errors.name ? `cert-name-error-${cert.id}` : undefined}
+            aria-describedby={
+              errors.name ? `cert-name-error-${cert.id}` : undefined
+            }
             className={errors.name ? 'border-destructive' : ''}
           />
           {errors.name && (
-            <p id={`cert-name-error-${cert.id}`} className="text-sm text-destructive">{errors.name}</p>
+            <p
+              id={`cert-name-error-${cert.id}`}
+              className="text-sm text-destructive"
+            >
+              {errors.name}
+            </p>
           )}
         </div>
 
@@ -94,10 +101,18 @@ function CertificationEntryFields({
             placeholder="Amazon Web Services"
             aria-required="true"
             aria-invalid={!!errors.issuer}
+            aria-describedby={
+              errors.issuer ? `cert-issuer-error-${cert.id}` : undefined
+            }
             className={errors.issuer ? 'border-destructive' : ''}
           />
           {errors.issuer && (
-            <p className="text-sm text-destructive">{errors.issuer}</p>
+            <p
+              id={`cert-issuer-error-${cert.id}`}
+              className="text-sm text-destructive"
+            >
+              {errors.issuer}
+            </p>
           )}
         </div>
 
@@ -118,10 +133,18 @@ function CertificationEntryFields({
               onBlur={(e) => handleBlur('issueDate', e.target.value)}
               aria-required="true"
               aria-invalid={!!errors.issueDate}
+              aria-describedby={
+                errors.issueDate ? `cert-issueDate-error-${cert.id}` : undefined
+              }
               className={errors.issueDate ? 'border-destructive' : ''}
             />
             {errors.issueDate && (
-              <p className="text-sm text-destructive">{errors.issueDate}</p>
+              <p
+                id={`cert-issueDate-error-${cert.id}`}
+                className="text-sm text-destructive"
+              >
+                {errors.issueDate}
+              </p>
             )}
           </div>
 
