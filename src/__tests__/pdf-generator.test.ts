@@ -3,6 +3,7 @@
  * Tests the actual generate-pdf.ts module (not a mock).
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import type { MockInstance } from 'vitest'
 import type { Resume } from '@/types/resume'
 
 const sampleResume: Resume = {
@@ -25,7 +26,7 @@ const sampleResume: Resume = {
 }
 
 describe('generatePDF — core behavior', () => {
-  let printSpy: ReturnType<typeof vi.spyOn>
+  let printSpy: MockInstance<[], void>
   let originalTitle: string
 
   beforeEach(() => {
