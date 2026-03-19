@@ -75,7 +75,7 @@ export function PreviewPanel() {
       {/* Scale indicator */}
       <div className="shrink-0 border-b border-border bg-background px-4 py-2">
         <p className="text-xs text-muted-foreground">
-          Live Preview &mdash; Scale to fit
+          Live Preview &mdash; exactly what you&apos;ll download
         </p>
       </div>
 
