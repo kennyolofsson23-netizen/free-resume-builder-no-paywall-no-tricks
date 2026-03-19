@@ -36,8 +36,15 @@ vi.mock('lucide-react', () => ({
 
 // Mock Button component
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, ...props }: { children: React.ReactNode; onClick?: () => void; [key: string]: unknown }) =>
-    React.createElement('button', { onClick, ...props }, children),
+  Button: ({
+    children,
+    onClick,
+    ...props
+  }: {
+    children: React.ReactNode
+    onClick?: () => void
+    [key: string]: unknown
+  }) => React.createElement('button', { onClick, ...props }, children),
 }))
 
 import { PreviewPanel } from '@/components/builder/preview-panel'
@@ -79,8 +86,8 @@ describe('PreviewPanel', () => {
   })
 
   it('renders without crashing when resume is null', async () => {
-    mockUseResumeStore.mockImplementation((selector: (s: { resume: null }) => unknown) =>
-      selector({ resume: null })
+    mockUseResumeStore.mockImplementation(
+      (selector: (s: { resume: null }) => unknown) => selector({ resume: null })
     )
     const { container } = render(React.createElement(PreviewPanel))
     await act(async () => {})
@@ -88,8 +95,8 @@ describe('PreviewPanel', () => {
   })
 
   it('shows "No resume data yet" placeholder when resume is null', async () => {
-    mockUseResumeStore.mockImplementation((selector: (s: { resume: null }) => unknown) =>
-      selector({ resume: null })
+    mockUseResumeStore.mockImplementation(
+      (selector: (s: { resume: null }) => unknown) => selector({ resume: null })
     )
     const { container } = render(React.createElement(PreviewPanel))
     await act(async () => {})
@@ -103,7 +110,9 @@ describe('PreviewPanel', () => {
     )
     const { container } = render(React.createElement(PreviewPanel))
     await act(async () => {})
-    expect(container.textContent).toContain('Your resume preview will appear here')
+    expect(container.textContent).toContain(
+      'Your resume preview will appear here'
+    )
   })
 
   it('renders TemplateRenderer when resume has a fullName', async () => {
@@ -160,7 +169,10 @@ describe('MobilePreviewSheet', () => {
         selector({ resume: sampleResume })
     )
     const { container } = render(
-      React.createElement(MobilePreviewSheet, { isOpen: false, onClose: vi.fn() })
+      React.createElement(MobilePreviewSheet, {
+        isOpen: false,
+        onClose: vi.fn(),
+      })
     )
     await act(async () => {})
     expect(container.firstChild).toBeNull()
@@ -172,7 +184,10 @@ describe('MobilePreviewSheet', () => {
         selector({ resume: sampleResume })
     )
     const { container } = render(
-      React.createElement(MobilePreviewSheet, { isOpen: true, onClose: vi.fn() })
+      React.createElement(MobilePreviewSheet, {
+        isOpen: true,
+        onClose: vi.fn(),
+      })
     )
     await act(async () => {})
     expect(container.firstChild).not.toBeNull()
@@ -184,7 +199,10 @@ describe('MobilePreviewSheet', () => {
         selector({ resume: sampleResume })
     )
     const { container } = render(
-      React.createElement(MobilePreviewSheet, { isOpen: true, onClose: vi.fn() })
+      React.createElement(MobilePreviewSheet, {
+        isOpen: true,
+        onClose: vi.fn(),
+      })
     )
     await act(async () => {})
     expect(container.textContent).toContain('Resume Preview')
@@ -196,7 +214,10 @@ describe('MobilePreviewSheet', () => {
         selector({ resume: sampleResume })
     )
     const { getByTestId } = render(
-      React.createElement(MobilePreviewSheet, { isOpen: true, onClose: vi.fn() })
+      React.createElement(MobilePreviewSheet, {
+        isOpen: true,
+        onClose: vi.fn(),
+      })
     )
     await act(async () => {})
     expect(getByTestId('template-renderer')).toBeDefined()

@@ -21,9 +21,10 @@ describe('Template Gallery Page — SEO metadata', () => {
     const title =
       typeof metadata.title === 'string'
         ? metadata.title
-        : (metadata.title as { default?: string; absolute?: string })?.absolute ??
+        : ((metadata.title as { default?: string; absolute?: string })
+            ?.absolute ??
           (metadata.title as { default?: string })?.default ??
-          ''
+          '')
     expect(title).toMatch(/free resume templates/i)
   })
 
@@ -73,7 +74,13 @@ describe('Template Gallery Page — renders all 5 templates', () => {
   it('renders exactly 5 template article sections with prefixed ids', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     const { container } = render(React.createElement(TemplatesPage))
-    const templateIds = ['modern', 'classic', 'minimal', 'creative', 'professional']
+    const templateIds = [
+      'modern',
+      'classic',
+      'minimal',
+      'creative',
+      'professional',
+    ]
     const found = templateIds.filter((id) =>
       container.querySelector('#template-' + id)
     )
@@ -92,7 +99,13 @@ describe('Template Gallery Page — renders all 5 templates', () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
     // Each TemplateGallery card has an h2 with just the template name
-    const templateNames = ['Modern', 'Classic', 'Minimal', 'Creative', 'Professional']
+    const templateNames = [
+      'Modern',
+      'Classic',
+      'Minimal',
+      'Creative',
+      'Professional',
+    ]
     for (const name of templateNames) {
       const h2s = screen.getAllByRole('heading', { level: 2 })
       const match = h2s.find((h) => h.textContent?.trim() === name)
@@ -115,7 +128,13 @@ describe('Template Gallery Page — Use This Template CTAs', () => {
   it('each CTA links to /builder?template={id}', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
-    const templateIds = ['modern', 'classic', 'minimal', 'creative', 'professional']
+    const templateIds = [
+      'modern',
+      'classic',
+      'minimal',
+      'creative',
+      'professional',
+    ]
     for (const id of templateIds) {
       const links = screen.getAllByRole('link', {
         name: new RegExp('use ' + id + ' template', 'i'),
@@ -136,7 +155,9 @@ describe('Template Gallery Page — Use This Template CTAs', () => {
   it('professional template CTA links to /builder?template=professional', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
     render(React.createElement(TemplatesPage))
-    const link = screen.getByRole('link', { name: /use professional template/i })
+    const link = screen.getByRole('link', {
+      name: /use professional template/i,
+    })
     expect(link.getAttribute('href')).toBe('/builder?template=professional')
   })
 

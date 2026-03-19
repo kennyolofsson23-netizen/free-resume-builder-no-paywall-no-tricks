@@ -27,7 +27,8 @@ export default function PreviewPage() {
       // Try new codec first (handles 'z:' compressed and plain base64url)
       // Fall back to legacy 'c:'/'j:' prefixed format
       const decoded =
-        hash.startsWith('z:') || (!hash.startsWith('c:') && !hash.startsWith('j:'))
+        hash.startsWith('z:') ||
+        (!hash.startsWith('c:') && !hash.startsWith('j:'))
           ? decodeResumeFromURL(hash)
           : decodeResumeData(hash)
 
