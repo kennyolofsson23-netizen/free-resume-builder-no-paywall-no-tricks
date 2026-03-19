@@ -66,9 +66,9 @@ describe('Resume Store — experience CRUD', () => {
     useResumeStore.getState().addExperience()
     const id = useResumeStore.getState().resume!.experiences[0]!.id
     useResumeStore.getState().updateExperience(id, { jobTitle: 'Engineer' })
-    expect(
-      useResumeStore.getState().resume?.experiences[0]?.jobTitle
-    ).toBe('Engineer')
+    expect(useResumeStore.getState().resume?.experiences[0]?.jobTitle).toBe(
+      'Engineer'
+    )
   })
 
   it('removes an experience', () => {
@@ -85,9 +85,7 @@ describe('Resume Store — experience CRUD', () => {
     useResumeStore.getState().addExperience()
     const exps = useResumeStore.getState().resume!.experiences
     const [first, second] = exps
-    useResumeStore
-      .getState()
-      .reorderExperiences([second!.id, first!.id])
+    useResumeStore.getState().reorderExperiences([second!.id, first!.id])
     const reordered = useResumeStore.getState().resume!.experiences
     expect(reordered[0]!.id).toBe(second!.id)
     expect(reordered[1]!.id).toBe(first!.id)
@@ -105,7 +103,9 @@ describe('Resume Store — skills CRUD', () => {
     useResumeStore.getState().createNewResume()
     useResumeStore.getState().addSkill()
     const id = useResumeStore.getState().resume!.skills[0]!.id
-    useResumeStore.getState().updateSkill(id, { name: 'TypeScript', level: 'expert' })
+    useResumeStore
+      .getState()
+      .updateSkill(id, { name: 'TypeScript', level: 'expert' })
     expect(useResumeStore.getState().resume?.skills[0]?.name).toBe('TypeScript')
   })
 
