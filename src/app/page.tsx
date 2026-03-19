@@ -62,7 +62,8 @@ export default function HomePage() {
                 Real-time Preview
               </h3>
               <p className="text-muted-foreground">
-                See your resume update instantly as you type. Switch between templates with one click.
+                See your resume update instantly as you type. Switch between
+                templates with one click.
               </p>
             </div>
 
@@ -74,7 +75,8 @@ export default function HomePage() {
                 Instant PDF Download
               </h3>
               <p className="text-muted-foreground">
-                Download your resume as a PDF instantly. No waiting, no email, no account needed.
+                Download your resume as a PDF instantly. No waiting, no email,
+                no account needed.
               </p>
             </div>
 
@@ -86,7 +88,8 @@ export default function HomePage() {
                 5 Professional Templates
               </h3>
               <p className="text-muted-foreground">
-                Choose from 5 clean, modern templates designed to pass ATS systems.
+                Choose from 5 clean, modern templates designed to pass ATS
+                systems.
               </p>
             </div>
 
@@ -98,7 +101,8 @@ export default function HomePage() {
                 100% Client-Side
               </h3>
               <p className="text-muted-foreground">
-                Your data never leaves your browser. No servers, no tracking, no corporate BS.
+                Your data never leaves your browser. No servers, no tracking, no
+                corporate BS.
               </p>
             </div>
           </div>

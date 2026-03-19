@@ -2,7 +2,12 @@
  * Resume data types
  */
 
-export type ResumeTemplate = 'modern' | 'classic' | 'minimal' | 'creative' | 'professional'
+export type ResumeTemplate =
+  | 'modern'
+  | 'classic'
+  | 'minimal'
+  | 'creative'
+  | 'professional'
 
 export interface PersonalInfo {
   fullName: string
@@ -85,4 +90,9 @@ export const RESUME_TEMPLATES: ResumeTemplate[] = [
   'professional',
 ]
 
-export const SKILL_LEVELS = ['beginner', 'intermediate', 'advanced', 'expert'] as const
+export const SKILL_LEVELS = [
+  'beginner',
+  'intermediate',
+  'advanced',
+  'expert',
+] as const

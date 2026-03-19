@@ -2,24 +2,25 @@
 
 ## 1. Tech Stack
 
-| Layer | Technology | Rationale |
-|---|---|---|
-| **Framework** | Next.js 16.0.7 (App Router) | Already in package.json. RSC for SEO landing page, client components for builder. |
-| **Language** | TypeScript 5.8 (strict) | Already configured with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`. |
-| **Styling** | Tailwind CSS 4 + CVA | Already in package.json. Utility-first for rapid development, CVA for component variants. |
-| **UI Primitives** | Radix UI | Already in package.json. Accessible, unstyled, keyboard/ARIA support out of the box. |
-| **State Management** | Zustand 4 | Already in package.json. Lightweight, no boilerplate, supports localStorage middleware. |
-| **PDF Generation** | jsPDF 2.5 + html2canvas 1.4 | Already in package.json. Client-side, zero server cost. html2canvas renders preview → jsPDF wraps as PDF. |
-| **Validation** | Zod 3 | Already in package.json. Runtime validation for resume data, JSON import, URL-decoded data. |
-| **Icons** | Lucide React | Already in package.json. Tree-shakeable, consistent style. |
-| **Testing** | Vitest + React Testing Library + Playwright | Already configured. Unit/component tests in Vitest, E2E in Playwright. |
-| **Analytics** | Plausible (script tag) | Cookie-free, GDPR-compliant, no server cost (cloud plan $9/mo). |
-| **Hosting** | Vercel (free tier) | Zero-config Next.js deployment. Static export for most pages. Free tier handles massive traffic for static sites. |
-| **URL Compression** | pako (gzip) | Compress resume data for shareable links. ~30KB library, lazy-loaded. |
+| Layer                | Technology                                  | Rationale                                                                                                         |
+| -------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Framework**        | Next.js 16.0.7 (App Router)                 | Already in package.json. RSC for SEO landing page, client components for builder.                                 |
+| **Language**         | TypeScript 5.8 (strict)                     | Already configured with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`.                              |
+| **Styling**          | Tailwind CSS 4 + CVA                        | Already in package.json. Utility-first for rapid development, CVA for component variants.                         |
+| **UI Primitives**    | Radix UI                                    | Already in package.json. Accessible, unstyled, keyboard/ARIA support out of the box.                              |
+| **State Management** | Zustand 4                                   | Already in package.json. Lightweight, no boilerplate, supports localStorage middleware.                           |
+| **PDF Generation**   | jsPDF 2.5 + html2canvas 1.4                 | Already in package.json. Client-side, zero server cost. html2canvas renders preview → jsPDF wraps as PDF.         |
+| **Validation**       | Zod 3                                       | Already in package.json. Runtime validation for resume data, JSON import, URL-decoded data.                       |
+| **Icons**            | Lucide React                                | Already in package.json. Tree-shakeable, consistent style.                                                        |
+| **Testing**          | Vitest + React Testing Library + Playwright | Already configured. Unit/component tests in Vitest, E2E in Playwright.                                            |
+| **Analytics**        | Plausible (script tag)                      | Cookie-free, GDPR-compliant, no server cost (cloud plan $9/mo).                                                   |
+| **Hosting**          | Vercel (free tier)                          | Zero-config Next.js deployment. Static export for most pages. Free tier handles massive traffic for static sites. |
+| **URL Compression**  | pako (gzip)                                 | Compress resume data for shareable links. ~30KB library, lazy-loaded.                                             |
 
 ### No Database
 
 This application has **zero server-side state**. All data lives in:
+
 1. **localStorage** — primary persistence for active resume data
 2. **URL fragment** — shareable links encode data after `#` (never sent to server)
 3. **Client memory** — Zustand store during active session
@@ -97,7 +98,11 @@ export const certificationSchema = z.object({
 })
 
 export const resumeTemplateSchema = z.enum([
-  'modern', 'classic', 'minimal', 'creative', 'professional'
+  'modern',
+  'classic',
+  'minimal',
+  'creative',
+  'professional',
 ])
 
 export const resumeSchema = z.object({
@@ -109,7 +114,10 @@ export const resumeSchema = z.object({
   skills: z.array(skillSchema).default([]),
   projects: z.array(projectSchema).default([]),
   certifications: z.array(certificationSchema).default([]),
-  accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).default('#2563eb'),
+  accentColor: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/)
+    .default('#2563eb'),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 })
@@ -129,58 +137,60 @@ The "API" is the Zustand store interface. Here are the public methods:
 
 **File: `src/store/resume-store.ts`**
 
-| Method | Input | Output | Description |
-|---|---|---|---|
-| `createNewResume()` | — | `Resume` | Creates empty resume with defaults |
-| `setResume(resume)` | `Resume` | `void` | Replaces entire resume state |
-| `updatePersonalInfo(info)` | `Partial<PersonalInfo>` | `void` | Merges personal info fields |
-| `addExperience()` | — | `void` | Appends empty experience entry |
-| `updateExperience(id, data)` | `string, Partial<Experience>` | `void` | Updates a specific experience |
-| `removeExperience(id)` | `string` | `void` | Removes experience by ID |
-| `reorderExperiences(ids)` | `string[]` | `void` | Sets new order by ID array |
-| `addEducation()` | — | `void` | Appends empty education entry |
-| `updateEducation(id, data)` | `string, Partial<Education>` | `void` | Updates a specific education |
-| `removeEducation(id)` | `string` | `void` | Removes education by ID |
-| `reorderEducation(ids)` | `string[]` | `void` | Sets new order |
-| `addSkill()` | — | `void` | Appends empty skill entry |
-| `updateSkill(id, data)` | `string, Partial<Skill>` | `void` | Updates a skill |
-| `removeSkill(id)` | `string` | `void` | Removes skill by ID |
-| `addProject()` | — | `void` | Appends empty project entry |
-| `updateProject(id, data)` | `string, Partial<Project>` | `void` | Updates a project |
-| `removeProject(id)` | `string` | `void` | Removes project by ID |
-| `addCertification()` | — | `void` | Appends empty certification |
-| `updateCertification(id, data)` | `string, Partial<Certification>` | `void` | Updates a certification |
-| `removeCertification(id)` | `string` | `void` | Removes certification by ID |
-| `updateTemplate(template)` | `ResumeTemplate` | `void` | Switches template |
-| `updateAccentColor(color)` | `string` | `void` | Sets accent color hex |
-| `loadFromLocalStorage()` | — | `void` | Hydrates store from localStorage |
-| `saveToLocalStorage()` | — | `void` | Persists store to localStorage |
-| `exportAsJSON()` | — | `string` | Serializes resume as JSON string |
-| `importFromJSON(json)` | `string` | `boolean` | Parses and validates JSON, returns success |
-| `generateShareableURL()` | — | `string` | Compresses + base64url encodes resume data |
-| `loadFromShareableURL(hash)` | `string` | `boolean` | Decodes + decompresses URL hash data |
-| `reset()` | — | `void` | Clears resume state and localStorage |
+| Method                          | Input                            | Output    | Description                                |
+| ------------------------------- | -------------------------------- | --------- | ------------------------------------------ |
+| `createNewResume()`             | —                                | `Resume`  | Creates empty resume with defaults         |
+| `setResume(resume)`             | `Resume`                         | `void`    | Replaces entire resume state               |
+| `updatePersonalInfo(info)`      | `Partial<PersonalInfo>`          | `void`    | Merges personal info fields                |
+| `addExperience()`               | —                                | `void`    | Appends empty experience entry             |
+| `updateExperience(id, data)`    | `string, Partial<Experience>`    | `void`    | Updates a specific experience              |
+| `removeExperience(id)`          | `string`                         | `void`    | Removes experience by ID                   |
+| `reorderExperiences(ids)`       | `string[]`                       | `void`    | Sets new order by ID array                 |
+| `addEducation()`                | —                                | `void`    | Appends empty education entry              |
+| `updateEducation(id, data)`     | `string, Partial<Education>`     | `void`    | Updates a specific education               |
+| `removeEducation(id)`           | `string`                         | `void`    | Removes education by ID                    |
+| `reorderEducation(ids)`         | `string[]`                       | `void`    | Sets new order                             |
+| `addSkill()`                    | —                                | `void`    | Appends empty skill entry                  |
+| `updateSkill(id, data)`         | `string, Partial<Skill>`         | `void`    | Updates a skill                            |
+| `removeSkill(id)`               | `string`                         | `void`    | Removes skill by ID                        |
+| `addProject()`                  | —                                | `void`    | Appends empty project entry                |
+| `updateProject(id, data)`       | `string, Partial<Project>`       | `void`    | Updates a project                          |
+| `removeProject(id)`             | `string`                         | `void`    | Removes project by ID                      |
+| `addCertification()`            | —                                | `void`    | Appends empty certification                |
+| `updateCertification(id, data)` | `string, Partial<Certification>` | `void`    | Updates a certification                    |
+| `removeCertification(id)`       | `string`                         | `void`    | Removes certification by ID                |
+| `updateTemplate(template)`      | `ResumeTemplate`                 | `void`    | Switches template                          |
+| `updateAccentColor(color)`      | `string`                         | `void`    | Sets accent color hex                      |
+| `loadFromLocalStorage()`        | —                                | `void`    | Hydrates store from localStorage           |
+| `saveToLocalStorage()`          | —                                | `void`    | Persists store to localStorage             |
+| `exportAsJSON()`                | —                                | `string`  | Serializes resume as JSON string           |
+| `importFromJSON(json)`          | `string`                         | `boolean` | Parses and validates JSON, returns success |
+| `generateShareableURL()`        | —                                | `string`  | Compresses + base64url encodes resume data |
+| `loadFromShareableURL(hash)`    | `string`                         | `boolean` | Decodes + decompresses URL hash data       |
+| `reset()`                       | —                                | `void`    | Clears resume state and localStorage       |
 
 ---
 
 ## 4. Page / Route Map
 
-| URL | Page | Component | Data Source | Auth | Description |
-|---|---|---|---|---|---|
-| `/` | Landing | `src/app/page.tsx` | None (static) | None | SEO landing page with counter-positioning copy |
-| `/builder` | Builder | `src/app/builder/page.tsx` | localStorage via Zustand | None | Main resume editor + live preview |
-| `/preview` | Shared Preview | `src/app/preview/page.tsx` | URL hash fragment | None | Read-only resume preview from shareable link |
-| `/templates` | Template Gallery | `src/app/templates/page.tsx` | None (static) | None | Browse all 5 templates with sample data |
+| URL          | Page             | Component                    | Data Source              | Auth | Description                                    |
+| ------------ | ---------------- | ---------------------------- | ------------------------ | ---- | ---------------------------------------------- |
+| `/`          | Landing          | `src/app/page.tsx`           | None (static)            | None | SEO landing page with counter-positioning copy |
+| `/builder`   | Builder          | `src/app/builder/page.tsx`   | localStorage via Zustand | None | Main resume editor + live preview              |
+| `/preview`   | Shared Preview   | `src/app/preview/page.tsx`   | URL hash fragment        | None | Read-only resume preview from shareable link   |
+| `/templates` | Template Gallery | `src/app/templates/page.tsx` | None (static)            | None | Browse all 5 templates with sample data        |
 
 ### Route Details
 
 #### `/` — Landing Page (Server Component)
+
 - Fully server-rendered for SEO
 - Zero client JS beyond Tailwind and analytics
 - CTA button links to `/builder`
 - Contains: hero, feature grid, template previews, trust signals, FAQ, footer with affiliate links
 
 #### `/builder` — Resume Builder (Client Component)
+
 - `"use client"` at page level (everything is interactive)
 - On mount: `loadFromLocalStorage()` or `createNewResume()`
 - Auto-saves to localStorage on 1-second debounce
@@ -189,6 +199,7 @@ The "API" is the Zustand store interface. Here are the public methods:
 - Template selector, download button, share button in toolbar
 
 #### `/preview` — Shareable Preview (Client Component)
+
 - Reads URL hash fragment on mount
 - Decompresses and validates data via Zod
 - Renders read-only resume preview
@@ -196,6 +207,7 @@ The "API" is the Zustand store interface. Here are the public methods:
 - No edit capabilities
 
 #### `/templates` — Template Gallery (Server Component)
+
 - Static page showing all 5 templates with sample data
 - Each template has a "Use This Template" button → `/builder?template=modern`
 - Good for SEO: "free resume templates"
@@ -375,11 +387,13 @@ User navigates to /builder
 ## 7. Security Checklist
 
 ### Authentication & Authorization
+
 - [x] **No auth required** — app is fully anonymous, no user accounts
 - [x] **No server-side state** — nothing to protect on the server
 - [x] **No API routes** — no endpoints to exploit
 
 ### Input Validation
+
 - [x] **All resume data validated with Zod** — both on form input and on JSON import
 - [x] **Shareable link data validated with Zod** — prevents malformed data injection
 - [x] **File import validated** — JSON import runs through Zod before setting state
@@ -387,6 +401,7 @@ User navigates to /builder
 - [x] **URL validation on website/linkedin/github fields** — prevents script injection
 
 ### XSS Prevention
+
 - [x] **React's built-in escaping** — all user content rendered via JSX (auto-escaped)
 - [x] **No `dangerouslySetInnerHTML`** — never used anywhere in the codebase
 - [x] **No `eval()` or `new Function()`** — JSON.parse only, never evaluated as code
@@ -394,6 +409,7 @@ User navigates to /builder
 - [x] **Shareable link data in URL fragment** (after `#`) — never sent to server, decoded client-side only
 
 ### HTTP Security Headers (in `next.config.ts`)
+
 - [x] `X-Content-Type-Options: nosniff` — already configured
 - [x] `X-Frame-Options: DENY` — already configured
 - [x] `Referrer-Policy: strict-origin-when-cross-origin` — already configured
@@ -401,6 +417,7 @@ User navigates to /builder
 - [ ] Add `Content-Security-Policy` header — restrict script sources to `'self'` + analytics + ad network domain
 
 ### Data Privacy
+
 - [x] **Zero data collection** — no server, no database, no tracking cookies
 - [x] **localStorage only** — data stays on user's device
 - [x] **Shareable links use URL fragment** — fragment is never sent to the server in HTTP requests
@@ -408,17 +425,20 @@ User navigates to /builder
 - [x] **No email collection** — not even optional
 
 ### Secrets Management
+
 - [x] **No secrets to manage** — no API keys, no database credentials, no auth tokens
 - [x] **Environment variables only for build-time config** — analytics ID, ad network ID
 - [x] **`.env.example` documents all env vars** — already exists
 
 ### Third-Party Dependencies
+
 - [x] **Minimal dependency surface** — jsPDF, html2canvas, pako are the only non-UI libraries
 - [x] **All dependencies are well-maintained OSS** with active security response
 - [x] **npm audit** should be run in CI before deployment
 - [x] **Dependabot or Renovate** for automated dependency updates
 
 ### Denial of Service
+
 - [x] **Static site on Vercel** — Vercel's edge network handles DDoS
 - [x] **No server-side computation** — nothing to overwhelm
 - [x] **localStorage quota** is browser-enforced (~5-10MB) — natural limit
@@ -428,6 +448,7 @@ User navigates to /builder
 ## 8. Build & Deployment
 
 ### Development
+
 ```bash
 npm run dev          # Next.js dev server with Turbopack
 npm run test         # Vitest unit/component tests
@@ -437,6 +458,7 @@ npm run lint         # ESLint
 ```
 
 ### CI Pipeline (GitHub Actions)
+
 1. `npm ci`
 2. `npm run type-check`
 3. `npm run lint`
@@ -446,6 +468,7 @@ npm run lint         # ESLint
 7. Lighthouse CI check (performance ≥ 90)
 
 ### Deployment
+
 - **Vercel** — auto-deploys from `main` branch
 - Preview deploys on every PR
 - No environment secrets needed for core functionality
@@ -453,11 +476,12 @@ npm run lint         # ESLint
 - Optional: `NEXT_PUBLIC_AD_CLIENT_ID` for ad network
 
 ### Performance Budget
-| Asset | Max Size |
-|---|---|
-| Initial JS bundle | 250KB (gzipped) |
-| jsPDF (lazy) | 300KB (gzipped, loaded on "Download PDF" click) |
-| pako (lazy) | 30KB (gzipped, loaded on "Share" click) |
-| html2canvas (lazy) | 50KB (gzipped, loaded on "Download PDF" click) |
-| CSS | 30KB (gzipped) |
-| Fonts (Inter) | Self-hosted, 50KB subset |
+
+| Asset              | Max Size                                        |
+| ------------------ | ----------------------------------------------- |
+| Initial JS bundle  | 250KB (gzipped)                                 |
+| jsPDF (lazy)       | 300KB (gzipped, loaded on "Download PDF" click) |
+| pako (lazy)        | 30KB (gzipped, loaded on "Share" click)         |
+| html2canvas (lazy) | 50KB (gzipped, loaded on "Download PDF" click)  |
+| CSS                | 30KB (gzipped)                                  |
+| Fonts (Inter)      | Self-hosted, 50KB subset                        |

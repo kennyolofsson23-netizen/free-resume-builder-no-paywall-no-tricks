@@ -156,6 +156,7 @@ MIT - Feel free to use this project however you like.
 ## Support
 
 For issues, feature requests, or questions:
+
 - Open a GitHub issue
 - Tweet at us
 - Email: hello@resumebuilder.local

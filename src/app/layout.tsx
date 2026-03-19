@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Free Resume Builder — No Paywall, No Tricks',
   description:
-    'Professional resume builder with 5 clean templates, real-time preview, and instant PDF download. No email, no account, no paywall. Unlike Zety, we don\'t lock your PDF behind a subscription.',
+    "Professional resume builder with 5 clean templates, real-time preview, and instant PDF download. No email, no account, no paywall. Unlike Zety, we don't lock your PDF behind a subscription.",
   keywords: [
     'resume builder',
     'free resume',
@@ -41,15 +41,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only"
-        >
+        <a href="#main-content" className="sr-only focus:not-sr-only">
           Skip to main content
         </a>
-        <div className="min-h-screen bg-background">
-          {children}
-        </div>
+        <div className="min-h-screen bg-background">{children}</div>
       </body>
     </html>
   )

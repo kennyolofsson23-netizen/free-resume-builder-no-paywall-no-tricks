@@ -23,15 +23,15 @@
 
 ### Core Principles
 
-| Principle | Implementation |
-|-----------|----------------|
-| **Radical Transparency** | No hidden fees, no dark patterns. Copy says exactly what the tool does and doesn't cost. Anti-paywall badge visible above the fold on landing. Counter-positioning copy appears in ≥3 distinct places per SPEC F006. |
-| **Speed First** | Builder loads instantly. Preview re-renders ≤200 ms after input (SPEC requirement). jsPDF + html2canvas lazy-loaded on first "Download PDF" click. PDF generates in <2 s. |
-| **Trust Through Restraint** | Minimal UI chrome. White space over decoration. No fake star-ratings or invented social proof. Affiliate links clearly labeled; never block the primary user journey. |
-| **Content Is the Product** | The resume preview — not the UI shell — is the hero element in the builder. Editor chrome recedes; resume canvas dominates. Preview always white-background (as it will print), even in dark mode. |
-| **Keyboard-First** | Every action reachable without a mouse. Tab order logical. No focus traps outside dialogs and sheets. |
-| **Zero Onboarding Friction** | Builder functional on first visit. No wizard, no splash screen, no account wall. URL param `?template=modern` pre-selects a template (e.g., from `/templates` page). |
-| **Privacy by Design** | No data ever leaves the browser. Shareable links encode data in URL fragment (never sent to server). This is a selling point and must be reflected in copy throughout. |
+| Principle                    | Implementation                                                                                                                                                                                                       |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Radical Transparency**     | No hidden fees, no dark patterns. Copy says exactly what the tool does and doesn't cost. Anti-paywall badge visible above the fold on landing. Counter-positioning copy appears in ≥3 distinct places per SPEC F006. |
+| **Speed First**              | Builder loads instantly. Preview re-renders ≤200 ms after input (SPEC requirement). jsPDF + html2canvas lazy-loaded on first "Download PDF" click. PDF generates in <2 s.                                            |
+| **Trust Through Restraint**  | Minimal UI chrome. White space over decoration. No fake star-ratings or invented social proof. Affiliate links clearly labeled; never block the primary user journey.                                                |
+| **Content Is the Product**   | The resume preview — not the UI shell — is the hero element in the builder. Editor chrome recedes; resume canvas dominates. Preview always white-background (as it will print), even in dark mode.                   |
+| **Keyboard-First**           | Every action reachable without a mouse. Tab order logical. No focus traps outside dialogs and sheets.                                                                                                                |
+| **Zero Onboarding Friction** | Builder functional on first visit. No wizard, no splash screen, no account wall. URL param `?template=modern` pre-selects a template (e.g., from `/templates` page).                                                 |
+| **Privacy by Design**        | No data ever leaves the browser. Shareable links encode data in URL fragment (never sent to server). This is a selling point and must be reflected in copy throughout.                                               |
 
 ### Visual Style
 
@@ -51,77 +51,77 @@ CSS custom properties in `globals.css`; consumed via Tailwind theme tokens. Hex 
 
 #### Light Mode (`:root`)
 
-| Token | HSL | Hex | Usage |
-|-------|-----|-----|-------|
-| `--background` | `0 0% 100%` | `#FFFFFF` | Page background |
-| `--foreground` | `0 0% 3.6%` | `#090909` | Body text, headings |
-| `--card` | `0 0% 100%` | `#FFFFFF` | Card surfaces |
-| `--card-foreground` | `0 0% 3.6%` | `#090909` | Card text |
-| `--muted` | `0 0% 96.1%` | `#F5F5F5` | Subtle backgrounds, disabled states |
-| `--muted-foreground` | `0 0% 45.1%` | `#737373` | Placeholders, helper text |
-| `--border` | `0 0% 89.8%` | `#E5E5E5` | Dividers, input borders |
-| `--input` | `0 0% 89.8%` | `#E5E5E5` | Input border color |
-| `--ring` | `0 0% 3.6%` | `#090909` | Focus rings |
-| `--primary` | `0 0% 9.0%` | `#171717` | Primary buttons, active states |
-| `--primary-foreground` | `0 0% 98%` | `#FAFAFA` | Text on primary buttons |
-| `--secondary` | `0 0% 96.1%` | `#F5F5F5` | Secondary buttons |
-| `--secondary-foreground` | `0 0% 9.0%` | `#171717` | Text on secondary buttons |
-| `--destructive` | `0 84.2% 60.2%` | `#F05252` | Delete, error states |
-| `--destructive-foreground` | `0 0% 98%` | `#FAFAFA` | Text on destructive |
-| `--accent` | `0 0% 9.0%` | `#171717` | Accent surfaces |
-| `--accent-foreground` | `0 0% 98%` | `#FAFAFA` | Text on accent |
+| Token                      | HSL             | Hex       | Usage                               |
+| -------------------------- | --------------- | --------- | ----------------------------------- |
+| `--background`             | `0 0% 100%`     | `#FFFFFF` | Page background                     |
+| `--foreground`             | `0 0% 3.6%`     | `#090909` | Body text, headings                 |
+| `--card`                   | `0 0% 100%`     | `#FFFFFF` | Card surfaces                       |
+| `--card-foreground`        | `0 0% 3.6%`     | `#090909` | Card text                           |
+| `--muted`                  | `0 0% 96.1%`    | `#F5F5F5` | Subtle backgrounds, disabled states |
+| `--muted-foreground`       | `0 0% 45.1%`    | `#737373` | Placeholders, helper text           |
+| `--border`                 | `0 0% 89.8%`    | `#E5E5E5` | Dividers, input borders             |
+| `--input`                  | `0 0% 89.8%`    | `#E5E5E5` | Input border color                  |
+| `--ring`                   | `0 0% 3.6%`     | `#090909` | Focus rings                         |
+| `--primary`                | `0 0% 9.0%`     | `#171717` | Primary buttons, active states      |
+| `--primary-foreground`     | `0 0% 98%`      | `#FAFAFA` | Text on primary buttons             |
+| `--secondary`              | `0 0% 96.1%`    | `#F5F5F5` | Secondary buttons                   |
+| `--secondary-foreground`   | `0 0% 9.0%`     | `#171717` | Text on secondary buttons           |
+| `--destructive`            | `0 84.2% 60.2%` | `#F05252` | Delete, error states                |
+| `--destructive-foreground` | `0 0% 98%`      | `#FAFAFA` | Text on destructive                 |
+| `--accent`                 | `0 0% 9.0%`     | `#171717` | Accent surfaces                     |
+| `--accent-foreground`      | `0 0% 98%`      | `#FAFAFA` | Text on accent                      |
 
 #### Dark Mode (`.dark`)
 
-| Token | HSL | Hex |
-|-------|-----|-----|
-| `--background` | `0 0% 3.6%` | `#090909` |
-| `--foreground` | `0 0% 98%` | `#FAFAFA` |
-| `--card` | `0 0% 5.0%` | `#0D0D0D` |
-| `--muted` | `0 0% 14.9%` | `#262626` |
-| `--muted-foreground` | `0 0% 63.9%` | `#A3A3A3` |
-| `--border` | `0 0% 14.9%` | `#262626` |
-| `--primary` | `0 0% 98%` | `#FAFAFA` |
-| `--primary-foreground` | `0 0% 9.0%` | `#171717` |
-| `--destructive` | `0 72.2% 50.6%` | `#E53E3E` |
+| Token                  | HSL             | Hex       |
+| ---------------------- | --------------- | --------- |
+| `--background`         | `0 0% 3.6%`     | `#090909` |
+| `--foreground`         | `0 0% 98%`      | `#FAFAFA` |
+| `--card`               | `0 0% 5.0%`     | `#0D0D0D` |
+| `--muted`              | `0 0% 14.9%`    | `#262626` |
+| `--muted-foreground`   | `0 0% 63.9%`    | `#A3A3A3` |
+| `--border`             | `0 0% 14.9%`    | `#262626` |
+| `--primary`            | `0 0% 98%`      | `#FAFAFA` |
+| `--primary-foreground` | `0 0% 9.0%`     | `#171717` |
+| `--destructive`        | `0 72.2% 50.6%` | `#E53E3E` |
 
 #### Contextual / Semantic Colors (fixed, non-theme)
 
 Used for feature icons and badges; do **not** vary with dark/light mode.
 
-| Purpose | Background | Icon/Text | Tailwind classes |
-|---------|-----------|-----------|-----------------|
-| Preview / Vision | `#EFF6FF` | `#2563EB` | `bg-blue-100 text-blue-600` |
-| Download / Success | `#F0FDF4` | `#16A34A` | `bg-green-100 text-green-600` |
-| Templates / Creative | `#FAF5FF` | `#9333EA` | `bg-purple-100 text-purple-600` |
-| Privacy / Trust | `#FFFBEB` | `#D97706` | `bg-amber-100 text-amber-600` |
-| Anti-paywall Badge | `#FEF2F2` | `#B91C1C` | `bg-red-100 text-red-700` |
+| Purpose              | Background | Icon/Text | Tailwind classes                |
+| -------------------- | ---------- | --------- | ------------------------------- |
+| Preview / Vision     | `#EFF6FF`  | `#2563EB` | `bg-blue-100 text-blue-600`     |
+| Download / Success   | `#F0FDF4`  | `#16A34A` | `bg-green-100 text-green-600`   |
+| Templates / Creative | `#FAF5FF`  | `#9333EA` | `bg-purple-100 text-purple-600` |
+| Privacy / Trust      | `#FFFBEB`  | `#D97706` | `bg-amber-100 text-amber-600`   |
+| Anti-paywall Badge   | `#FEF2F2`  | `#B91C1C` | `bg-red-100 text-red-700`       |
 
 #### Template Accent Colors (inside resume canvas only)
 
 These are user-selectable via `accentColor` field (hex, default `#2563EB`). Preset palette of 12 colors:
 
-| # | Name | Hex |
-|---|------|-----|
-| 1 | Cobalt Blue | `#2563EB` |
-| 2 | Slate | `#475569` |
-| 3 | Emerald | `#059669` |
-| 4 | Violet | `#7C3AED` |
-| 5 | Rose | `#E11D48` |
-| 6 | Amber | `#D97706` |
-| 7 | Teal | `#0891B2` |
-| 8 | Indigo | `#4F46E5` |
-| 9 | Fuchsia | `#C026D3` |
-| 10 | Orange | `#EA580C` |
-| 11 | Neutral Dark | `#171717` |
-| 12 | Slate Blue | `#1D4ED8` |
+| #   | Name         | Hex       |
+| --- | ------------ | --------- |
+| 1   | Cobalt Blue  | `#2563EB` |
+| 2   | Slate        | `#475569` |
+| 3   | Emerald      | `#059669` |
+| 4   | Violet       | `#7C3AED` |
+| 5   | Rose         | `#E11D48` |
+| 6   | Amber        | `#D97706` |
+| 7   | Teal         | `#0891B2` |
+| 8   | Indigo       | `#4F46E5` |
+| 9   | Fuchsia      | `#C026D3` |
+| 10  | Orange       | `#EA580C` |
+| 11  | Neutral Dark | `#171717` |
+| 12  | Slate Blue   | `#1D4ED8` |
 
 Contrast check rule: if `getContrastRatio(accentColor, '#FFFFFF') < 3.0`, show warning badge "Low contrast — may be hard to read when printed." (SPEC F012)
 
 #### Landing Hero Gradient
 
 ```css
-background: linear-gradient(to bottom right, #0F172A, #1E293B, #0F172A);
+background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
 /* Tailwind: bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 */
 ```
 
@@ -131,20 +131,20 @@ Font: **Inter** (Google Fonts, `subsets: ['latin']`), loaded via `next/font/goog
 
 #### Type Scale
 
-| Role | Tag | Size | Weight | Line-height | Tailwind |
-|------|-----|------|--------|-------------|---------|
-| Display XL | `h1` (landing desktop) | 60px / 3.75rem | 700 | 1.1 | `text-6xl font-bold tracking-tight` |
-| Display L | `h1` (landing tablet) | 48px / 3rem | 700 | 1.1 | `text-5xl font-bold tracking-tight` |
-| Display M | `h1` (landing mobile) | 36px / 2.25rem | 700 | 1.2 | `text-4xl font-bold tracking-tight` |
-| Heading 2 | `h2` | 30px / 1.875rem | 700 | 1.25 | `text-3xl font-bold tracking-tight` |
-| Heading 3 | `h3` | 18px / 1.125rem | 600 | 1.4 | `text-lg font-semibold` |
-| Body Large | `p` | 20px / 1.25rem | 400 | 1.6 | `text-xl` |
-| Body | `p` | 16px / 1rem | 400 | 1.5 | `text-base` |
-| Body Small | `p`, `span` | 14px / 0.875rem | 400 | 1.5 | `text-sm` |
-| Caption | `span` | 12px / 0.75rem | 400 | 1.4 | `text-xs` |
-| Label / UI | `label` | 14px / 0.875rem | 500 | 1 | `text-sm font-medium` |
-| Badge | `span` | 14px / 0.875rem | 600 | 1 | `text-sm font-semibold` |
-| Monospace | code, URL fields | 14px / 0.875rem | 400 | 1.5 | `font-mono text-sm` |
+| Role       | Tag                    | Size            | Weight | Line-height | Tailwind                            |
+| ---------- | ---------------------- | --------------- | ------ | ----------- | ----------------------------------- |
+| Display XL | `h1` (landing desktop) | 60px / 3.75rem  | 700    | 1.1         | `text-6xl font-bold tracking-tight` |
+| Display L  | `h1` (landing tablet)  | 48px / 3rem     | 700    | 1.1         | `text-5xl font-bold tracking-tight` |
+| Display M  | `h1` (landing mobile)  | 36px / 2.25rem  | 700    | 1.2         | `text-4xl font-bold tracking-tight` |
+| Heading 2  | `h2`                   | 30px / 1.875rem | 700    | 1.25        | `text-3xl font-bold tracking-tight` |
+| Heading 3  | `h3`                   | 18px / 1.125rem | 600    | 1.4         | `text-lg font-semibold`             |
+| Body Large | `p`                    | 20px / 1.25rem  | 400    | 1.6         | `text-xl`                           |
+| Body       | `p`                    | 16px / 1rem     | 400    | 1.5         | `text-base`                         |
+| Body Small | `p`, `span`            | 14px / 0.875rem | 400    | 1.5         | `text-sm`                           |
+| Caption    | `span`                 | 12px / 0.75rem  | 400    | 1.4         | `text-xs`                           |
+| Label / UI | `label`                | 14px / 0.875rem | 500    | 1           | `text-sm font-medium`               |
+| Badge      | `span`                 | 14px / 0.875rem | 600    | 1           | `text-sm font-semibold`             |
+| Monospace  | code, URL fields       | 14px / 0.875rem | 400    | 1.5         | `font-mono text-sm`                 |
 
 #### Rules
 
@@ -158,36 +158,36 @@ Font: **Inter** (Google Fonts, `subsets: ['latin']`), loaded via `next/font/goog
 
 Tailwind's 4 px base unit. The project uses multiples of 4.
 
-| Token | px | Typical usage |
-|-------|----|--------------|
-| `space-1` | 4 | Icon gap, tight inline spacing |
-| `space-2` | 8 | Badge padding, input padding Y |
-| `space-3` | 12 | Small component gaps |
-| `space-4` | 16 | Card padding, standard form gaps |
-| `space-6` | 24 | Section sub-gaps |
-| `space-8` | 32 | Large card padding |
-| `space-12` | 48 | Section vertical breathing room |
-| `space-24` | 96 | Landing page section `py-24` |
+| Token      | px  | Typical usage                    |
+| ---------- | --- | -------------------------------- |
+| `space-1`  | 4   | Icon gap, tight inline spacing   |
+| `space-2`  | 8   | Badge padding, input padding Y   |
+| `space-3`  | 12  | Small component gaps             |
+| `space-4`  | 16  | Card padding, standard form gaps |
+| `space-6`  | 24  | Section sub-gaps                 |
+| `space-8`  | 32  | Large card padding               |
+| `space-12` | 48  | Section vertical breathing room  |
+| `space-24` | 96  | Landing page section `py-24`     |
 
 #### Layout Widths
 
-| Context | Max-width | Tailwind |
-|---------|-----------|---------|
-| Default content | 896px | `max-w-4xl` |
-| Narrow CTA / forms | 672px | `max-w-2xl` |
-| Builder editor panel | 480px | `w-[480px]` (fixed) |
-| Resume canvas (A4 @ 96 dpi) | 816px | `w-[816px]` |
-| Resume canvas height (A4) | 1056px | `min-h-[1056px]` |
-| Full bleed | 100% | — |
+| Context                     | Max-width | Tailwind            |
+| --------------------------- | --------- | ------------------- |
+| Default content             | 896px     | `max-w-4xl`         |
+| Narrow CTA / forms          | 672px     | `max-w-2xl`         |
+| Builder editor panel        | 480px     | `w-[480px]` (fixed) |
+| Resume canvas (A4 @ 96 dpi) | 816px     | `w-[816px]`         |
+| Resume canvas height (A4)   | 1056px    | `min-h-[1056px]`    |
+| Full bleed                  | 100%      | —                   |
 
 #### Border Radius
 
-| Token | Value | Tailwind |
-|-------|-------|---------|
-| `--radius` | 8px | `rounded-lg` |
-| Medium | 6px | `rounded-md` |
-| Small | 4px | `rounded-sm` |
-| Pill | 9999px | `rounded-full` |
+| Token      | Value  | Tailwind       |
+| ---------- | ------ | -------------- |
+| `--radius` | 8px    | `rounded-lg`   |
+| Medium     | 6px    | `rounded-md`   |
+| Small      | 4px    | `rounded-sm`   |
+| Pill       | 9999px | `rounded-full` |
 
 ---
 
@@ -520,15 +520,15 @@ Each trust signal: icon (Lucide) + `text-sm font-semibold` heading + `text-xs te
 
 #### Landing Layout — Breakpoints
 
-| Element | Mobile (0–639px) | sm (640–767px) | md (768px+) | lg (1024px+) |
-|---------|-----------------|----------------|-------------|--------------|
-| Hero padding | `py-16 px-4` | `py-20 px-6` | `py-24 px-8` | Same |
-| H1 size | `text-4xl` | `text-5xl` | `text-5xl` | `text-6xl` |
-| CTA layout | `flex-col w-full` | `flex-row` | Same | Same |
-| Feature grid | `grid-cols-1` | `grid-cols-1` | `grid-cols-2` | Same |
-| Trust signals | `grid-cols-2` | `grid-cols-2` | `grid-cols-4` | Same |
-| Template showcase tabs | scrollable | scrollable | full-width | full-width |
-| Max content width | `100%` | `100%` | `100%` | `max-w-4xl mx-auto` |
+| Element                | Mobile (0–639px)  | sm (640–767px) | md (768px+)   | lg (1024px+)        |
+| ---------------------- | ----------------- | -------------- | ------------- | ------------------- |
+| Hero padding           | `py-16 px-4`      | `py-20 px-6`   | `py-24 px-8`  | Same                |
+| H1 size                | `text-4xl`        | `text-5xl`     | `text-5xl`    | `text-6xl`          |
+| CTA layout             | `flex-col w-full` | `flex-row`     | Same          | Same                |
+| Feature grid           | `grid-cols-1`     | `grid-cols-1`  | `grid-cols-2` | Same                |
+| Trust signals          | `grid-cols-2`     | `grid-cols-2`  | `grid-cols-4` | Same                |
+| Template showcase tabs | scrollable        | scrollable     | full-width    | full-width          |
+| Max content width      | `100%`            | `100%`         | `100%`        | `max-w-4xl mx-auto` |
 
 ---
 
@@ -597,6 +597,7 @@ Each trust signal: icon (Lucide) + `text-sm font-semibold` heading + `text-xs te
 ```
 
 Tab trigger badges: show item count on collapsed tabs
+
 - e.g., `Experience (2)` when 2 items exist
 - Badge: `bg-muted text-muted-foreground text-xs rounded-full px-1.5 py-0.5`
 
@@ -676,6 +677,7 @@ Uses Edit/Preview toggle tabs + mobile preview bottom sheet:
 ```
 
 Canvas scale formula:
+
 ```ts
 const scale = Math.min(1, (previewPanelWidth - 64) / 816)
 // 64 = 32px padding each side
@@ -767,7 +769,10 @@ Static RSC page. Good for SEO ("free resume templates").
 ```tsx
 <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-border bg-background px-4">
   {/* Logo / Back */}
-  <Link href="/" className="flex items-center gap-1.5 text-sm font-semibold text-foreground mr-2">
+  <Link
+    href="/"
+    className="flex items-center gap-1.5 text-sm font-semibold text-foreground mr-2"
+  >
     <FileText className="h-4 w-4" aria-hidden="true" />
     <span className="hidden sm:inline">Resume Builder</span>
   </Link>
@@ -783,7 +788,9 @@ Static RSC page. Good for SEO ("free resume templates").
       </SelectTrigger>
       <SelectContent>
         {RESUME_TEMPLATES.map((t) => (
-          <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>
+          <SelectItem key={t} value={t} className="capitalize">
+            {t}
+          </SelectItem>
         ))}
       </SelectContent>
     </Select>
@@ -792,7 +799,12 @@ Static RSC page. Good for SEO ("free resume templates").
   {/* Accent Color */}
   <Popover>
     <PopoverTrigger asChild>
-      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="Pick accent color">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-8 w-8 p-0"
+        aria-label="Pick accent color"
+      >
         <span
           className="h-5 w-5 rounded-full border-2 border-border"
           style={{ backgroundColor: accentColor }}
@@ -813,7 +825,12 @@ Static RSC page. Good for SEO ("free resume templates").
   {/* Share */}
   <Tooltip>
     <TooltipTrigger asChild>
-      <Button variant="outline" size="sm" className="h-8 hidden sm:flex" onClick={handleShare}>
+      <Button
+        variant="outline"
+        size="sm"
+        className="h-8 hidden sm:flex"
+        onClick={handleShare}
+      >
         <Share2 className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
         Share
       </Button>
@@ -822,11 +839,18 @@ Static RSC page. Good for SEO ("free resume templates").
   </Tooltip>
 
   {/* Download */}
-  <Button size="sm" className="h-8" onClick={handleDownload} disabled={isGenerating} aria-busy={isGenerating}>
-    {isGenerating
-      ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-      : <Download className="h-3.5 w-3.5" aria-hidden="true" />
-    }
+  <Button
+    size="sm"
+    className="h-8"
+    onClick={handleDownload}
+    disabled={isGenerating}
+    aria-busy={isGenerating}
+  >
+    {isGenerating ? (
+      <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+    ) : (
+      <Download className="h-3.5 w-3.5" aria-hidden="true" />
+    )}
     <span className="ml-1.5 hidden sm:inline">
       {isGenerating ? 'Generating…' : 'Download PDF'}
     </span>
@@ -835,7 +859,12 @@ Static RSC page. Good for SEO ("free resume templates").
   {/* Overflow Menu */}
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
-      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="More options">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        aria-label="More options"
+      >
         <MoreHorizontal className="h-4 w-4" />
       </Button>
     </DropdownMenuTrigger>
@@ -865,10 +894,10 @@ Static RSC page. Good for SEO ("free resume templates").
 
 **Toolbar button states summary:**
 
-| Button | Idle | Loading | Success | Error |
-|--------|------|---------|---------|-------|
+| Button   | Idle    | Loading                              | Success                       | Error                       |
+| -------- | ------- | ------------------------------------ | ----------------------------- | --------------------------- |
 | Download | Default | Spinner + "Generating…" + `disabled` | Check + "Downloaded!" (1.5 s) | `AlertCircle` + "Try Again" |
-| Share | Outline | Spinner + "Copying…" | Check + "Copied!" (2 s) | Toast error |
+| Share    | Outline | Spinner + "Copying…"                 | Check + "Copied!" (2 s)       | Toast error                 |
 
 ---
 
@@ -889,7 +918,11 @@ Static RSC page. Good for SEO ("free resume templates").
       { value: 'education', label: 'Education', count: education.length },
       { value: 'skills', label: 'Skills', count: skills.length },
       { value: 'projects', label: 'Projects', count: projects.length },
-      { value: 'certifications', label: 'Certifications', count: certifications.length },
+      {
+        value: 'certifications',
+        label: 'Certifications',
+        count: certifications.length,
+      },
     ].map(({ value, label, count }) => (
       <TabsTrigger
         key={value}
@@ -900,8 +933,10 @@ Static RSC page. Good for SEO ("free resume templates").
       >
         {label}
         {count > 0 && (
-          <span className="ml-1.5 rounded-full bg-muted px-1.5 py-0.5 text-[10px]
-                           leading-none text-muted-foreground">
+          <span
+            className="ml-1.5 rounded-full bg-muted px-1.5 py-0.5 text-[10px]
+                           leading-none text-muted-foreground"
+          >
             {count}
           </span>
         )}
@@ -955,19 +990,23 @@ Reusable collapsible wrapper for Experience, Education, Projects, Certifications
 **shadcn:** `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`, `Button`, `AlertDialog`
 
 ```tsx
-<AccordionItem value={id} className="border border-border rounded-md mb-2">
+;<AccordionItem value={id} className="border border-border rounded-md mb-2">
   <AccordionTrigger
     className="flex items-center gap-2 px-3 py-3 text-sm font-medium hover:no-underline
                hover:bg-muted/50 rounded-t-md [&[data-state=open]]:rounded-b-none"
   >
     {/* Drag handle (future DnD) */}
-    <GripVertical className="h-4 w-4 text-muted-foreground flex-shrink-0 cursor-grab"
-                  aria-hidden="true" />
+    <GripVertical
+      className="h-4 w-4 text-muted-foreground flex-shrink-0 cursor-grab"
+      aria-hidden="true"
+    />
     {/* Item title */}
     <span className="flex-1 text-left text-sm truncate">{primaryLabel}</span>
     {/* Optional secondary label */}
     {secondaryLabel && (
-      <span className="text-xs text-muted-foreground mr-2 hidden sm:block">{secondaryLabel}</span>
+      <span className="text-xs text-muted-foreground mr-2 hidden sm:block">
+        {secondaryLabel}
+      </span>
     )}
     {/* Delete button */}
     <Button
@@ -975,19 +1014,22 @@ Reusable collapsible wrapper for Experience, Education, Projects, Certifications
       size="icon"
       className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10
                  flex-shrink-0"
-      onClick={(e) => { e.stopPropagation(); setShowDeleteDialog(true) }}
+      onClick={(e) => {
+        e.stopPropagation()
+        setShowDeleteDialog(true)
+      }}
       aria-label={`Delete ${primaryLabel}`}
     >
       <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
     </Button>
   </AccordionTrigger>
-  <AccordionContent className="px-3 pb-4 pt-2">
-    {children}
-  </AccordionContent>
+  <AccordionContent className="px-3 pb-4 pt-2">{children}</AccordionContent>
 </AccordionItem>
 
-{/* Delete confirmation */}
-<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+{
+  /* Delete confirmation */
+}
+;<AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
   <AlertDialogContent>
     <AlertDialogHeader>
       <AlertDialogTitle>Delete "{primaryLabel}"?</AlertDialogTitle>
@@ -1057,7 +1099,10 @@ Inline add-row (no accordion; skills are brief):
 <div className="space-y-1 p-4">
   {/* Existing skills */}
   {skills.map((skill) => (
-    <div key={skill.id} className="flex items-center gap-2 py-1.5 border-b border-border last:border-0">
+    <div
+      key={skill.id}
+      className="flex items-center gap-2 py-1.5 border-b border-border last:border-0"
+    >
       <span className="flex-1 text-sm">{skill.name}</span>
       <SkillLevelBadge level={skill.level} />
       <Button
@@ -1093,8 +1138,12 @@ Inline add-row (no accordion; skills are brief):
         <SelectItem value="expert">Expert</SelectItem>
       </SelectContent>
     </Select>
-    <Button size="sm" className="h-8 px-3" onClick={handleAddSkill}
-            aria-label="Add skill">
+    <Button
+      size="sm"
+      className="h-8 px-3"
+      onClick={handleAddSkill}
+      aria-label="Add skill"
+    >
       <Plus className="h-3.5 w-3.5" aria-hidden="true" />
     </Button>
   </div>
@@ -1103,12 +1152,12 @@ Inline add-row (no accordion; skills are brief):
 
 **Skill level badge colors:**
 
-| Level | Tailwind classes |
-|-------|-----------------|
-| `beginner` | `bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300` |
-| `intermediate` | `bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300` |
-| `advanced` | `bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300` |
-| `expert` | `bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300` |
+| Level          | Tailwind classes                                                           |
+| -------------- | -------------------------------------------------------------------------- |
+| `beginner`     | `bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300`        |
+| `intermediate` | `bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300`         |
+| `advanced`     | `bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300` |
+| `expert`       | `bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300`     |
 
 ---
 
@@ -1119,14 +1168,18 @@ Inline add-row (no accordion; skills are brief):
 ```tsx
 // 12 preset swatches in a 4×3 grid
 <div className="space-y-3">
-  <Label className="text-xs font-medium text-muted-foreground">Accent Color</Label>
+  <Label className="text-xs font-medium text-muted-foreground">
+    Accent Color
+  </Label>
   <div className="grid grid-cols-6 gap-2">
     {ACCENT_COLORS.map(({ hex, name }) => (
       <button
         key={hex}
         className={cn(
-          "h-7 w-7 rounded-full border-2 transition-transform hover:scale-110",
-          accentColor === hex ? "border-foreground scale-110" : "border-transparent"
+          'h-7 w-7 rounded-full border-2 transition-transform hover:scale-110',
+          accentColor === hex
+            ? 'border-foreground scale-110'
+            : 'border-transparent'
         )}
         style={{ backgroundColor: hex }}
         onClick={() => updateAccentColor(hex)}
@@ -1137,8 +1190,11 @@ Inline add-row (no accordion; skills are brief):
   </div>
   {/* Custom hex input */}
   <div className="flex items-center gap-2">
-    <div className="h-7 w-7 rounded-full border border-border flex-shrink-0"
-         style={{ backgroundColor: accentColor }} aria-hidden="true" />
+    <div
+      className="h-7 w-7 rounded-full border border-border flex-shrink-0"
+      style={{ backgroundColor: accentColor }}
+      aria-hidden="true"
+    />
     <Input
       value={accentColor}
       onChange={(e) => handleHexInput(e.target.value)}
@@ -1182,17 +1238,23 @@ Inline add-row (no accordion; skills are brief):
       {RESUME_TEMPLATES.map((t) => (
         <button
           key={t}
-          onClick={() => { updateTemplate(t); close() }}
+          onClick={() => {
+            updateTemplate(t)
+            close()
+          }}
           className={cn(
-            "flex flex-col items-center gap-1.5 rounded-lg border-2 p-2 transition-colors",
+            'flex flex-col items-center gap-1.5 rounded-lg border-2 p-2 transition-colors',
             template === t
-              ? "border-primary bg-primary/5"
-              : "border-transparent hover:border-border"
+              ? 'border-primary bg-primary/5'
+              : 'border-transparent hover:border-border'
           )}
           aria-pressed={template === t}
           aria-label={`${t} template`}
         >
-          <TemplateThumbnail name={t} className="w-full aspect-[3/4] rounded shadow-sm" />
+          <TemplateThumbnail
+            name={t}
+            className="w-full aspect-[3/4] rounded shadow-sm"
+          />
           <span className="text-[10px] font-medium capitalize">{t}</span>
         </button>
       ))}
@@ -1258,13 +1320,13 @@ Inline add-row (no accordion; skills are brief):
 
 **Template visual specs (inside canvas — printed content):**
 
-| Template | Layout | Accent usage | Serif? | Notes |
-|----------|--------|-------------|--------|-------|
-| Modern | Single-column + skills sidebar (2-col) | Section heading underlines, links | No | Accent color from `accentColor` |
-| Classic | Single-column | Horizontal rules | Yes (headings) | Dark, traditional feel |
-| Minimal | Single-column | None (pure black) | No | Maximum whitespace |
-| Creative | Bold accent header block | Header background, icon bullets | No | Most visually distinctive |
-| Professional | 2-col (dark sidebar + main) | Sidebar background | No | Corporate-appropriate |
+| Template     | Layout                                 | Accent usage                      | Serif?         | Notes                           |
+| ------------ | -------------------------------------- | --------------------------------- | -------------- | ------------------------------- |
+| Modern       | Single-column + skills sidebar (2-col) | Section heading underlines, links | No             | Accent color from `accentColor` |
+| Classic      | Single-column                          | Horizontal rules                  | Yes (headings) | Dark, traditional feel          |
+| Minimal      | Single-column                          | None (pure black)                 | No             | Maximum whitespace              |
+| Creative     | Bold accent header block               | Header background, icon bullets   | No             | Most visually distinctive       |
+| Professional | 2-col (dark sidebar + main)            | Sidebar background                | No             | Corporate-appropriate           |
 
 ---
 
@@ -1281,22 +1343,30 @@ interface FormFieldProps {
 }
 
 // Rendered:
-<div className="space-y-1.5">
+;<div className="space-y-1.5">
   <Label htmlFor={htmlFor} className="text-sm font-medium leading-none">
     {label}
     {required && (
-      <span aria-hidden="true" className="text-destructive ml-0.5">*</span>
+      <span aria-hidden="true" className="text-destructive ml-0.5">
+        *
+      </span>
     )}
   </Label>
   {children}
   {error && (
-    <p id={`${htmlFor}-error`} className="flex items-center gap-1 text-xs text-destructive" role="alert">
+    <p
+      id={`${htmlFor}-error`}
+      className="flex items-center gap-1 text-xs text-destructive"
+      role="alert"
+    >
       <AlertCircle className="h-3 w-3 flex-shrink-0" aria-hidden="true" />
       {error}
     </p>
   )}
   {hint && !error && (
-    <p id={`${htmlFor}-hint`} className="text-xs text-muted-foreground">{hint}</p>
+    <p id={`${htmlFor}-hint`} className="text-xs text-muted-foreground">
+      {hint}
+    </p>
   )}
 </div>
 ```
@@ -1353,10 +1423,11 @@ const labels: Record<DownloadState, string> = {
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      {isDark
-        ? <Sun className="h-4 w-4" aria-hidden="true" />
-        : <Moon className="h-4 w-4" aria-hidden="true" />
-      }
+      {isDark ? (
+        <Sun className="h-4 w-4" aria-hidden="true" />
+      ) : (
+        <Moon className="h-4 w-4" aria-hidden="true" />
+      )}
     </Button>
   </TooltipTrigger>
   <TooltipContent>{isDark ? 'Light mode' : 'Dark mode'}</TooltipContent>
@@ -1370,18 +1441,17 @@ const labels: Record<DownloadState, string> = {
 Shown below the resume canvas in the preview panel (desktop). Never overlaps the canvas. Never shown on `/preview` page.
 
 ```tsx
-<div className="mx-auto mt-4 max-w-[816px] rounded-md border border-border bg-card p-3
-                flex items-center justify-between gap-4 text-sm">
+<div
+  className="mx-auto mt-4 max-w-[816px] rounded-md border border-border bg-card p-3
+                flex items-center justify-between gap-4 text-sm"
+>
   <div>
     <p className="font-medium">Want AI-powered suggestions?</p>
-    <p className="text-xs text-muted-foreground">Try Kickresume for resume content ideas.</p>
+    <p className="text-xs text-muted-foreground">
+      Try Kickresume for resume content ideas.
+    </p>
   </div>
-  <Button
-    variant="outline"
-    size="sm"
-    asChild
-    className="flex-shrink-0"
-  >
+  <Button variant="outline" size="sm" asChild className="flex-shrink-0">
     <a
       href="https://www.kickresume.com/?ref=freeresume"
       target="_blank"
@@ -1396,6 +1466,7 @@ Shown below the resume canvas in the preview panel (desktop). Never overlaps the
 ```
 
 Rules per SPEC:
+
 - Never before PDF download
 - Never in the PDF itself
 - Never as a pop-up or interstitial
@@ -1407,8 +1478,8 @@ Rules per SPEC:
 
 ```tsx
 <div className="rounded-lg border border-border bg-card p-6 hover:shadow-md transition-shadow duration-200">
-  <div className={cn("mb-4 inline-block rounded-lg p-3", iconBg)}>
-    <Icon className={cn("h-6 w-6", iconColor)} aria-hidden="true" />
+  <div className={cn('mb-4 inline-block rounded-lg p-3', iconBg)}>
+    <Icon className={cn('h-6 w-6', iconColor)} aria-hidden="true" />
   </div>
   <h3 className="mb-2 text-lg font-semibold text-foreground">{title}</h3>
   <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
@@ -1441,8 +1512,8 @@ Rules per SPEC:
     <AlertDialogHeader>
       <AlertDialogTitle>Start a new resume?</AlertDialogTitle>
       <AlertDialogDescription>
-        This will clear your current resume. Export your data first if you want to keep it.
-        This action cannot be undone.
+        This will clear your current resume. Export your data first if you want
+        to keep it. This action cannot be undone.
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
@@ -1464,7 +1535,9 @@ Rules per SPEC:
 
 ```tsx
 <div className="border-t border-border bg-muted/50 py-8 text-center">
-  <p className="text-lg font-semibold mb-2">Like this resume? Build yours for free.</p>
+  <p className="text-lg font-semibold mb-2">
+    Like this resume? Build yours for free.
+  </p>
   <p className="text-sm text-muted-foreground mb-4">
     No account. No email. No paywall. Takes less than 10 minutes.
   </p>
@@ -1492,12 +1565,12 @@ Rules per SPEC:
 </div>
 ```
 
-| Icon | Title | Description |
-|------|-------|-------------|
-| `Lock` | 100% Private | Your data never leaves your browser |
-| `Zap` | Instant Preview | Updates in under 200ms as you type |
-| `CheckCircle` | ATS Friendly | Text is selectable, not rasterized |
-| `Globe` | Shareable Links | Share read-only links without accounts |
+| Icon          | Title           | Description                            |
+| ------------- | --------------- | -------------------------------------- |
+| `Lock`        | 100% Private    | Your data never leaves your browser    |
+| `Zap`         | Instant Preview | Updates in under 200ms as you type     |
+| `CheckCircle` | ATS Friendly    | Text is selectable, not rasterized     |
+| `Globe`       | Shareable Links | Share read-only links without accounts |
 
 ---
 
@@ -1507,22 +1580,22 @@ Rules per SPEC:
 
 All combinations meet WCAG 2.2 AA: 4.5:1 for normal text, 3:1 for large text (≥18pt or ≥14pt bold).
 
-| Combination | Foreground | Background | Ratio | Pass |
-|------------|-----------|-----------|-------|------|
-| Body text | `#090909` | `#FFFFFF` | 21:1 | ✅ |
-| Muted text | `#737373` | `#FFFFFF` | 4.6:1 | ✅ AA |
-| Primary button text | `#FAFAFA` | `#171717` | 18.1:1 | ✅ |
-| Hero body (slate-300) | `#CBD5E1` | `#0F172A` | 9.5:1 | ✅ |
-| Hero h1 | `#FFFFFF` | `#0F172A` | 19.1:1 | ✅ |
-| Anti-paywall badge | `#B91C1C` (red-700) | `#FEF2F2` (red-50) | 6.1:1 | ✅ |
-| Destructive button | `#FAFAFA` | `#F05252` | 4.7:1 | ✅ |
-| Error text | `#F05252` | `#FFFFFF` | 3.5:1 | ✅ (bold) |
-| Tab trigger (active) | `#090909` | `#FFFFFF` | 21:1 | ✅ |
-| Tab trigger (muted) | `#737373` | `#FFFFFF` | 4.6:1 | ✅ AA |
-| Skill badge beginner | `#475569` | `#F1F5F9` | 5.3:1 | ✅ |
-| Skill badge intermediate | `#1D4ED8` | `#EFF6FF` | 7.2:1 | ✅ |
-| Skill badge advanced | `#6D28D9` | `#F5F3FF` | 6.8:1 | ✅ |
-| Skill badge expert | `#15803D` | `#F0FDF4` | 7.5:1 | ✅ |
+| Combination              | Foreground          | Background         | Ratio  | Pass      |
+| ------------------------ | ------------------- | ------------------ | ------ | --------- |
+| Body text                | `#090909`           | `#FFFFFF`          | 21:1   | ✅        |
+| Muted text               | `#737373`           | `#FFFFFF`          | 4.6:1  | ✅ AA     |
+| Primary button text      | `#FAFAFA`           | `#171717`          | 18.1:1 | ✅        |
+| Hero body (slate-300)    | `#CBD5E1`           | `#0F172A`          | 9.5:1  | ✅        |
+| Hero h1                  | `#FFFFFF`           | `#0F172A`          | 19.1:1 | ✅        |
+| Anti-paywall badge       | `#B91C1C` (red-700) | `#FEF2F2` (red-50) | 6.1:1  | ✅        |
+| Destructive button       | `#FAFAFA`           | `#F05252`          | 4.7:1  | ✅        |
+| Error text               | `#F05252`           | `#FFFFFF`          | 3.5:1  | ✅ (bold) |
+| Tab trigger (active)     | `#090909`           | `#FFFFFF`          | 21:1   | ✅        |
+| Tab trigger (muted)      | `#737373`           | `#FFFFFF`          | 4.6:1  | ✅ AA     |
+| Skill badge beginner     | `#475569`           | `#F1F5F9`          | 5.3:1  | ✅        |
+| Skill badge intermediate | `#1D4ED8`           | `#EFF6FF`          | 7.2:1  | ✅        |
+| Skill badge advanced     | `#6D28D9`           | `#F5F3FF`          | 6.8:1  | ✅        |
+| Skill badge expert       | `#15803D`           | `#F0FDF4`          | 7.5:1  | ✅        |
 
 > Placeholder text (#A3A3A3 on white = 2.6:1) is exempt from WCAG 1.4.3 as it is not functional content.
 
@@ -1574,63 +1647,63 @@ All combinations meet WCAG 2.2 AA: 4.5:1 for normal text, 3:1 for large text (�
 
 #### Component Keyboard Interactions
 
-| Component | Key | Action |
-|-----------|-----|--------|
-| `<Tabs>` tab list | `←` `→` | Move focus between tabs, auto-activate |
-| `<Accordion>` trigger | `Enter` / `Space` | Toggle open/close |
-| `<Select>` | `↑` `↓` | Navigate options when open |
-| `<Select>` | `Enter` / `Space` | Open; confirm selection |
-| `<AlertDialog>` | `Esc` | Close (Cancel) |
-| `<Sheet>` | `Esc` | Close |
-| `<Popover>` | `Esc` | Close |
-| `<DropdownMenu>` | `↑` `↓` | Navigate items |
-| `<DropdownMenu>` | `Enter` | Activate item |
-| Skill add row `<Input>` | `Enter` | Add skill (same as clicking + button) |
-| Color swatch buttons | `Enter` / `Space` | Select color |
-| Template thumbnail buttons | `Enter` / `Space` | Select template |
+| Component                  | Key               | Action                                 |
+| -------------------------- | ----------------- | -------------------------------------- |
+| `<Tabs>` tab list          | `←` `→`           | Move focus between tabs, auto-activate |
+| `<Accordion>` trigger      | `Enter` / `Space` | Toggle open/close                      |
+| `<Select>`                 | `↑` `↓`           | Navigate options when open             |
+| `<Select>`                 | `Enter` / `Space` | Open; confirm selection                |
+| `<AlertDialog>`            | `Esc`             | Close (Cancel)                         |
+| `<Sheet>`                  | `Esc`             | Close                                  |
+| `<Popover>`                | `Esc`             | Close                                  |
+| `<DropdownMenu>`           | `↑` `↓`           | Navigate items                         |
+| `<DropdownMenu>`           | `Enter`           | Activate item                          |
+| Skill add row `<Input>`    | `Enter`           | Add skill (same as clicking + button)  |
+| Color swatch buttons       | `Enter` / `Space` | Select color                           |
+| Template thumbnail buttons | `Enter` / `Space` | Select template                        |
 
 ### 6.4 ARIA Attributes Reference
 
-| Element | ARIA attributes |
-|---------|----------------|
-| Skip link | Points to `id="main-content"` |
-| Builder `<main>` | `id="main-content"` |
-| Section tabs list | `role="tablist"`, `aria-label="Resume sections"` |
-| Tab triggers | `role="tab"`, `aria-selected`, `aria-controls` |
-| Tab panels | `role="tabpanel"`, `aria-labelledby` |
-| Accordion items | `aria-expanded`, `aria-controls` on trigger |
-| Resume canvas | `role="region"`, `aria-label="Resume preview"`, `aria-live="polite"`, `aria-atomic="false"` |
-| Template announce | Hidden `aria-live="polite"` region: `"[name] template selected"` |
-| Download button | `aria-busy={generating}`, `aria-label` (changes per state) |
-| Share button | `aria-label` (changes per state) |
-| Delete buttons | `aria-label="Delete [item name]"` |
-| Template thumbnails | `aria-pressed={selected}`, `aria-label="[name] template"` |
-| Color swatches | `aria-pressed={selected}`, `aria-label="[name] accent color (selected)"` |
-| Required field `*` | `aria-hidden="true"` on `*`; field has `aria-required="true"` |
-| Error messages | `role="alert"`, `id` linked via `aria-describedby` on input |
-| Empty states | `role="status"` |
-| Anti-paywall badge | `role="note"` |
-| Feature/trust icons | `aria-hidden="true"` (decorative) |
-| Affiliate link | `aria-label="Try Kickresume (affiliate link, opens in new tab)"` |
-| Toast (info/success) | `role="status"` (Sonner default) |
-| Toast (error) | `role="alert"` (Sonner default) |
+| Element              | ARIA attributes                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| Skip link            | Points to `id="main-content"`                                                               |
+| Builder `<main>`     | `id="main-content"`                                                                         |
+| Section tabs list    | `role="tablist"`, `aria-label="Resume sections"`                                            |
+| Tab triggers         | `role="tab"`, `aria-selected`, `aria-controls`                                              |
+| Tab panels           | `role="tabpanel"`, `aria-labelledby`                                                        |
+| Accordion items      | `aria-expanded`, `aria-controls` on trigger                                                 |
+| Resume canvas        | `role="region"`, `aria-label="Resume preview"`, `aria-live="polite"`, `aria-atomic="false"` |
+| Template announce    | Hidden `aria-live="polite"` region: `"[name] template selected"`                            |
+| Download button      | `aria-busy={generating}`, `aria-label` (changes per state)                                  |
+| Share button         | `aria-label` (changes per state)                                                            |
+| Delete buttons       | `aria-label="Delete [item name]"`                                                           |
+| Template thumbnails  | `aria-pressed={selected}`, `aria-label="[name] template"`                                   |
+| Color swatches       | `aria-pressed={selected}`, `aria-label="[name] accent color (selected)"`                    |
+| Required field `*`   | `aria-hidden="true"` on `*`; field has `aria-required="true"`                               |
+| Error messages       | `role="alert"`, `id` linked via `aria-describedby` on input                                 |
+| Empty states         | `role="status"`                                                                             |
+| Anti-paywall badge   | `role="note"`                                                                               |
+| Feature/trust icons  | `aria-hidden="true"` (decorative)                                                           |
+| Affiliate link       | `aria-label="Try Kickresume (affiliate link, opens in new tab)"`                            |
+| Toast (info/success) | `role="status"` (Sonner default)                                                            |
+| Toast (error)        | `role="alert"` (Sonner default)                                                             |
 
 ### 6.5 Touch Targets
 
 Minimum **44×44 CSS px** for all interactive elements (WCAG 2.5.5):
 
-| Component | Minimum size | Implementation |
-|-----------|-------------|----------------|
-| Primary CTA buttons | 48px height | `h-12 px-8` |
-| Default `<Button>` | 40px height | Use `h-11` where touch is expected |
-| Icon buttons in toolbar | 44×44px | `h-8 w-8` + `p-1` wrapper, or `h-11 w-11` |
-| Section tab triggers | 40px height | Add `py-2` → use `h-11` |
-| Accordion triggers | 44px height | `py-3` (full-width row) |
-| Delete (trash) buttons | 44×44px | `h-11 w-11` ghost on mobile; `h-7 w-7` on desktop (acceptable — larger drag target on whole accordion row) |
-| Checkbox | 44×44px | Extend click target via `<Label>` |
-| Template thumbnails | 80×100px | Exceeds minimum |
-| Color swatches | 28×28px on desktop; 36×36px on mobile | `h-7 w-7` → `h-9 w-9 sm:h-7 sm:w-7` |
-| Skills delete (X) | 44×44px on mobile | `h-11 w-11 sm:h-7 sm:w-7` |
+| Component               | Minimum size                          | Implementation                                                                                             |
+| ----------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Primary CTA buttons     | 48px height                           | `h-12 px-8`                                                                                                |
+| Default `<Button>`      | 40px height                           | Use `h-11` where touch is expected                                                                         |
+| Icon buttons in toolbar | 44×44px                               | `h-8 w-8` + `p-1` wrapper, or `h-11 w-11`                                                                  |
+| Section tab triggers    | 40px height                           | Add `py-2` → use `h-11`                                                                                    |
+| Accordion triggers      | 44px height                           | `py-3` (full-width row)                                                                                    |
+| Delete (trash) buttons  | 44×44px                               | `h-11 w-11` ghost on mobile; `h-7 w-7` on desktop (acceptable — larger drag target on whole accordion row) |
+| Checkbox                | 44×44px                               | Extend click target via `<Label>`                                                                          |
+| Template thumbnails     | 80×100px                              | Exceeds minimum                                                                                            |
+| Color swatches          | 28×28px on desktop; 36×36px on mobile | `h-7 w-7` → `h-9 w-9 sm:h-7 sm:w-7`                                                                        |
+| Skills delete (X)       | 44×44px on mobile                     | `h-11 w-11 sm:h-7 sm:w-7`                                                                                  |
 
 ### 6.6 Screen Reader Experience
 
@@ -1647,8 +1720,8 @@ Minimum **44×44 CSS px** for all interactive elements (WCAG 2.5.5):
 ```css
 @media (prefers-reduced-motion: reduce) {
   /* Accordion */
-  [data-state="open"],
-  [data-state="closed"] {
+  [data-state='open'],
+  [data-state='closed'] {
     animation: none !important;
     transition: none !important;
   }
@@ -1670,7 +1743,12 @@ On client-side navigation (Next.js App Router), add a `<RouteAnnouncer />` patte
 
 ```tsx
 // In layout.tsx or as shared component
-<div aria-live="assertive" aria-atomic="true" className="sr-only" id="route-announcer">
+<div
+  aria-live="assertive"
+  aria-atomic="true"
+  className="sr-only"
+  id="route-announcer"
+>
   {/* Updated with page title on navigation */}
 </div>
 ```
@@ -1681,60 +1759,60 @@ On client-side navigation (Next.js App Router), add a `<RouteAnnouncer />` patte
 
 Tailwind default breakpoints:
 
-| Breakpoint | Min-width | Label | Key changes |
-|-----------|-----------|-------|-------------|
-| (default) | 0 | Mobile S | Single column, stacked everything |
-| `sm` | 640px | Mobile L / Small tablet | Form fields go 2-col, CTAs go row, toolbar shows text labels |
-| `md` | 768px | Tablet | Feature cards 2-col, builder goes stacked (editor / preview), template select in header |
-| `lg` | 1024px | Desktop | Builder side-by-side, editor panel fixed 480px |
-| `xl` | 1280px | Wide desktop | Preview canvas can render closer to 1:1 scale |
+| Breakpoint | Min-width | Label                   | Key changes                                                                             |
+| ---------- | --------- | ----------------------- | --------------------------------------------------------------------------------------- |
+| (default)  | 0         | Mobile S                | Single column, stacked everything                                                       |
+| `sm`       | 640px     | Mobile L / Small tablet | Form fields go 2-col, CTAs go row, toolbar shows text labels                            |
+| `md`       | 768px     | Tablet                  | Feature cards 2-col, builder goes stacked (editor / preview), template select in header |
+| `lg`       | 1024px    | Desktop                 | Builder side-by-side, editor panel fixed 480px                                          |
+| `xl`       | 1280px    | Wide desktop            | Preview canvas can render closer to 1:1 scale                                           |
 
 ### 7.1 Landing Page
 
-| Element | 0–639px | 640–767px | 768–1023px | 1024px+ |
-|---------|---------|-----------|------------|---------|
-| H1 | `text-4xl` | `text-5xl` | `text-5xl` | `text-6xl` |
-| Hero subtitle | `text-lg` | `text-xl` | `text-xl` | `text-xl` |
-| CTA buttons | `flex-col w-full` | `flex-row` | `flex-row` | `flex-row` |
-| Feature grid | `grid-cols-1` | `grid-cols-1` | `grid-cols-2` | `grid-cols-2` |
-| Trust signals | `grid-cols-2` | `grid-cols-2` | `grid-cols-4` | `grid-cols-4` |
-| Template showcase | Single tab, scrollable preview | Same | Full tab row | Full tab row |
-| Section padding | `py-16 px-4` | `py-20 px-6` | `py-24 px-6` | `py-24 px-8` |
+| Element           | 0–639px                        | 640–767px     | 768–1023px    | 1024px+       |
+| ----------------- | ------------------------------ | ------------- | ------------- | ------------- |
+| H1                | `text-4xl`                     | `text-5xl`    | `text-5xl`    | `text-6xl`    |
+| Hero subtitle     | `text-lg`                      | `text-xl`     | `text-xl`     | `text-xl`     |
+| CTA buttons       | `flex-col w-full`              | `flex-row`    | `flex-row`    | `flex-row`    |
+| Feature grid      | `grid-cols-1`                  | `grid-cols-1` | `grid-cols-2` | `grid-cols-2` |
+| Trust signals     | `grid-cols-2`                  | `grid-cols-2` | `grid-cols-4` | `grid-cols-4` |
+| Template showcase | Single tab, scrollable preview | Same          | Full tab row  | Full tab row  |
+| Section padding   | `py-16 px-4`                   | `py-20 px-6`  | `py-24 px-6`  | `py-24 px-8`  |
 
 ### 7.2 Builder Page
 
-| Element | 0–767px | 768–1023px | 1024px+ |
-|---------|---------|------------|---------|
-| Layout | Single panel + Edit/Preview toggle | Stacked (editor top 45vh, preview bottom 55vh) | Side-by-side |
-| Editor width | `100%` | `100%` | `w-[480px]` |
-| Preview position | Bottom sheet (Sheet component) | Below editor | Right panel |
-| Template switcher | In `DropdownMenu` (Sheet on click) | In toolbar (Select) | In toolbar (Select) |
-| Download label | Icon only | "Download" | "Download PDF" |
-| Share button | In `DropdownMenu` | In toolbar | In toolbar |
-| Canvas scale | ~0.35–0.42 | ~0.60–0.75 | ~0.85–1.0 |
-| Toolbar height | `h-14` | `h-14` | `h-14` |
+| Element           | 0–767px                            | 768–1023px                                     | 1024px+             |
+| ----------------- | ---------------------------------- | ---------------------------------------------- | ------------------- |
+| Layout            | Single panel + Edit/Preview toggle | Stacked (editor top 45vh, preview bottom 55vh) | Side-by-side        |
+| Editor width      | `100%`                             | `100%`                                         | `w-[480px]`         |
+| Preview position  | Bottom sheet (Sheet component)     | Below editor                                   | Right panel         |
+| Template switcher | In `DropdownMenu` (Sheet on click) | In toolbar (Select)                            | In toolbar (Select) |
+| Download label    | Icon only                          | "Download"                                     | "Download PDF"      |
+| Share button      | In `DropdownMenu`                  | In toolbar                                     | In toolbar          |
+| Canvas scale      | ~0.35–0.42                         | ~0.60–0.75                                     | ~0.85–1.0           |
+| Toolbar height    | `h-14`                             | `h-14`                                         | `h-14`              |
 
 ### 7.3 Template Gallery (`/templates`)
 
-| Element | 0–639px | 640–1023px | 1024px+ |
-|---------|---------|------------|---------|
+| Element       | 0–639px       | 640–1023px    | 1024px+       |
+| ------------- | ------------- | ------------- | ------------- |
 | Template grid | `grid-cols-1` | `grid-cols-2` | `grid-cols-3` |
-| Preview scale | 0.30 | 0.40 | 0.50 |
+| Preview scale | 0.30          | 0.40          | 0.50          |
 
 ### 7.4 Preview Page (`/preview`)
 
-| Element | 0–767px | 768–1023px | 1024px+ |
-|---------|---------|------------|---------|
-| Canvas scale | 0.35–0.45 | 0.60–0.75 | 0.85–1.0 |
-| CTA banner | Below canvas, stacked | Below canvas, row | Below canvas, row |
+| Element      | 0–767px               | 768–1023px        | 1024px+           |
+| ------------ | --------------------- | ----------------- | ----------------- |
+| Canvas scale | 0.35–0.45             | 0.60–0.75         | 0.85–1.0          |
+| CTA banner   | Below canvas, stacked | Below canvas, row | Below canvas, row |
 
 ### 7.5 Canvas Scaling Formula
 
 ```ts
 // hooks/use-media-query.ts provides containerWidth
 function getPreviewScale(containerWidth: number): number {
-  const CANVAS_WIDTH = 816  // A4 at 96 dpi
-  const PADDING = 64        // 32px each side
+  const CANVAS_WIDTH = 816 // A4 at 96 dpi
+  const PADDING = 64 // 32px each side
   return Math.min(1, (containerWidth - PADDING) / CANVAS_WIDTH)
 }
 
@@ -1761,6 +1839,7 @@ function getPreviewScale(containerWidth: number): number {
 `resume` is `null` during SSR hydration. Show skeleton for ~1 frame:
 
 **Builder Loading Skeleton:**
+
 ```tsx
 <div className="flex h-[calc(100vh-3.5rem)]">
   {/* Editor skeleton */}
@@ -1816,7 +1895,9 @@ Every list section shows a purposeful empty state before items are added.
     <Icon className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
   </div>
   <p className="text-sm font-medium text-foreground mb-1">{heading}</p>
-  <p className="text-xs text-muted-foreground mb-4 max-w-[240px]">{subheading}</p>
+  <p className="text-xs text-muted-foreground mb-4 max-w-[240px]">
+    {subheading}
+  </p>
   <Button variant="outline" size="sm" onClick={onAdd}>
     <Plus className="h-4 w-4 mr-2" aria-hidden="true" />
     {addLabel}
@@ -1824,20 +1905,25 @@ Every list section shows a purposeful empty state before items are added.
 </div>
 ```
 
-| Section | Icon | Heading | Subheading | Button label |
-|---------|------|---------|------------|--------------|
-| Experience | `Briefcase` | No experience added | Add your work history to strengthen your resume | Add Experience |
-| Education | `GraduationCap` | No education added | Add your academic background | Add Education |
-| Skills | `Zap` | No skills added | List your technical and soft skills | Add Skill |
-| Projects | `FolderOpen` | No projects added | Showcase side projects and open-source work | Add Project |
-| Certifications | `Award` | No certifications added | Add certifications to verify your expertise | Add Certification |
+| Section        | Icon            | Heading                 | Subheading                                      | Button label      |
+| -------------- | --------------- | ----------------------- | ----------------------------------------------- | ----------------- |
+| Experience     | `Briefcase`     | No experience added     | Add your work history to strengthen your resume | Add Experience    |
+| Education      | `GraduationCap` | No education added      | Add your academic background                    | Add Education     |
+| Skills         | `Zap`           | No skills added         | List your technical and soft skills             | Add Skill         |
+| Projects       | `FolderOpen`    | No projects added       | Showcase side projects and open-source work     | Add Project       |
+| Certifications | `Award`         | No certifications added | Add certifications to verify your expertise     | Add Certification |
 
 **Resume Preview — Empty (no name entered):**
 
 ```tsx
 <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center p-8">
-  <FileText className="h-20 w-20 mb-4 text-muted-foreground opacity-20" aria-hidden="true" />
-  <p className="text-base font-medium text-muted-foreground">Your resume preview will appear here</p>
+  <FileText
+    className="h-20 w-20 mb-4 text-muted-foreground opacity-20"
+    aria-hidden="true"
+  />
+  <p className="text-base font-medium text-muted-foreground">
+    Your resume preview will appear here
+  </p>
   <p className="text-sm text-muted-foreground mt-2">
     Start by entering your name in the Personal Info tab.
   </p>
@@ -1851,16 +1937,17 @@ Falls back to "Modern" — always a valid selection.
 
 ### 8.3 Loading States
 
-| Context | Loading UI | Duration | Notes |
-|---------|-----------|---------|-------|
-| Builder initial hydration | Skeleton panels | ~1 render frame | After `useEffect` runs, instant |
-| Template component (lazy) | `<ResumeCanvasSkeleton />` via `Suspense` | <200 ms | Only if `React.lazy` is used |
-| PDF generation | Button spinner + `disabled`; no overlay | 1–4 s | jsPDF + html2canvas |
-| Share link (pako lazy-load) | Share button spinner + "Generating…" | <1 s | One-time lazy load |
-| JSON import (file read) | No UI (synchronous) | <50 ms | FileReader is fast |
-| URL hash decode (`/preview`) | Full-page skeleton | <100 ms | pako inflate + Zod parse |
+| Context                      | Loading UI                                | Duration        | Notes                           |
+| ---------------------------- | ----------------------------------------- | --------------- | ------------------------------- |
+| Builder initial hydration    | Skeleton panels                           | ~1 render frame | After `useEffect` runs, instant |
+| Template component (lazy)    | `<ResumeCanvasSkeleton />` via `Suspense` | <200 ms         | Only if `React.lazy` is used    |
+| PDF generation               | Button spinner + `disabled`; no overlay   | 1–4 s           | jsPDF + html2canvas             |
+| Share link (pako lazy-load)  | Share button spinner + "Generating…"      | <1 s            | One-time lazy load              |
+| JSON import (file read)      | No UI (synchronous)                       | <50 ms          | FileReader is fast              |
+| URL hash decode (`/preview`) | Full-page skeleton                        | <100 ms         | pako inflate + Zod parse        |
 
 **ResumeCanvasSkeleton:**
+
 ```tsx
 <div className="w-[816px] min-h-[1056px] bg-white p-12 space-y-6">
   {/* Name */}
@@ -1888,6 +1975,7 @@ Falls back to "Modern" — always a valid selection.
 ```
 
 **PDF Generation — no overlay; button feedback is sufficient:**
+
 ```
 Button: [⟳ Generating…] (disabled, aria-busy="true")
 Preview canvas: pointer-events-none (prevents interaction during capture)
@@ -1926,7 +2014,8 @@ toast.error('Couldn't save changes', {
 // Button state → 'error' for 4 s
 // Then returns to 'idle'
 toast.error('Could not generate PDF', {
-  description: 'Please try again. If the issue persists, try refreshing the page.',
+  description:
+    'Please try again. If the issue persists, try refreshing the page.',
   duration: 6000,
   action: { label: 'Retry', onClick: handleDownload },
 })
@@ -1950,7 +2039,7 @@ document.getElementById('fullName')?.focus()
 
 ```tsx
 toast.error('Invalid resume format', {
-  description: 'The JSON file doesn\'t match the expected resume structure.',
+  description: "The JSON file doesn't match the expected resume structure.",
   duration: 5000,
 })
 // No state change; existing resume preserved
@@ -1966,8 +2055,8 @@ toast.error('Invalid resume format', {
   </div>
   <h1 className="text-2xl font-bold mb-2">Couldn't load this resume</h1>
   <p className="text-muted-foreground mb-6 max-w-md">
-    The link may be expired, corrupted, or from an older version.
-    Ask the sender to generate a new share link.
+    The link may be expired, corrupted, or from an older version. Ask the sender
+    to generate a new share link.
   </p>
   <Button asChild>
     <Link href="/builder">Build Your Own Resume — It's Free</Link>
@@ -1979,12 +2068,17 @@ toast.error('Invalid resume format', {
 
 ```tsx
 // Inside AccentColorPicker, below hex input
-{isLowContrast && (
-  <p className="text-xs text-amber-600 flex items-center gap-1 mt-1" role="alert">
-    <AlertCircle className="h-3 w-3 flex-shrink-0" aria-hidden="true" />
-    Low contrast — may be hard to read when printed
-  </p>
-)}
+{
+  isLowContrast && (
+    <p
+      className="text-xs text-amber-600 flex items-center gap-1 mt-1"
+      role="alert"
+    >
+      <AlertCircle className="h-3 w-3 flex-shrink-0" aria-hidden="true" />
+      Low contrast — may be hard to read when printed
+    </p>
+  )
+}
 // Color is NOT prevented — just warned; user may want dark-on-color prints
 ```
 
@@ -1992,63 +2086,63 @@ toast.error('Invalid resume format', {
 
 ### 8.5 Complete State Matrix
 
-| Context | Loading | Empty | Error |
-|---------|---------|-------|-------|
-| Builder initial load | Skeleton panels (both) | — | Graceful fallback → blank resume |
-| Template switch | Suspense `<ResumeCanvasSkeleton />` | — | — |
-| PDF generation | Spinner button, `aria-busy` | — | Toast + "Try Again" button |
-| Share link generation | Spinner on Share button | — | Toast error |
-| Share link open (`/preview`) | Full-page skeleton | — | Full-page error + CTA |
-| JSON export | None (instant) | — | Toast error |
-| JSON import | None (instant) | — | Toast error + data preserved |
-| Experience section | — | Empty state + Add btn | — |
-| Education section | — | Empty state + Add btn | — |
-| Skills section | — | Empty state + inline add | — |
-| Projects section | — | Empty state + Add btn | — |
-| Certifications section | — | Empty state + Add btn | — |
-| Resume preview (no name) | — | Placeholder illustration | — |
-| localStorage save | Silent | — | Toast warning (quota full / private) |
-| localStorage load | ~0 ms (no UI) | Blank resume (valid) | Silent → blank resume + optional toast |
-| Accent color (low contrast) | — | — | Inline warning (non-blocking) |
-| New Resume confirmation | — | — | — |
-| Form field validation | — | — | Red border + `role="alert"` msg below |
+| Context                      | Loading                             | Empty                    | Error                                  |
+| ---------------------------- | ----------------------------------- | ------------------------ | -------------------------------------- |
+| Builder initial load         | Skeleton panels (both)              | —                        | Graceful fallback → blank resume       |
+| Template switch              | Suspense `<ResumeCanvasSkeleton />` | —                        | —                                      |
+| PDF generation               | Spinner button, `aria-busy`         | —                        | Toast + "Try Again" button             |
+| Share link generation        | Spinner on Share button             | —                        | Toast error                            |
+| Share link open (`/preview`) | Full-page skeleton                  | —                        | Full-page error + CTA                  |
+| JSON export                  | None (instant)                      | —                        | Toast error                            |
+| JSON import                  | None (instant)                      | —                        | Toast error + data preserved           |
+| Experience section           | —                                   | Empty state + Add btn    | —                                      |
+| Education section            | —                                   | Empty state + Add btn    | —                                      |
+| Skills section               | —                                   | Empty state + inline add | —                                      |
+| Projects section             | —                                   | Empty state + Add btn    | —                                      |
+| Certifications section       | —                                   | Empty state + Add btn    | —                                      |
+| Resume preview (no name)     | —                                   | Placeholder illustration | —                                      |
+| localStorage save            | Silent                              | —                        | Toast warning (quota full / private)   |
+| localStorage load            | ~0 ms (no UI)                       | Blank resume (valid)     | Silent → blank resume + optional toast |
+| Accent color (low contrast)  | —                                   | —                        | Inline warning (non-blocking)          |
+| New Resume confirmation      | —                                   | —                        | —                                      |
+| Form field validation        | —                                   | —                        | Red border + `role="alert"` msg below  |
 
 ---
 
 ## Appendix A: shadcn/ui Components Used
 
-| Component | Usage location |
-|-----------|---------------|
-| `Button` | CTAs, download, share, add items, delete, form submit |
-| `Input` | All text form fields |
-| `Textarea` | Summary, experience/project descriptions |
-| `Label` | All form labels |
-| `Select` / `SelectTrigger` / `SelectContent` / `SelectItem` | Template switcher, skill level |
-| `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` | Section nav in editor; template showcase on landing; Edit/Preview mobile toggle |
-| `Accordion` / `AccordionItem` / `AccordionTrigger` / `AccordionContent` | Experience, Education, Projects, Certifications, FAQ |
-| `AlertDialog` | Delete confirmations, New Resume confirmation |
-| `Dialog` | (Future: keyboard shortcuts help) |
-| `Sheet` | Mobile template picker, mobile preview bottom sheet |
-| `Popover` | Accent color picker |
-| `DropdownMenu` | Toolbar overflow menu (New, Import, Export, Print) |
-| `Tooltip` | Icon button labels on desktop |
-| `Badge` | Skill levels, item count on section tabs |
-| `Skeleton` | Loading states (builder, preview page) |
-| `Separator` | Visual dividers in toolbar, editor |
-| `Checkbox` | "Currently working here" |
-| `Sonner` (Toast) | All notifications (save, download, share, errors) |
+| Component                                                               | Usage location                                                                  |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `Button`                                                                | CTAs, download, share, add items, delete, form submit                           |
+| `Input`                                                                 | All text form fields                                                            |
+| `Textarea`                                                              | Summary, experience/project descriptions                                        |
+| `Label`                                                                 | All form labels                                                                 |
+| `Select` / `SelectTrigger` / `SelectContent` / `SelectItem`             | Template switcher, skill level                                                  |
+| `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent`                     | Section nav in editor; template showcase on landing; Edit/Preview mobile toggle |
+| `Accordion` / `AccordionItem` / `AccordionTrigger` / `AccordionContent` | Experience, Education, Projects, Certifications, FAQ                            |
+| `AlertDialog`                                                           | Delete confirmations, New Resume confirmation                                   |
+| `Dialog`                                                                | (Future: keyboard shortcuts help)                                               |
+| `Sheet`                                                                 | Mobile template picker, mobile preview bottom sheet                             |
+| `Popover`                                                               | Accent color picker                                                             |
+| `DropdownMenu`                                                          | Toolbar overflow menu (New, Import, Export, Print)                              |
+| `Tooltip`                                                               | Icon button labels on desktop                                                   |
+| `Badge`                                                                 | Skill levels, item count on section tabs                                        |
+| `Skeleton`                                                              | Loading states (builder, preview page)                                          |
+| `Separator`                                                             | Visual dividers in toolbar, editor                                              |
+| `Checkbox`                                                              | "Currently working here"                                                        |
+| `Sonner` (Toast)                                                        | All notifications (save, download, share, errors)                               |
 
 ---
 
 ## Appendix B: Hooks Reference
 
-| Hook | File | Purpose |
-|------|------|---------|
-| `useAutoSave` | `hooks/use-auto-save.ts` | Debounced (1 s) localStorage save on any store change |
-| `usePdfGenerator` | `hooks/use-pdf-generator.ts` | Manages lazy-load of jsPDF + html2canvas, generation state machine |
-| `useShareableLink` | `hooks/use-shareable-link.ts` | URL encoding (pako + base64url), clipboard copy |
-| `useKeyboardShortcuts` | `hooks/use-keyboard-shortcuts.ts` | `Ctrl+Z` undo, `Ctrl+S` export, `Ctrl+P` print |
-| `useMediaQuery` | `hooks/use-media-query.ts` | Breakpoint detection for layout switching |
+| Hook                   | File                              | Purpose                                                            |
+| ---------------------- | --------------------------------- | ------------------------------------------------------------------ |
+| `useAutoSave`          | `hooks/use-auto-save.ts`          | Debounced (1 s) localStorage save on any store change              |
+| `usePdfGenerator`      | `hooks/use-pdf-generator.ts`      | Manages lazy-load of jsPDF + html2canvas, generation state machine |
+| `useShareableLink`     | `hooks/use-shareable-link.ts`     | URL encoding (pako + base64url), clipboard copy                    |
+| `useKeyboardShortcuts` | `hooks/use-keyboard-shortcuts.ts` | `Ctrl+Z` undo, `Ctrl+S` export, `Ctrl+P` print                     |
+| `useMediaQuery`        | `hooks/use-media-query.ts`        | Breakpoint detection for layout switching                          |
 
 ---
 
@@ -2137,4 +2231,4 @@ A11y:        sr-only focus:not-sr-only
 
 ---
 
-*DESIGN.md — v1.1 | Last updated: March 2026 | Matches SPEC.md v1.0 + ARCHITECTURE.md v1.0*
+_DESIGN.md — v1.1 | Last updated: March 2026 | Matches SPEC.md v1.0 + ARCHITECTURE.md v1.0_
