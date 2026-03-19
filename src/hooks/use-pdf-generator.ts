@@ -43,9 +43,43 @@ export function usePdfGenerator(): UsePdfGeneratorResult {
     })
 
     try {
-      const { generatePDF } = await import('@/lib/pdf/generate-pdf')
+      // Lazy-load heavy PDF libraries only when user clicks download
+      const [html2canvasMod, jspdfMod] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf'),
+      ])
+      const html2canvas = html2canvasMod.default as unknown as (
+        element: HTMLElement,
+        options?: object
+      ) => Promise<HTMLCanvasElement>
+      const { jsPDF } = jspdfMod
+
+      const element = document.getElementById('resume-preview')
+      if (!element) throw new Error('Preview element not found')
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      })
+
+      const pdf = new jsPDF({ format: 'letter', unit: 'in', orientation: 'portrait' })
+      const imgData = canvas.toDataURL('image/png')
+      const pageWidth = 8.5
+      const pageHeight = 11
+      const canvasAspect = canvas.width / canvas.height
+      let imgWidth = pageWidth
+      let imgHeight = pageWidth / canvasAspect
+      if (imgHeight > pageHeight) {
+        imgHeight = pageHeight
+        imgWidth = pageHeight * canvasAspect
+      }
+      const xOffset = (pageWidth - imgWidth) / 2
+      const yOffset = canvasAspect < pageWidth / pageHeight ? (pageHeight - imgHeight) / 2 : 0
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight)
+
       const safeName = fullName.replace(/[^a-z0-9_\- ]/gi, '_').trim()
-      await generatePDF('resume-preview', `${safeName}_Resume.pdf`)
+      pdf.save(`${safeName}_Resume.pdf`)
 
       toast({
         title: 'PDF downloaded!',

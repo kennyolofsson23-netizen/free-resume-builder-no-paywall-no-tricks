@@ -11,14 +11,14 @@ export function Header() {
         <Link
           href="/"
           className="text-lg font-bold text-slate-900 dark:text-white"
-          aria-label="ResumeBuilder — Home"
+          aria-label="ResumeBuilder Â— Home"
         >
           ResumeBuilder
         </Link>
 
         {/* Main navigation */}
         <nav className="flex items-center gap-4" aria-label="Main navigation">
-          {/* Templates link — hidden on mobile */}
+          {/* Templates link Â— hidden on mobile */}
           <Link
             href="/templates"
             className="hidden text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-white sm:block"
@@ -28,7 +28,7 @@ export function Header() {
 
           <ThemeToggle />
 
-          {/* Build Resume CTA — always visible */}
+          {/* Build Resume CTA Â— always visible */}
           <Link
             href="/builder"
             className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"

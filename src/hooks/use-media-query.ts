@@ -30,3 +30,16 @@ export function useMediaQuery(query: string): boolean {
 
   return matches
 }
+
+// Convenience hooks
+export function useIsMobile() {
+  return useMediaQuery('(max-width: 767px)')
+}
+
+export function useIsTablet() {
+  return useMediaQuery('(min-width: 768px) and (max-width: 1023px)')
+}
+
+export function useIsDesktop() {
+  return useMediaQuery('(min-width: 1024px)')
+}
