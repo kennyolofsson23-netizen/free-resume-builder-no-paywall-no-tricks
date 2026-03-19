@@ -185,8 +185,8 @@ export function CertificationsForm() {
     <div className="space-y-3">
       {certifications.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No certifications yet. Click &quot;Add Certification&quot; to get
-          started.
+          Add licenses, professional certifications, or credentials that
+          strengthen your application.
         </p>
       )}
 

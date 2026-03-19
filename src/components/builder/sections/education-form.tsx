@@ -50,7 +50,7 @@ function EducationEntryFields({
     setErrors(newErrors)
   }
 
-  const title = edu.school || 'New Education'
+  const title = edu.school || 'New School'
   const subtitle = edu.degree
     ? edu.field
       ? `${edu.degree} in ${edu.field}`
@@ -249,8 +249,7 @@ export function EducationForm() {
     <div className="space-y-3">
       {education.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No education entries yet. Click &quot;Add Education&quot; to get
-          started.
+          List your degrees, diplomas, bootcamps, or relevant coursework.
         </p>
       )}
 

@@ -51,7 +51,7 @@ function ExperienceEntryFields({
     setErrors(newErrors)
   }
 
-  const title = exp.jobTitle || 'New Experience'
+  const title = exp.jobTitle || 'New Position'
   const subtitle = exp.company || ''
 
   return (
@@ -238,7 +238,7 @@ function ExperienceEntryFields({
             value={exp.description}
             maxLength={FIELD_LIMITS.description}
             onChange={(e) => onUpdate(exp.id, { description: e.target.value })}
-            placeholder="Describe your responsibilities and achievements..."
+            placeholder="Describe your key responsibilities and measurable achievements. Use bullet points starting with action verbs like 'Led', 'Built', 'Reduced', 'Increased'..."
             rows={4}
           />
           <p className="text-xs text-muted-foreground text-right">
@@ -281,8 +281,12 @@ export function ExperienceForm() {
     <div className="space-y-3">
       {experiences.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No experience entries yet. Click &quot;Add Experience&quot; to get
-          started.
+          Your work history goes here — even one entry makes a difference.
+          <br />
+          <span className="text-xs">
+            Add internships, part-time roles, freelance work, or volunteer
+            positions.
+          </span>
         </p>
       )}
 

@@ -50,7 +50,7 @@ function ProjectEntryFields({
 
   return (
     <SectionEntry
-      title={project.title || 'New Project'}
+      title={project.title || 'Untitled Project'}
       onDelete={() => onDelete(project.id)}
     >
       <div className="space-y-4">
@@ -68,7 +68,7 @@ function ProjectEntryFields({
             maxLength={FIELD_LIMITS.projectTitle}
             onChange={(e) => onUpdate(project.id, { title: e.target.value })}
             onBlur={(e) => handleBlur('title', e.target.value)}
-            placeholder="My Awesome Project"
+            placeholder="e.g. Portfolio Website, Inventory App, Open Source CLI Tool"
             aria-required="true"
             aria-invalid={!!errors.title}
             className={errors.title ? 'border-destructive' : ''}
@@ -93,7 +93,7 @@ function ProjectEntryFields({
             onChange={(e) =>
               onUpdate(project.id, { description: e.target.value })
             }
-            placeholder="Describe the project, its goals, and your contributions..."
+            placeholder="What did you build, why, and what was the result? Include any measurable impact (e.g. '10K monthly active users', '40% faster load time')..."
             rows={3}
           />
           <p className="text-xs text-muted-foreground text-right">
@@ -192,7 +192,8 @@ export function ProjectsForm() {
     <div className="space-y-3">
       {projects.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No projects yet. Click &quot;Add Project&quot; to get started.
+          Show off what you&apos;ve built — side projects, freelance work,
+          open source contributions, or class projects all count.
         </p>
       )}
 

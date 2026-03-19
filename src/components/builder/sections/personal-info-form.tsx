@@ -220,7 +220,7 @@ export function PersonalInfoForm() {
           value={info.summary ?? ''}
           maxLength={FIELD_LIMITS.summary}
           onChange={(e) => updatePersonalInfo({ summary: e.target.value })}
-          placeholder="A brief summary of your professional background and goals..."
+          placeholder="e.g. 'Software engineer with 5 years of experience building web applications. Passionate about clean code and great user experiences.'"
           rows={4}
         />
         <p className="text-xs text-muted-foreground text-right">

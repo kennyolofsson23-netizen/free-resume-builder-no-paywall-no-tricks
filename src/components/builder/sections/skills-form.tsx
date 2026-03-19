@@ -73,7 +73,12 @@ export function SkillsForm() {
     <div className="space-y-3">
       {skills.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No skills yet. Click &quot;Add Skill&quot; to get started.
+          List what you know — tools, languages, frameworks, and soft skills.
+          <br />
+          <span className="text-xs">
+            Tip: include skills from the job descriptions you&apos;re applying
+            to.
+          </span>
         </p>
       )}
 
