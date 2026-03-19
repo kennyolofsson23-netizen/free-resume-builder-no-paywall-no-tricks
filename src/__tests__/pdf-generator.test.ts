@@ -29,6 +29,7 @@ describe('generatePDF — core behavior', () => {
   let originalTitle: string
 
   beforeEach(() => {
+    vi.resetModules()
     originalTitle = document.title
     printSpy = vi.spyOn(window, 'print').mockImplementation(() => {
       // Simulate afterprint event synchronously in tests
