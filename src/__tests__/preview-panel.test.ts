@@ -15,11 +15,11 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 // Mock the Zustand store
 const mockUseResumeStore = vi.fn()
 vi.mock('@/store/resume-store', () => ({
-  useResumeStore: (selector) => mockUseResumeStore(selector),
+  useResumeStore: (selector: (s: unknown) => unknown) => mockUseResumeStore(selector),
 }))
 
 vi.mock('@/components/templates/template-renderer', () => ({
-  TemplateRenderer: ({ resume }) =>
+  TemplateRenderer: ({ resume }: { resume: { template: string } }) =>
     React.createElement('div', {
       'data-testid': 'template-renderer',
       'data-template': resume.template,
@@ -31,7 +31,7 @@ vi.mock('lucide-react', () => ({
 }))
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, 'aria-label': ariaLabel }) =>
+  Button: ({ children, onClick, 'aria-label': ariaLabel }: { children: React.ReactNode; onClick?: () => void; 'aria-label'?: string }) =>
     React.createElement('button', { onClick, 'aria-label': ariaLabel }, children),
 }))
 
