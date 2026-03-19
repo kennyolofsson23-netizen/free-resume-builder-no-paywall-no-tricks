@@ -157,11 +157,7 @@ test.describe('Templates Page — anti-paywall messaging', () => {
 
   test('page has at least one link to /builder', async ({ page }) => {
     await page.goto('/templates')
-    const builderLinks = await page
-      .getByRole('link')
-      .filter({ hasAttribute: ['href', '/builder'] })
-      .all()
-    // Alternatively, just check any link with href starting with /builder
+    // Check any link with href starting with /builder
     const allLinks = page.locator('a[href^="/builder"]')
     const count = await allLinks.count()
     expect(count).toBeGreaterThan(0)
