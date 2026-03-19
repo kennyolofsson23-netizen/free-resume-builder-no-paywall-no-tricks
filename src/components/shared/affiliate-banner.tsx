@@ -21,7 +21,7 @@ export function AffiliateBanner({ className }: AffiliateBannerProps) {
     >
       <div className="flex items-center gap-2 min-w-0">
         <span className="text-xs text-muted-foreground shrink-0">
-          Sponsored
+          Partner
         </span>
         <span className="text-muted-foreground">
           Want AI-powered writing help?{' '}

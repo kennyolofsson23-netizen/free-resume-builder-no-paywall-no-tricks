@@ -42,7 +42,7 @@ function CertificationEntryFields({
     setErrors(newErrors)
   }
 
-  const title = cert.name || 'New Certification'
+  const title = cert.name || 'Untitled Certification'
   const subtitle = cert.issuer || ''
 
   return (

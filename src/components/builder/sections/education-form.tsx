@@ -50,7 +50,7 @@ function EducationEntryFields({
     setErrors(newErrors)
   }
 
-  const title = edu.school || 'New School'
+  const title = edu.school || 'Untitled Degree'
   const subtitle = edu.degree
     ? edu.field
       ? `${edu.degree} in ${edu.field}`

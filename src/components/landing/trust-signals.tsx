@@ -47,7 +47,7 @@ export function TrustSignals() {
 
         <div className="mt-12 rounded-lg border border-border bg-muted/50 p-8 text-center">
           <p className="text-lg font-bold text-foreground">
-            Your resume data belongs to you — not us.
+            Zero data collection. Zero paywall. Zero compromise.
           </p>
           <p className="mt-2 text-muted-foreground">
             We collect nothing. Store nothing. Charge nothing. The PDF download is free because it should be.

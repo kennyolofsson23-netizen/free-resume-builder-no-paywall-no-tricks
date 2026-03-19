@@ -5,7 +5,7 @@ export function FeatureGrid() {
     <section id="features" className="px-4 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <h2 className="mb-4 text-center text-3xl font-bold tracking-tight text-foreground">
-          Built for job seekers who&apos;ve been burned before
+          Everything You Need to Build a Great Resume
         </h2>
         <p className="mb-12 text-center text-muted-foreground">
           Every feature you need. None of the paywalls, dark patterns, or

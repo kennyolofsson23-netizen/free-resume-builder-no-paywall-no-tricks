@@ -37,7 +37,7 @@ export function PreviewPanel() {
           className="flex flex-1 items-center justify-center bg-muted/30 p-6"
         >
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-muted-foreground">Start typing to see your resume take shape</p>
+            <p className="text-sm text-muted-foreground">No resume data yet</p>
           </div>
         </div>
       </div>
@@ -59,7 +59,7 @@ export function PreviewPanel() {
         >
           <div className="text-center text-muted-foreground">
             <p className="text-lg font-medium">
-              Your resume will appear here as you type
+              Your resume preview will appear here
             </p>
             <p className="text-sm">
               Add your name in the Personal tab to get started
