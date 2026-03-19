@@ -11,6 +11,8 @@ import {
   Undo2,
   Redo2,
   Link as LinkIcon,
+  Loader2,
+  Check,
 } from 'lucide-react'
 import { useResumeStore } from '@/store/resume-store'
 import { TEMPLATE_LIST } from '@/lib/constants'
@@ -31,7 +33,7 @@ export function BuilderToolbar() {
   const importFromJSON = useResumeStore((state) => state.importFromJSON)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
 
-  const { generatePdf, isGenerating } = usePdfGenerator()
+  const { downloadPDF, status: pdfStatus, isGenerating } = usePdfGenerator()
   const { generateLink, isCopied } = useShareableLink()
   const { undo, redo, canUndo, canRedo } = useKeyboardShortcuts({
     enabled: true,
@@ -249,13 +251,15 @@ export function BuilderToolbar() {
         <Button
           type="button"
           size="sm"
-          onClick={generatePdf}
-          disabled={isGenerating}
+          onClick={downloadPDF}
+          disabled={pdfStatus === 'generating'}
           aria-label="Download PDF"
         >
-          <Download className="mr-1.5 h-4 w-4" />
+          {pdfStatus === 'generating' && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
+          {pdfStatus === 'success' && <Check className="mr-1.5 h-4 w-4" />}
+          {(pdfStatus === 'idle' || pdfStatus === 'error') && <Download className="mr-1.5 h-4 w-4" />}
           <span className="hidden sm:inline">
-            {isGenerating ? 'Generating...' : 'Download PDF'}
+            {pdfStatus === 'generating' ? 'Generating…' : pdfStatus === 'success' ? 'Downloaded!' : 'Download PDF'}
           </span>
           <span className="sm:hidden">PDF</span>
         </Button>

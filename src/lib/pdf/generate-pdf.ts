@@ -1,59 +1,81 @@
-/**
- * Client-side PDF generation using jsPDF + html2canvas.
- * Captures the target element and saves as a letter-size PDF.
- */
-export async function generatePDF(
-  elementId: string,
-  filename: string
-): Promise<void> {
-  // html2canvas lacks NodeNext-compatible type exports; cast to its actual signature
-  type Html2CanvasFn = (
-    element: HTMLElement,
-    options?: object
-  ) => Promise<HTMLCanvasElement>
-  const html2canvas = (await import('html2canvas'))
-    .default as unknown as Html2CanvasFn
-  const { jsPDF } = await import('jspdf')
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+
+export interface GeneratePDFOptions {
+  elementId?: string
+  filename?: string
+}
+
+export async function generatePDF(options: GeneratePDFOptions = {}): Promise<void> {
+  const { elementId = 'resume-preview-container', filename = 'Resume.pdf' } = options
 
   const element = document.getElementById(elementId)
   if (!element) {
-    throw new Error(`Element with id "${elementId}" not found`)
+    throw new Error(`Element #${elementId} not found`)
   }
 
+  // Capture the element at 2x resolution for quality
   const canvas = await html2canvas(element, {
     scale: 2,
     useCORS: true,
     logging: false,
+    backgroundColor: '#ffffff',
+    // Ensure colors print correctly
+    allowTaint: false,
   })
 
-  // Letter page dimensions in inches: 8.5 x 11
-  const pageWidth = 8.5
-  const pageHeight = 11
+  const imgData = canvas.toDataURL('image/jpeg', 0.95)
 
+  // US Letter dimensions in points (1 inch = 72 points)
   const pdf = new jsPDF({
-    format: 'letter',
-    unit: 'in',
     orientation: 'portrait',
+    unit: 'pt',
+    format: 'letter', // 612 x 792 pt
   })
 
-  const imgData = canvas.toDataURL('image/png')
+  const pdfWidth = pdf.internal.pageSize.getWidth()
+  const pdfHeight = pdf.internal.pageSize.getHeight()
 
-  // Calculate dimensions to fit the canvas into the letter page
-  const canvasAspect = canvas.width / canvas.height
-  const pageAspect = pageWidth / pageHeight
+  // Calculate dimensions to fit the canvas in the PDF
+  const canvasWidth = canvas.width
+  const canvasHeight = canvas.height
+  const ratio = canvasWidth / canvasHeight
 
-  let imgWidth = pageWidth
-  let imgHeight = pageWidth / canvasAspect
+  // If content fits on one page, render it; otherwise tile pages
+  const imgHeight = pdfWidth / ratio
 
-  if (imgHeight > pageHeight) {
-    imgHeight = pageHeight
-    imgWidth = pageHeight * canvasAspect
+  if (imgHeight <= pdfHeight) {
+    // Single page
+    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight)
+  } else {
+    // Multi-page: split canvas into page-sized chunks
+    let yOffset = 0
+    let pageNum = 0
+
+    while (yOffset < canvasHeight) {
+      if (pageNum > 0) pdf.addPage()
+
+      const pageHeightPx = (pdfHeight / pdfWidth) * canvasWidth
+      const sourceY = yOffset
+      const sourceH = Math.min(pageHeightPx, canvasHeight - yOffset)
+
+      // Create a temporary canvas for this page slice
+      const pageCanvas = document.createElement('canvas')
+      pageCanvas.width = canvasWidth
+      pageCanvas.height = sourceH
+      const ctx = pageCanvas.getContext('2d')
+      if (ctx) {
+        ctx.drawImage(canvas, 0, sourceY, canvasWidth, sourceH, 0, 0, canvasWidth, sourceH)
+      }
+
+      const pageImgData = pageCanvas.toDataURL('image/jpeg', 0.95)
+      const pageImgHeight = (sourceH / canvasWidth) * pdfWidth
+      pdf.addImage(pageImgData, 'JPEG', 0, 0, pdfWidth, pageImgHeight)
+
+      yOffset += pageHeightPx
+      pageNum++
+    }
   }
 
-  // Center horizontally if narrower than page
-  const xOffset = (pageWidth - imgWidth) / 2
-  const yOffset = pageAspect > canvasAspect ? (pageHeight - imgHeight) / 2 : 0
-
-  pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight)
   pdf.save(filename)
 }
