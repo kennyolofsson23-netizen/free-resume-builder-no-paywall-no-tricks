@@ -8,90 +8,36 @@ import { FAQ } from '@/components/landing/faq'
 import { Footer } from '@/components/landing/footer'
 
 export const metadata: Metadata = {
-  title: 'Free Resume Builder â€” No Paywall, No Tricks',
+  title: 'Free Resume Builder — No Paywall, No Tricks',
   description:
-    'The best free resume builder with no paywall. Build a professional resume online with 5 ATS-friendly templates, real-time PDF preview, and instant download. No email, no account, no tricks. The best Zety free alternative.',
+    "Build a professional resume for free. 5 ATS-friendly templates, real-time PDF preview, instant download. No email. No account. Unlike Zety — we don't charge $29.99/month to download your own resume.",
   keywords: [
-    'free resume builder no paywall',
+    'free resume builder',
+    'resume builder no paywall',
     'Zety free alternative',
-    'resume builder free download',
-    'free resume builder no sign up',
-    'ATS resume builder free',
-    'free resume builder no credit card',
-    'online resume builder free',
-    'resume builder no subscription',
+    'free resume download',
+    'ATS resume builder',
     'free CV builder',
-    'resume maker free',
   ],
-  alternates: {
-    canonical: 'https://freeresumebuilder.app',
-  },
   openGraph: {
-    type: 'website',
-    url: 'https://freeresumebuilder.app',
-    title: 'Free Resume Builder â€” No Paywall, No Tricks',
+    title: 'Free Resume Builder — No Paywall, No Tricks',
     description:
-      'Build a professional resume for free. 5 ATS-friendly templates, real-time preview, instant PDF download. No account required. The Zety alternative that actually stays free.',
-    siteName: 'Free Resume Builder',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Free Resume Builder â€” No Paywall, No Tricks',
-      },
-    ],
+      'Build a resume in minutes. No email. No account. No $1.95 trial that auto-renews. Just your resume, instantly.',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Free Resume Builder â€” No Paywall, No Tricks',
-    description:
-      'Build your resume for free. No account, no paywall, no tricks. Instant PDF download.',
-    images: ['/og-image.png'],
-  },
-}
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: 'Free Resume Builder',
-  url: 'https://freeresumebuilder.app',
-  description:
-    'Free online resume builder with 5 professional templates, real-time preview, and instant PDF download. No account or payment required.',
-  applicationCategory: 'BusinessApplication',
-  operatingSystem: 'All',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'USD',
-  },
-  featureList: [
-    'Real-time resume preview',
-    'Instant PDF download',
-    '5 professional templates',
-    '100% private â€” data never leaves browser',
-    'No account required',
-    'ATS-friendly templates',
-    'Shareable resume links',
-  ],
 }
 
 export default function HomePage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <Header />
       <main id="main-content" className="min-h-screen">
         <Hero />
-        <TrustSignals />
         <FeatureGrid />
         <TemplateShowcase />
+        <TrustSignals />
         <FAQ />
+        <Footer />
       </main>
-      <Footer />
     </>
   )
 }
