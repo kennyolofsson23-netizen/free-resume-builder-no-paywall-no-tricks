@@ -37,7 +37,9 @@ export function PreviewPanel() {
           className="flex flex-1 items-center justify-center bg-muted/30 p-6"
         >
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-muted-foreground">Start typing — your resume will appear here instantly</p>
+            <p className="text-sm text-muted-foreground">
+              Start typing — your resume will appear here instantly
+            </p>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@ const faqs = [
   {
     question: 'Is this actually free, or is there a catch?',
     answer:
-      "No catch. No credit card. No trial period that auto-renews. The PDF download is free. All five templates are free. Sharing your resume is free. We make money through optional partner links — never by charging you.",
+      'No catch. No credit card. No trial period that auto-renews. The PDF download is free. All five templates are free. Sharing your resume is free. We make money through optional partner links — never by charging you.',
   },
   {
     question: 'Do I need to create an account?',
@@ -17,12 +17,12 @@ const faqs = [
   {
     question: 'What if I close the tab or lose my internet connection?',
     answer:
-      "Your resume is automatically saved to your browser as you type. When you return to the page — even after closing your laptop — it picks up exactly where you left off. No internet needed after the initial load.",
+      'Your resume is automatically saved to your browser as you type. When you return to the page — even after closing your laptop — it picks up exactly where you left off. No internet needed after the initial load.',
   },
   {
     question: 'Will my resume get past applicant tracking systems (ATS)?',
     answer:
-      "Yes. All five templates are ATS-compatible: the text is fully selectable, sections use standard headings, and nothing is rendered as an image. Your resume will parse correctly through systems like Taleo, Greenhouse, Lever, and Workday.",
+      'Yes. All five templates are ATS-compatible: the text is fully selectable, sections use standard headings, and nothing is rendered as an image. Your resume will parse correctly through systems like Taleo, Greenhouse, Lever, and Workday.',
   },
   {
     question: 'How is this different from Zety or Resume.io?',
@@ -32,7 +32,7 @@ const faqs = [
   {
     question: 'Can I share my resume with someone else?',
     answer:
-      "Yes. Hit the Share button in the builder and a link is generated instantly. Anyone with the link can view your resume — read-only, no account needed. All the data is encoded in the URL itself, so nothing is ever sent to a server.",
+      'Yes. Hit the Share button in the builder and a link is generated instantly. Anyone with the link can view your resume — read-only, no account needed. All the data is encoded in the URL itself, so nothing is ever sent to a server.',
   },
 ]
 

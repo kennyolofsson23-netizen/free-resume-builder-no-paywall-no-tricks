@@ -44,7 +44,11 @@ export function BuilderToolbar() {
   }
 
   const handleNewResume = () => {
-    if (confirm('Start a new resume? Your current resume will be saved in the list — nothing will be lost.')) {
+    if (
+      confirm(
+        'Start a new resume? Your current resume will be saved in the list — nothing will be lost.'
+      )
+    ) {
       createNewResume()
     }
   }
@@ -60,7 +64,11 @@ export function BuilderToolbar() {
     a.download = `${name.replace(/[^a-z0-9_\- ]/gi, '_')}_resume.json`
     a.click()
     URL.revokeObjectURL(url)
-    toast({ title: 'Resume exported', description: 'Saved as a JSON file. Import it anytime to pick up where you left off.' })
+    toast({
+      title: 'Resume exported',
+      description:
+        'Saved as a JSON file. Import it anytime to pick up where you left off.',
+    })
   }
 
   const handleImportJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,12 +81,14 @@ export function BuilderToolbar() {
       if (success) {
         toast({
           title: 'Resume imported',
-          description: 'All your data has been loaded. Everything looks just as you left it.',
+          description:
+            'All your data has been loaded. Everything looks just as you left it.',
         })
       } else {
         toast({
           title: 'Import failed',
-          description: "That file couldn\u2019t be read. Make sure it\u2019s a JSON file exported from this builder \u2014 nothing else was changed.",
+          description:
+            'That file couldn\u2019t be read. Make sure it\u2019s a JSON file exported from this builder \u2014 nothing else was changed.',
           variant: 'destructive',
         })
       }

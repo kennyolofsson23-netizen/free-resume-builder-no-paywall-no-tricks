@@ -12,7 +12,13 @@
  */
 import { test, expect } from '@playwright/test'
 
-const TEMPLATE_IDS = ['modern', 'classic', 'minimal', 'creative', 'professional'] as const
+const TEMPLATE_IDS = [
+  'modern',
+  'classic',
+  'minimal',
+  'creative',
+  'professional',
+] as const
 
 // ---------------------------------------------------------------------------
 // Page load
@@ -98,7 +104,9 @@ test.describe('Templates Page — Use This Template CTAs', () => {
     page,
   }) => {
     await page.goto('/templates')
-    const firstCta = page.getByRole('link', { name: /use this template/i }).first()
+    const firstCta = page
+      .getByRole('link', { name: /use this template/i })
+      .first()
     await firstCta.click()
     await expect(page).toHaveURL(/\/builder/)
   })
@@ -172,7 +180,9 @@ test.describe('Templates Page — navigation', () => {
 
   test('has a link back to the home page or brand name', async ({ page }) => {
     await page.goto('/templates')
-    const homeLink = page.getByRole('link', { name: /free resume builder|home/i }).first()
+    const homeLink = page
+      .getByRole('link', { name: /free resume builder|home/i })
+      .first()
     await expect(homeLink).toBeVisible()
   })
 

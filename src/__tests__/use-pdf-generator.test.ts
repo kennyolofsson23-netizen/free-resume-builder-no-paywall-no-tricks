@@ -406,7 +406,10 @@ describe('usePdfGenerator — isGenerating flag', () => {
     // Use a promise we control to pause generation
     let resolveGeneration!: () => void
     mockGeneratePDF.mockImplementationOnce(
-      () => new Promise<void>((resolve) => { resolveGeneration = resolve })
+      () =>
+        new Promise<void>((resolve) => {
+          resolveGeneration = resolve
+        })
     )
 
     const { result } = renderHook(() => usePdfGenerator())

@@ -93,7 +93,9 @@ test.describe('Preview Page — no hash', () => {
     ).toBeVisible()
   })
 
-  test('shows a CTA to build a resume when no hash present', async ({ page }) => {
+  test('shows a CTA to build a resume when no hash present', async ({
+    page,
+  }) => {
     await page.goto('/preview')
     await page.waitForLoadState('networkidle')
 
@@ -134,7 +136,9 @@ test.describe('Preview Page — invalid hash', () => {
     await page.goto('/preview#AAAA')
     await page.waitForLoadState('networkidle')
 
-    const builderLink = page.getByRole('link', { name: /build your own resume/i })
+    const builderLink = page.getByRole('link', {
+      name: /build your own resume/i,
+    })
     await expect(builderLink).toHaveAttribute('href', '/builder')
   })
 })
@@ -202,11 +206,15 @@ test.describe('Preview Page — Preview CTA', () => {
     await page.waitForLoadState('networkidle')
 
     // Should show a CTA linking to the builder
-    const builderLinks = page.getByRole('link', { name: /build|use this template|create/i })
+    const builderLinks = page.getByRole('link', {
+      name: /build|use this template|create/i,
+    })
     await expect(builderLinks.first()).toBeVisible()
   })
 
-  test('CTA links to /builder or /builder?template=modern', async ({ page }) => {
+  test('CTA links to /builder or /builder?template=modern', async ({
+    page,
+  }) => {
     await page.goto(`/preview#${validHash}`)
     await page.waitForLoadState('networkidle')
 
@@ -239,7 +247,11 @@ test.describe('Preview Page — template variants', () => {
 
   for (const template of templates) {
     test(`renders ${template} template preview`, async ({ page }) => {
-      const hash = encodeResumeAsHash({ ...sampleResume, id: `e2e-${template}`, template })
+      const hash = encodeResumeAsHash({
+        ...sampleResume,
+        id: `e2e-${template}`,
+        template,
+      })
       await page.goto(`/preview#${hash}`)
       await page.waitForLoadState('networkidle')
 

@@ -216,7 +216,8 @@ export function PersonalInfoForm() {
           Professional Summary
         </Label>
         <p className="text-xs text-muted-foreground">
-          2–4 sentences. Lead with your title and years of experience, name your strongest skill, and end with what you&apos;re looking for.
+          2–4 sentences. Lead with your title and years of experience, name your
+          strongest skill, and end with what you&apos;re looking for.
         </p>
         <Textarea
           id="summary"

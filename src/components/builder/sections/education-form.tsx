@@ -252,7 +252,8 @@ export function EducationForm() {
           List your degrees, diplomas, bootcamps, or relevant coursework.
           <br />
           <span className="text-xs">
-            No degree? A bootcamp, online certificate, or relevant coursework all count.
+            No degree? A bootcamp, online certificate, or relevant coursework
+            all count.
           </span>
         </p>
       )}

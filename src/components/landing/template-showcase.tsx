@@ -4,7 +4,8 @@ const templates = [
   {
     id: 'modern',
     name: 'Modern',
-    description: 'Clean lines, accent color, two-column layout. Ideal for tech and product roles.',
+    description:
+      'Clean lines, accent color, two-column layout. Ideal for tech and product roles.',
     placeholderClass: 'bg-blue-500',
   },
   {
@@ -17,7 +18,8 @@ const templates = [
   {
     id: 'minimal',
     name: 'Minimal',
-    description: 'Maximum white space. Your content does the talking, nothing else.',
+    description:
+      'Maximum white space. Your content does the talking, nothing else.',
     placeholderClass: 'bg-gray-200',
   },
   {

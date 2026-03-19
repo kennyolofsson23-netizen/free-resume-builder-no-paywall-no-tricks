@@ -17,9 +17,11 @@ export function Hero() {
           </h1>
 
           <p className="mb-8 text-xl text-slate-300">
-            Five professional templates. Real-time preview. One-click PDF download.
+            Five professional templates. Real-time preview. One-click PDF
+            download.
             <br />
-            No email. No account. No &ldquo;$1.95 trial&rdquo; that quietly becomes $29.99/month.
+            No email. No account. No &ldquo;$1.95 trial&rdquo; that quietly
+            becomes $29.99/month.
           </p>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
@@ -40,8 +42,12 @@ export function Hero() {
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <span className="text-sm text-slate-400">✓ No account needed</span>
-            <span className="text-sm text-slate-400">✓ Your data never leaves your browser</span>
-            <span className="text-sm text-slate-400">✓ PDF downloads in seconds</span>
+            <span className="text-sm text-slate-400">
+              ✓ Your data never leaves your browser
+            </span>
+            <span className="text-sm text-slate-400">
+              ✓ PDF downloads in seconds
+            </span>
           </div>
         </div>
       </div>

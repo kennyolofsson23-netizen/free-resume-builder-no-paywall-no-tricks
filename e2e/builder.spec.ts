@@ -20,7 +20,11 @@ import { test, expect } from '@playwright/test'
 // ---------------------------------------------------------------------------
 
 /** Fill a form field identified by its label text. */
-async function fillField(page: import('@playwright/test').Page, label: string, value: string) {
+async function fillField(
+  page: import('@playwright/test').Page,
+  label: string,
+  value: string
+) {
   const field = page.getByLabel(label, { exact: false })
   await field.fill(value)
 }
@@ -166,9 +170,7 @@ test.describe('Builder Page — Experience section', () => {
 test.describe('Builder Page — Skills section', () => {
   test('shows the Skills section', async ({ page }) => {
     await page.goto('/builder')
-    await expect(
-      page.getByRole('heading', { name: /skills/i })
-    ).toBeVisible()
+    await expect(page.getByRole('heading', { name: /skills/i })).toBeVisible()
   })
 
   test('can add a skill', async ({ page }) => {
@@ -217,7 +219,8 @@ test.describe('Builder Page — Template switching', () => {
   test('toolbar has a template selector', async ({ page }) => {
     await page.goto('/builder')
     // Look for a template dropdown/select in the toolbar
-    const templateControl = page.getByRole('combobox', { name: /template/i })
+    const templateControl = page
+      .getByRole('combobox', { name: /template/i })
       .or(page.getByLabel(/template/i))
     await expect(templateControl.first()).toBeVisible()
   })
@@ -230,7 +233,8 @@ test.describe('Builder Page — Template switching', () => {
 test.describe('Builder Page — PDF Download', () => {
   test('shows the Download PDF button', async ({ page }) => {
     await page.goto('/builder')
-    const downloadBtn = page.getByRole('button', { name: /download/i })
+    const downloadBtn = page
+      .getByRole('button', { name: /download/i })
       .or(page.getByRole('button', { name: /pdf/i }))
     await expect(downloadBtn.first()).toBeVisible()
   })
@@ -243,7 +247,8 @@ test.describe('Builder Page — PDF Download', () => {
 test.describe('Builder Page — Share link', () => {
   test('shows a Share or Copy Link button', async ({ page }) => {
     await page.goto('/builder')
-    const shareBtn = page.getByRole('button', { name: /share/i })
+    const shareBtn = page
+      .getByRole('button', { name: /share/i })
       .or(page.getByRole('button', { name: /copy link/i }))
     await expect(shareBtn.first()).toBeVisible()
   })
@@ -320,7 +325,9 @@ test.describe('Builder Page — Personal info preview roundtrip', () => {
 test.describe('Builder Page — Navigation', () => {
   test('has a link back to the home page', async ({ page }) => {
     await page.goto('/builder')
-    const homeLink = page.getByRole('link', { name: /free resume builder|home/i })
+    const homeLink = page.getByRole('link', {
+      name: /free resume builder|home/i,
+    })
     await expect(homeLink.first()).toBeVisible()
   })
 

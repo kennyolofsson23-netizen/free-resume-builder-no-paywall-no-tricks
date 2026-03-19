@@ -41,7 +41,8 @@ export function useShareableLink(): UseShareableLinkReturn {
       setIsCopied(true)
       toast({
         title: 'Link copied to clipboard!',
-        description: 'Anyone with this link can view your resume — no account required.',
+        description:
+          'Anyone with this link can view your resume — no account required.',
       })
 
       setTimeout(() => {
@@ -50,7 +51,8 @@ export function useShareableLink(): UseShareableLinkReturn {
     } catch {
       toast({
         title: 'Clipboard access denied',
-        description: 'Copy failed. Check your browser permissions and try again.',
+        description:
+          'Copy failed. Check your browser permissions and try again.',
         variant: 'destructive',
       })
     }

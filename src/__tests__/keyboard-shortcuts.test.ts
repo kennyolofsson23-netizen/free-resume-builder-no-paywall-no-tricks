@@ -35,7 +35,12 @@ function fireKey(
     targetTag?: 'BODY' | 'INPUT' | 'TEXTAREA' | 'SELECT'
   } = {}
 ) {
-  const { ctrlKey = false, metaKey = false, shiftKey = false, targetTag = 'BODY' } = opts
+  const {
+    ctrlKey = false,
+    metaKey = false,
+    shiftKey = false,
+    targetTag = 'BODY',
+  } = opts
 
   // Build a fake target element whose tagName matches targetTag
   const fakeTarget = { tagName: targetTag }
@@ -72,7 +77,9 @@ describe('useKeyboardShortcuts — return values', () => {
   })
 
   it('canUndo is false on fresh resume', () => {
-    act(() => { useResumeStore.getState().createNewResume() })
+    act(() => {
+      useResumeStore.getState().createNewResume()
+    })
     const { result } = renderHook(() => useKeyboardShortcuts())
     expect(result.current.canUndo()).toBe(false)
   })
@@ -118,20 +125,28 @@ describe('useKeyboardShortcuts — Ctrl+Z undo', () => {
     })
     renderHook(() => useKeyboardShortcuts())
 
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('Before Undo')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'Before Undo'
+    )
 
-    act(() => { fireKey('z', { ctrlKey: true, targetTag: 'BODY' }) })
+    act(() => {
+      fireKey('z', { ctrlKey: true, targetTag: 'BODY' })
+    })
 
     expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('')
   })
 
   it('Ctrl+Z is a no-op when canUndo is false', () => {
-    act(() => { useResumeStore.getState().createNewResume() })
+    act(() => {
+      useResumeStore.getState().createNewResume()
+    })
     renderHook(() => useKeyboardShortcuts())
 
     const resumeBefore = useResumeStore.getState().resume
 
-    act(() => { fireKey('z', { ctrlKey: true, targetTag: 'BODY' }) })
+    act(() => {
+      fireKey('z', { ctrlKey: true, targetTag: 'BODY' })
+    })
 
     expect(useResumeStore.getState().resume).toEqual(resumeBefore)
   })
@@ -143,21 +158,31 @@ describe('useKeyboardShortcuts — Ctrl+Z undo', () => {
     })
     renderHook(() => useKeyboardShortcuts())
 
-    act(() => { fireKey('z', { ctrlKey: true, targetTag: 'INPUT' }) })
+    act(() => {
+      fireKey('z', { ctrlKey: true, targetTag: 'INPUT' })
+    })
 
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('Keep Me')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'Keep Me'
+    )
   })
 
   it('Ctrl+Z does NOT undo when TEXTAREA is focused', () => {
     act(() => {
       useResumeStore.getState().createNewResume()
-      useResumeStore.getState().updatePersonalInfo({ fullName: 'Textarea Safe' })
+      useResumeStore
+        .getState()
+        .updatePersonalInfo({ fullName: 'Textarea Safe' })
     })
     renderHook(() => useKeyboardShortcuts())
 
-    act(() => { fireKey('z', { ctrlKey: true, targetTag: 'TEXTAREA' }) })
+    act(() => {
+      fireKey('z', { ctrlKey: true, targetTag: 'TEXTAREA' })
+    })
 
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('Textarea Safe')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'Textarea Safe'
+    )
   })
 
   it('Ctrl+Z does NOT undo when SELECT is focused', () => {
@@ -167,9 +192,13 @@ describe('useKeyboardShortcuts — Ctrl+Z undo', () => {
     })
     renderHook(() => useKeyboardShortcuts())
 
-    act(() => { fireKey('z', { ctrlKey: true, targetTag: 'SELECT' }) })
+    act(() => {
+      fireKey('z', { ctrlKey: true, targetTag: 'SELECT' })
+    })
 
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('Select Safe')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'Select Safe'
+    )
   })
 })
 
@@ -186,9 +215,13 @@ describe('useKeyboardShortcuts — Ctrl+Y redo', () => {
     })
     renderHook(() => useKeyboardShortcuts())
 
-    act(() => { fireKey('y', { ctrlKey: true, targetTag: 'BODY' }) })
+    act(() => {
+      fireKey('y', { ctrlKey: true, targetTag: 'BODY' })
+    })
 
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('Redo Me')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'Redo Me'
+    )
   })
 
   it('Ctrl+Y is a no-op when canRedo is false', () => {
@@ -200,7 +233,9 @@ describe('useKeyboardShortcuts — Ctrl+Y redo', () => {
 
     const resumeBefore = useResumeStore.getState().resume
 
-    act(() => { fireKey('y', { ctrlKey: true, targetTag: 'BODY' }) })
+    act(() => {
+      fireKey('y', { ctrlKey: true, targetTag: 'BODY' })
+    })
 
     expect(useResumeStore.getState().resume).toEqual(resumeBefore)
   })
@@ -213,7 +248,9 @@ describe('useKeyboardShortcuts — Ctrl+Y redo', () => {
     })
     renderHook(() => useKeyboardShortcuts())
 
-    act(() => { fireKey('y', { ctrlKey: true, targetTag: 'INPUT' }) })
+    act(() => {
+      fireKey('y', { ctrlKey: true, targetTag: 'INPUT' })
+    })
 
     expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('')
   })
@@ -232,9 +269,13 @@ describe('useKeyboardShortcuts — Ctrl+Shift+Z redo', () => {
     })
     renderHook(() => useKeyboardShortcuts())
 
-    act(() => { fireKey('z', { ctrlKey: true, shiftKey: true, targetTag: 'BODY' }) })
+    act(() => {
+      fireKey('z', { ctrlKey: true, shiftKey: true, targetTag: 'BODY' })
+    })
 
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('ShiftZ Redo')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'ShiftZ Redo'
+    )
   })
 
   it('Ctrl+Shift+Z does NOT redo when TEXTAREA is focused', () => {
@@ -245,7 +286,9 @@ describe('useKeyboardShortcuts — Ctrl+Shift+Z redo', () => {
     })
     renderHook(() => useKeyboardShortcuts())
 
-    act(() => { fireKey('z', { ctrlKey: true, shiftKey: true, targetTag: 'TEXTAREA' }) })
+    act(() => {
+      fireKey('z', { ctrlKey: true, shiftKey: true, targetTag: 'TEXTAREA' })
+    })
 
     expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('')
   })
@@ -263,20 +306,28 @@ describe('useKeyboardShortcuts — enabled: false', () => {
     })
     renderHook(() => useKeyboardShortcuts({ enabled: false }))
 
-    act(() => { fireKey('z', { ctrlKey: true, targetTag: 'BODY' }) })
+    act(() => {
+      fireKey('z', { ctrlKey: true, targetTag: 'BODY' })
+    })
 
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('Disabled')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'Disabled'
+    )
   })
 
   it('Ctrl+Y does not trigger redo when disabled', () => {
     act(() => {
       useResumeStore.getState().createNewResume()
-      useResumeStore.getState().updatePersonalInfo({ fullName: 'Disabled Redo' })
+      useResumeStore
+        .getState()
+        .updatePersonalInfo({ fullName: 'Disabled Redo' })
       useResumeStore.getState().undo()
     })
     renderHook(() => useKeyboardShortcuts({ enabled: false }))
 
-    act(() => { fireKey('y', { ctrlKey: true, targetTag: 'BODY' }) })
+    act(() => {
+      fireKey('y', { ctrlKey: true, targetTag: 'BODY' })
+    })
 
     expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('')
   })
@@ -296,9 +347,13 @@ describe('useKeyboardShortcuts — cleanup on unmount', () => {
 
     unmount()
 
-    act(() => { fireKey('z', { ctrlKey: true, targetTag: 'BODY' }) })
+    act(() => {
+      fireKey('z', { ctrlKey: true, targetTag: 'BODY' })
+    })
 
     // Undo should NOT have fired after unmount
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('Pre-Unmount')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'Pre-Unmount'
+    )
   })
 })

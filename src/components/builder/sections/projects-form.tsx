@@ -192,8 +192,8 @@ export function ProjectsForm() {
     <div className="space-y-3">
       {projects.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          Show off what you&apos;ve built — side projects, freelance work,
-          open source contributions, or class projects all count.
+          Show off what you&apos;ve built — side projects, freelance work, open
+          source contributions, or class projects all count.
         </p>
       )}
 

@@ -69,7 +69,9 @@ export default function PreviewPage() {
             This resume link didn&apos;t load
           </h1>
           <p className="text-gray-600 mb-6">
-            The link may be truncated, corrupted, or from an older version of the builder. Ask the person who shared it to hit <strong>Share</strong> again and send you the new link.
+            The link may be truncated, corrupted, or from an older version of
+            the builder. Ask the person who shared it to hit{' '}
+            <strong>Share</strong> again and send you the new link.
           </p>
           <Link
             href="/builder"

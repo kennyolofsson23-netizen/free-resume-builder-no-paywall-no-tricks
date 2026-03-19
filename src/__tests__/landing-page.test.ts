@@ -48,7 +48,9 @@ describe('Landing Page — FeatureGrid section', () => {
     const { getByRole } = render(React.createElement(FeatureGrid))
     const heading = getByRole('heading', { level: 2 })
     // Actual heading: "Everything You Need to Build a Great Resume"
-    expect(heading.textContent).toMatch(/everything you need|build a great resume|job seekers|burned before|free resume/i)
+    expect(heading.textContent).toMatch(
+      /everything you need|build a great resume|job seekers|burned before|free resume/i
+    )
   })
 
   it('renders 6 h3 feature card headings', async () => {
@@ -146,6 +148,8 @@ describe('Landing Page — Footer section', () => {
     const { container } = render(React.createElement(Footer))
     expect(container.innerHTML).toContain('Free Resume Builder')
     // Actual text: "No data collected. No accounts. No paywall. Ever."
-    expect(container.innerHTML).toMatch(/no data collected|no paywall|no accounts/i)
+    expect(container.innerHTML).toMatch(
+      /no data collected|no paywall|no accounts/i
+    )
   })
 })

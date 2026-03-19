@@ -126,7 +126,8 @@ describe('personalInfoSchema — invalid data', () => {
 
   it('rejects invalid github URL', () => {
     expect(
-      personalInfoSchema.safeParse({ ...base, github: 'github.com/user' }).success
+      personalInfoSchema.safeParse({ ...base, github: 'github.com/user' })
+        .success
     ).toBe(false)
   })
 
@@ -159,9 +160,9 @@ describe('experienceSchema — valid data', () => {
   })
 
   it('accepts empty endDate', () => {
-    expect(
-      experienceSchema.safeParse({ ...base, endDate: '' }).success
-    ).toBe(true)
+    expect(experienceSchema.safeParse({ ...base, endDate: '' }).success).toBe(
+      true
+    )
   })
 
   it('accepts currentlyWorking: true with no endDate', () => {
@@ -182,9 +183,9 @@ describe('experienceSchema — valid data', () => {
   })
 
   it('accepts empty location', () => {
-    expect(
-      experienceSchema.safeParse({ ...base, location: '' }).success
-    ).toBe(true)
+    expect(experienceSchema.safeParse({ ...base, location: '' }).success).toBe(
+      true
+    )
   })
 })
 
@@ -201,9 +202,9 @@ describe('experienceSchema — invalid data', () => {
   }
 
   it('rejects empty jobTitle', () => {
-    expect(
-      experienceSchema.safeParse({ ...base, jobTitle: '' }).success
-    ).toBe(false)
+    expect(experienceSchema.safeParse({ ...base, jobTitle: '' }).success).toBe(
+      false
+    )
   })
 
   it('rejects jobTitle exceeding 100 characters', () => {
@@ -213,15 +214,15 @@ describe('experienceSchema — invalid data', () => {
   })
 
   it('rejects empty company', () => {
-    expect(
-      experienceSchema.safeParse({ ...base, company: '' }).success
-    ).toBe(false)
+    expect(experienceSchema.safeParse({ ...base, company: '' }).success).toBe(
+      false
+    )
   })
 
   it('rejects empty startDate', () => {
-    expect(
-      experienceSchema.safeParse({ ...base, startDate: '' }).success
-    ).toBe(false)
+    expect(experienceSchema.safeParse({ ...base, startDate: '' }).success).toBe(
+      false
+    )
   })
 
   it('rejects description exceeding 5000 characters', () => {
@@ -252,7 +253,9 @@ describe('educationSchema — valid data', () => {
   })
 
   it('accepts empty endDate', () => {
-    expect(educationSchema.safeParse({ ...base, endDate: '' }).success).toBe(true)
+    expect(educationSchema.safeParse({ ...base, endDate: '' }).success).toBe(
+      true
+    )
   })
 
   it('accepts empty gpa', () => {
@@ -276,7 +279,9 @@ describe('educationSchema — invalid data', () => {
   }
 
   it('rejects empty school', () => {
-    expect(educationSchema.safeParse({ ...base, school: '' }).success).toBe(false)
+    expect(educationSchema.safeParse({ ...base, school: '' }).success).toBe(
+      false
+    )
   })
 
   it('rejects school exceeding 100 characters', () => {
@@ -286,13 +291,15 @@ describe('educationSchema — invalid data', () => {
   })
 
   it('rejects empty degree', () => {
-    expect(educationSchema.safeParse({ ...base, degree: '' }).success).toBe(false)
+    expect(educationSchema.safeParse({ ...base, degree: '' }).success).toBe(
+      false
+    )
   })
 
   it('rejects empty startDate', () => {
-    expect(
-      educationSchema.safeParse({ ...base, startDate: '' }).success
-    ).toBe(false)
+    expect(educationSchema.safeParse({ ...base, startDate: '' }).success).toBe(
+      false
+    )
   })
 
   it('rejects gpa exceeding 10 characters', () => {
@@ -408,9 +415,9 @@ describe('projectSchema — valid data', () => {
   })
 
   it('accepts empty technologies array', () => {
-    expect(
-      projectSchema.safeParse({ ...base, technologies: [] }).success
-    ).toBe(true)
+    expect(projectSchema.safeParse({ ...base, technologies: [] }).success).toBe(
+      true
+    )
   })
 
   it('accepts description up to 2000 characters', () => {
@@ -507,9 +514,9 @@ describe('certificationSchema — invalid data', () => {
   }
 
   it('rejects empty name', () => {
-    expect(
-      certificationSchema.safeParse({ ...base, name: '' }).success
-    ).toBe(false)
+    expect(certificationSchema.safeParse({ ...base, name: '' }).success).toBe(
+      false
+    )
   })
 
   it('rejects name exceeding 100 characters', () => {
@@ -519,9 +526,9 @@ describe('certificationSchema — invalid data', () => {
   })
 
   it('rejects empty issuer', () => {
-    expect(
-      certificationSchema.safeParse({ ...base, issuer: '' }).success
-    ).toBe(false)
+    expect(certificationSchema.safeParse({ ...base, issuer: '' }).success).toBe(
+      false
+    )
   })
 
   it('rejects empty issueDate', () => {
@@ -663,8 +670,17 @@ describe('resumeSchema — valid complete resume', () => {
   })
 
   it('accepts all valid accentColor hex codes', () => {
-    for (const color of ['#000000', '#ffffff', '#2563eb', '#dc2626', '#AABBCC']) {
-      const result = resumeSchema.safeParse({ ...validResume, accentColor: color })
+    for (const color of [
+      '#000000',
+      '#ffffff',
+      '#2563eb',
+      '#dc2626',
+      '#AABBCC',
+    ]) {
+      const result = resumeSchema.safeParse({
+        ...validResume,
+        accentColor: color,
+      })
       expect(result.success).toBe(true)
     }
   })

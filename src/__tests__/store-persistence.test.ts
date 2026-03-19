@@ -138,7 +138,20 @@ describe('loadFromLocalStorage — valid stored data', () => {
 
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify(makeValidStoredResume({ personalInfo: { fullName: 'Loaded', email: 'l@e.com', phone: '', location: '', website: '', linkedin: '', github: '', summary: '' } }))
+      JSON.stringify(
+        makeValidStoredResume({
+          personalInfo: {
+            fullName: 'Loaded',
+            email: 'l@e.com',
+            phone: '',
+            location: '',
+            website: '',
+            linkedin: '',
+            github: '',
+            summary: '',
+          },
+        })
+      )
     )
 
     useResumeStore.getState().loadFromLocalStorage()

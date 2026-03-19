@@ -127,10 +127,16 @@ describe('useKeyboardShortcuts — Ctrl+Z (undo)', () => {
 
     renderHook(() => useKeyboardShortcuts())
 
-    act(() => { dispatchWindowKeydown('z', { ctrlKey: true }) })
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('First')
+    act(() => {
+      dispatchWindowKeydown('z', { ctrlKey: true })
+    })
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe(
+      'First'
+    )
 
-    act(() => { dispatchWindowKeydown('z', { ctrlKey: true }) })
+    act(() => {
+      dispatchWindowKeydown('z', { ctrlKey: true })
+    })
     expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('')
   })
 })

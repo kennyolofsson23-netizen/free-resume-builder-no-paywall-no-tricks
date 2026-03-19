@@ -488,10 +488,11 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
         const parsed = JSON.parse(stored)
         // Use a lenient schema for loading stored data so that in-progress
         // resumes (with empty required fields) are still restored correctly.
-        const lenientPersonalInfoSchema = resumeSchema.shape.personalInfo.extend({
-          fullName: z.string().default(''),
-          email: z.string().default(''),
-        })
+        const lenientPersonalInfoSchema =
+          resumeSchema.shape.personalInfo.extend({
+            fullName: z.string().default(''),
+            email: z.string().default(''),
+          })
         const lenientExperienceSchema = z.object({
           id: z.string(),
           jobTitle: z.string().default(''),
@@ -505,14 +506,19 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
         const lenientSkillSchema = z.object({
           id: z.string(),
           name: z.string().default(''),
-          level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
+          level: z
+            .enum(['beginner', 'intermediate', 'advanced', 'expert'])
+            .optional(),
         })
         const lenientSchema = resumeSchema.extend({
           personalInfo: lenientPersonalInfoSchema,
           experiences: z.array(lenientExperienceSchema).default([]),
           skills: z.array(lenientSkillSchema).default([]),
           template: resumeTemplateSchema.default('modern'),
-          accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).default(DEFAULT_ACCENT_COLOR),
+          accentColor: z
+            .string()
+            .regex(/^#[0-9a-fA-F]{6}$/)
+            .default(DEFAULT_ACCENT_COLOR),
         })
         const result = lenientSchema.safeParse(parsed)
         if (result.success) {

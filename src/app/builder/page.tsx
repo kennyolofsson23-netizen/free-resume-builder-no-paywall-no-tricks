@@ -38,9 +38,7 @@ export default function BuilderPage() {
         id="main-content"
         className="flex min-h-screen items-center justify-center bg-background"
       >
-        <p className="text-muted-foreground text-sm">
-          Loading your resume…
-        </p>
+        <p className="text-muted-foreground text-sm">Loading your resume…</p>
       </main>
     )
   }

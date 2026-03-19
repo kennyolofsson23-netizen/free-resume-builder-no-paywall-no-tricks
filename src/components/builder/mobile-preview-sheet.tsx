@@ -45,7 +45,10 @@ export function MobilePreviewSheet({
           </div>
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">
-            <p>Start filling in the form — your resume will appear here as you type</p>
+            <p>
+              Start filling in the form — your resume will appear here as you
+              type
+            </p>
           </div>
         )}
       </div>

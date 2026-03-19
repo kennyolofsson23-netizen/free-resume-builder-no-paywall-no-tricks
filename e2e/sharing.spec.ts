@@ -91,9 +91,7 @@ test.describe('Preview Page — valid encoded hash (store codec)', () => {
     const encoded = btoa(unescape(encodeURIComponent(json)))
     await page.goto(`/preview#${encoded}`)
 
-    await expect(
-      page.getByText('share@e2etest.com').first()
-    ).toBeVisible()
+    await expect(page.getByText('share@e2etest.com').first()).toBeVisible()
   })
 })
 
@@ -132,8 +130,9 @@ test.describe('Preview Page — no-account CTA', () => {
     await page.goto(`/preview#${encoded}`)
 
     // The page should invite the viewer to create their own resume
-    const cta =
-      page.getByRole('link', { name: /build.*resume|create.*resume|free/i }).first()
+    const cta = page
+      .getByRole('link', { name: /build.*resume|create.*resume|free/i })
+      .first()
     await expect(cta).toBeVisible()
   })
 
@@ -144,10 +143,10 @@ test.describe('Preview Page — no-account CTA', () => {
     const encoded = btoa(unescape(encodeURIComponent(json)))
     await page.goto(`/preview#${encoded}`)
 
-    const downloadElement =
-      page.getByRole('button', { name: /download/i })
-        .or(page.getByRole('link', { name: /download/i }))
-        .first()
+    const downloadElement = page
+      .getByRole('button', { name: /download/i })
+      .or(page.getByRole('link', { name: /download/i }))
+      .first()
 
     await expect(downloadElement).toBeVisible()
   })
@@ -195,7 +194,13 @@ test.describe('Builder — Share button copies a /preview URL', () => {
 // ---------------------------------------------------------------------------
 
 test.describe('Preview Page — template from URL hash', () => {
-  const templates = ['modern', 'classic', 'minimal', 'creative', 'professional'] as const
+  const templates = [
+    'modern',
+    'classic',
+    'minimal',
+    'creative',
+    'professional',
+  ] as const
 
   for (const template of templates) {
     test(`loads ${template} template from hash`, async ({ page }) => {
