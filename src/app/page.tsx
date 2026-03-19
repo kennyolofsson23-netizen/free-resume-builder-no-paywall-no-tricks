@@ -10,7 +10,7 @@ import { Footer } from '@/components/landing/footer'
 export const metadata: Metadata = {
   title: 'Free Resume Builder — No Paywall, No Tricks',
   description:
-    "The best free resume builder with no paywall. Build a professional resume online with 5 ATS-friendly templates, real-time PDF preview, and instant download. No email, no account, no tricks. The best Zety free alternative.",
+    'The best free resume builder with no paywall. Build a professional resume online with 5 ATS-friendly templates, real-time PDF preview, and instant download. No email, no account, no tricks. The best Zety free alternative.',
   keywords: [
     'free resume builder no paywall',
     'Zety free alternative',

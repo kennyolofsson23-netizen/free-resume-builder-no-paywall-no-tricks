@@ -22,7 +22,11 @@ interface CertEntryProps {
   onDelete: (id: string) => void
 }
 
-function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
+function CertificationEntryFields({
+  cert,
+  onUpdate,
+  onDelete,
+}: CertEntryProps) {
   const [errors, setErrors] = React.useState<CertFieldErrors>({})
 
   const handleBlur = (field: keyof CertFieldErrors, value: string) => {
@@ -30,7 +34,8 @@ function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) 
     if (!value.trim()) {
       if (field === 'name') newErrors.name = 'Certification name is required'
       else if (field === 'issuer') newErrors.issuer = 'Issuer is required'
-      else if (field === 'issueDate') newErrors.issueDate = 'Issue date is required'
+      else if (field === 'issueDate')
+        newErrors.issueDate = 'Issue date is required'
     } else {
       delete newErrors[field]
     }
@@ -49,7 +54,10 @@ function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) 
       <div className="space-y-4">
         {/* Name */}
         <div className="space-y-1.5">
-          <Label htmlFor={`cert-name-${cert.id}`} className="text-sm font-medium">
+          <Label
+            htmlFor={`cert-name-${cert.id}`}
+            className="text-sm font-medium"
+          >
             Certification Name <span className="text-destructive">*</span>
           </Label>
           <Input
@@ -70,7 +78,10 @@ function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) 
 
         {/* Issuer */}
         <div className="space-y-1.5">
-          <Label htmlFor={`cert-issuer-${cert.id}`} className="text-sm font-medium">
+          <Label
+            htmlFor={`cert-issuer-${cert.id}`}
+            className="text-sm font-medium"
+          >
             Issuer <span className="text-destructive">*</span>
           </Label>
           <Input
@@ -92,7 +103,10 @@ function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) 
         <div className="grid grid-cols-2 gap-3">
           {/* Issue Date */}
           <div className="space-y-1.5">
-            <Label htmlFor={`cert-issueDate-${cert.id}`} className="text-sm font-medium">
+            <Label
+              htmlFor={`cert-issueDate-${cert.id}`}
+              className="text-sm font-medium"
+            >
               Issue Date <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -112,7 +126,10 @@ function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) 
 
           {/* Expiration Date */}
           <div className="space-y-1.5">
-            <Label htmlFor={`cert-expDate-${cert.id}`} className="text-sm font-medium">
+            <Label
+              htmlFor={`cert-expDate-${cert.id}`}
+              className="text-sm font-medium"
+            >
               Expiration Date{' '}
               <span className="text-xs text-muted-foreground">(optional)</span>
             </Label>
@@ -120,14 +137,19 @@ function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) 
               id={`cert-expDate-${cert.id}`}
               type="month"
               value={cert.expirationDate ?? ''}
-              onChange={(e) => onUpdate(cert.id, { expirationDate: e.target.value })}
+              onChange={(e) =>
+                onUpdate(cert.id, { expirationDate: e.target.value })
+              }
             />
           </div>
         </div>
 
         {/* Credential URL */}
         <div className="space-y-1.5">
-          <Label htmlFor={`cert-url-${cert.id}`} className="text-sm font-medium">
+          <Label
+            htmlFor={`cert-url-${cert.id}`}
+            className="text-sm font-medium"
+          >
             Credential URL{' '}
             <span className="text-xs text-muted-foreground">(optional)</span>
           </Label>
@@ -136,7 +158,9 @@ function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) 
             type="url"
             value={cert.credentialUrl ?? ''}
             maxLength={FIELD_LIMITS.url}
-            onChange={(e) => onUpdate(cert.id, { credentialUrl: e.target.value })}
+            onChange={(e) =>
+              onUpdate(cert.id, { credentialUrl: e.target.value })
+            }
             placeholder="https://www.credly.com/badges/..."
           />
         </div>
@@ -148,8 +172,12 @@ function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) 
 export function CertificationsForm() {
   const resume = useResumeStore((state) => state.resume)
   const addCertification = useResumeStore((state) => state.addCertification)
-  const updateCertification = useResumeStore((state) => state.updateCertification)
-  const removeCertification = useResumeStore((state) => state.removeCertification)
+  const updateCertification = useResumeStore(
+    (state) => state.updateCertification
+  )
+  const removeCertification = useResumeStore(
+    (state) => state.removeCertification
+  )
 
   const certifications = resume?.certifications ?? []
 
@@ -157,7 +185,8 @@ export function CertificationsForm() {
     <div className="space-y-3">
       {certifications.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No certifications yet. Click &quot;Add Certification&quot; to get started.
+          No certifications yet. Click &quot;Add Certification&quot; to get
+          started.
         </p>
       )}
 

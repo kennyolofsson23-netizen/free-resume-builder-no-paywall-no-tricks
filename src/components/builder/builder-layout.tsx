@@ -31,7 +31,10 @@ export function BuilderLayout() {
       ) : (
         /* Mobile: tabbed layout */
         <div className="flex flex-1 flex-col overflow-hidden">
-          <Tabs defaultValue="edit" className="flex flex-1 flex-col overflow-hidden">
+          <Tabs
+            defaultValue="edit"
+            className="flex flex-1 flex-col overflow-hidden"
+          >
             <div className="border-b border-border">
               <TabsList className="w-full rounded-none bg-transparent h-10 gap-0 p-0">
                 <TabsTrigger

@@ -75,20 +75,24 @@ describe('FeatureGrid — section', () => {
 
 describe('TemplateShowcase — templates', () => {
   it('renders all 5 template names', async () => {
-    const { TemplateShowcase } = await import(
-      '@/components/landing/template-showcase'
-    )
+    const { TemplateShowcase } =
+      await import('@/components/landing/template-showcase')
     const { container } = render(React.createElement(TemplateShowcase))
     const text = container.textContent ?? ''
-    for (const name of ['Modern', 'Classic', 'Minimal', 'Creative', 'Professional']) {
+    for (const name of [
+      'Modern',
+      'Classic',
+      'Minimal',
+      'Creative',
+      'Professional',
+    ]) {
       expect(text).toContain(name)
     }
   })
 
   it('renders "Use This Template" links pointing to /builder', async () => {
-    const { TemplateShowcase } = await import(
-      '@/components/landing/template-showcase'
-    )
+    const { TemplateShowcase } =
+      await import('@/components/landing/template-showcase')
     render(React.createElement(TemplateShowcase))
     const templateLinks = screen
       .getAllByRole('link')
@@ -97,9 +101,8 @@ describe('TemplateShowcase — templates', () => {
   })
 
   it('section heading mentions free templates', async () => {
-    const { TemplateShowcase } = await import(
-      '@/components/landing/template-showcase'
-    )
+    const { TemplateShowcase } =
+      await import('@/components/landing/template-showcase')
     const { container } = render(React.createElement(TemplateShowcase))
     const text = container.textContent?.toLowerCase() ?? ''
     expect(text).toContain('free')
@@ -131,9 +134,15 @@ describe('TrustSignals — cells', () => {
     const { container } = render(React.createElement(TrustSignals))
     const text = container.textContent?.toLowerCase() ?? ''
     expect(text).toContain('private')
-    expect(text.includes('200ms') || text.includes('preview') || text.includes('fast')).toBe(true)
+    expect(
+      text.includes('200ms') ||
+        text.includes('preview') ||
+        text.includes('fast')
+    ).toBe(true)
     expect(text).toContain('ats')
-    expect(text.includes('no account') || text.includes('account required')).toBe(true)
+    expect(
+      text.includes('no account') || text.includes('account required')
+    ).toBe(true)
   })
 })
 
@@ -147,10 +156,13 @@ describe('FAQ — accordion items', () => {
     render(React.createElement(FAQ))
     const buttons = screen
       .getAllByRole('button')
-      .filter((el) => el.getAttribute('data-radix-collection-item') !== null ||
-        el.closest('[data-radix-accordion-item]') !== null ||
-        el.closest('div[data-state]') !== null ||
-        el.tagName === 'BUTTON')
+      .filter(
+        (el) =>
+          el.getAttribute('data-radix-collection-item') !== null ||
+          el.closest('[data-radix-accordion-item]') !== null ||
+          el.closest('div[data-state]') !== null ||
+          el.tagName === 'BUTTON'
+      )
     // There should be at least 6 accordion trigger buttons
     expect(buttons.length).toBeGreaterThanOrEqual(6)
   })

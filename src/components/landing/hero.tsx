@@ -8,7 +8,8 @@ export function Hero() {
           {/* Anti-paywall pill badge */}
           <div className="mb-6">
             <span className="rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-700">
-              Unlike Zety — we don&apos;t lock your PDF behind a $29.99/month subscription
+              Unlike Zety — we don&apos;t lock your PDF behind a $29.99/month
+              subscription
             </span>
           </div>
 

@@ -27,13 +27,19 @@ export function FormPanel() {
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header */}
       <div className="shrink-0 border-b border-border bg-background px-4 py-3">
-        <h2 className="truncate text-sm font-semibold text-foreground" title={resumeName}>
+        <h2
+          className="truncate text-sm font-semibold text-foreground"
+          title={resumeName}
+        >
           {resumeName}
         </h2>
       </div>
 
       {/* Tabs Navigation */}
-      <Tabs defaultValue="personal" className="flex flex-1 flex-col overflow-hidden">
+      <Tabs
+        defaultValue="personal"
+        className="flex flex-1 flex-col overflow-hidden"
+      >
         <div className="shrink-0 border-b border-border bg-background px-2 pt-2">
           <TabsList className="flex h-auto w-full flex-wrap gap-1 rounded-none bg-transparent p-0">
             {TABS.map((tab) => (

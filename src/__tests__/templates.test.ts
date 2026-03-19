@@ -95,7 +95,9 @@ describe('TemplateRenderer — renders each template without crashing', () => {
   templates.forEach((template) => {
     it(`renders ${template} template`, () => {
       const resume = makeResume(template)
-      const { container } = render(React.createElement(TemplateRenderer, { resume }))
+      const { container } = render(
+        React.createElement(TemplateRenderer, { resume })
+      )
       expect(container.firstChild).not.toBeNull()
     })
   })
@@ -113,7 +115,9 @@ describe('TemplateRenderer — full name appears in rendered output', () => {
   templates.forEach((template) => {
     it(`shows full name in ${template} template`, () => {
       const resume = makeResume(template)
-      const { getByText } = render(React.createElement(TemplateRenderer, { resume }))
+      const { getByText } = render(
+        React.createElement(TemplateRenderer, { resume })
+      )
       expect(getByText('Jane Doe')).toBeTruthy()
     })
   })
@@ -131,7 +135,9 @@ describe('TemplateRenderer — root element has required id and class', () => {
   templates.forEach((template) => {
     it(`${template} root has id="resume-preview" and class="resume-preview"`, () => {
       const resume = makeResume(template)
-      const { container } = render(React.createElement(TemplateRenderer, { resume }))
+      const { container } = render(
+        React.createElement(TemplateRenderer, { resume })
+      )
       const root = container.querySelector('#resume-preview')
       expect(root).not.toBeNull()
       expect(root?.classList.contains('resume-preview')).toBe(true)
@@ -142,19 +148,25 @@ describe('TemplateRenderer — root element has required id and class', () => {
 describe('TemplateRenderer — experience section content', () => {
   it('renders job title in modern template', () => {
     const resume = makeResume('modern')
-    const { getAllByText } = render(React.createElement(TemplateRenderer, { resume }))
+    const { getAllByText } = render(
+      React.createElement(TemplateRenderer, { resume })
+    )
     expect(getAllByText(/Senior Engineer/).length).toBeGreaterThan(0)
   })
 
   it('shows "Present" for currently-working jobs', () => {
     const resume = makeResume('modern')
-    const { getAllByText } = render(React.createElement(TemplateRenderer, { resume }))
+    const { getAllByText } = render(
+      React.createElement(TemplateRenderer, { resume })
+    )
     expect(getAllByText(/Present/).length).toBeGreaterThan(0)
   })
 
   it('renders company name', () => {
     const resume = makeResume('classic')
-    const { getByText } = render(React.createElement(TemplateRenderer, { resume }))
+    const { getByText } = render(
+      React.createElement(TemplateRenderer, { resume })
+    )
     expect(getByText(/Acme Corp/)).toBeTruthy()
   })
 })
@@ -162,13 +174,17 @@ describe('TemplateRenderer — experience section content', () => {
 describe('TemplateRenderer — skills section content', () => {
   it('renders skill names in modern template', () => {
     const resume = makeResume('modern')
-    const { getByText } = render(React.createElement(TemplateRenderer, { resume }))
+    const { getByText } = render(
+      React.createElement(TemplateRenderer, { resume })
+    )
     expect(getByText('TypeScript')).toBeTruthy()
   })
 
   it('renders skill names in professional template', () => {
     const resume = makeResume('professional')
-    const { getByText } = render(React.createElement(TemplateRenderer, { resume }))
+    const { getByText } = render(
+      React.createElement(TemplateRenderer, { resume })
+    )
     expect(getByText('React')).toBeTruthy()
   })
 })
@@ -176,7 +192,9 @@ describe('TemplateRenderer — skills section content', () => {
 describe('TemplateRenderer — education section content', () => {
   it('renders school name', () => {
     const resume = makeResume('creative')
-    const { getByText } = render(React.createElement(TemplateRenderer, { resume }))
+    const { getByText } = render(
+      React.createElement(TemplateRenderer, { resume })
+    )
     expect(getByText('MIT')).toBeTruthy()
   })
 })
@@ -184,7 +202,9 @@ describe('TemplateRenderer — education section content', () => {
 describe('TemplateRenderer — projects section content', () => {
   it('renders project title', () => {
     const resume = makeResume('minimal')
-    const { getByText } = render(React.createElement(TemplateRenderer, { resume }))
+    const { getByText } = render(
+      React.createElement(TemplateRenderer, { resume })
+    )
     expect(getByText('Open Source Toolkit')).toBeTruthy()
   })
 })
@@ -192,7 +212,9 @@ describe('TemplateRenderer — projects section content', () => {
 describe('TemplateRenderer — certifications section content', () => {
   it('renders certification name', () => {
     const resume = makeResume('professional')
-    const { getByText } = render(React.createElement(TemplateRenderer, { resume }))
+    const { getByText } = render(
+      React.createElement(TemplateRenderer, { resume })
+    )
     expect(getByText('AWS Solutions Architect')).toBeTruthy()
   })
 })
@@ -228,7 +250,9 @@ describe('TemplateRenderer — empty resume renders without error', () => {
   templates.forEach((template) => {
     it(`${template} handles empty sections gracefully`, () => {
       const resume = { ...emptyResume, template }
-      const { getByText } = render(React.createElement(TemplateRenderer, { resume }))
+      const { getByText } = render(
+        React.createElement(TemplateRenderer, { resume })
+      )
       expect(getByText('Empty User')).toBeTruthy()
     })
   })

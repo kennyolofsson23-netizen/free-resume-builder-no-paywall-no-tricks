@@ -10,7 +10,11 @@ interface PreviewViewerProps {
 
 export function PreviewViewer({ resume }: PreviewViewerProps) {
   return (
-    <div className={cn('min-h-screen bg-gray-100 flex items-start justify-center py-8 px-4')}>
+    <div
+      className={cn(
+        'min-h-screen bg-gray-100 flex items-start justify-center py-8 px-4'
+      )}
+    >
       <div
         className={cn(
           'resume-preview',
