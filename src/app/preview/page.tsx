@@ -66,7 +66,7 @@ export default function PreviewPage() {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <h1 className="text-2xl font-bold text-gray-900 mb-3">
-            This resume link didn&apos;t load
+            Share link didn&apos;t work
           </h1>
           <p className="text-gray-600 mb-6">
             The link may be truncated, corrupted, or from an older version of

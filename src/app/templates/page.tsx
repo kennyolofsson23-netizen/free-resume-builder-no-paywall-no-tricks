@@ -34,12 +34,20 @@ export default function TemplatesPage() {
           >
             Free Resume Builder
           </Link>
-          <Link
-            href="/builder"
-            className="bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Build Your Resume — It&apos;s Free
-          </Link>
+          <nav className="flex items-center gap-4">
+            <Link
+              href="/builder"
+              className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            >
+              Builder
+            </Link>
+            <Link
+              href="/builder"
+              className="bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Build Your Resume — It&apos;s Free
+            </Link>
+          </nav>
         </div>
       </div>
 
