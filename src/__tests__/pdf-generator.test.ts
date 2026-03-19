@@ -54,7 +54,10 @@ describe('generatePDF — core behavior', () => {
     document.body.appendChild(el)
 
     const { generatePDF } = await import('@/lib/pdf/generate-pdf')
-    await generatePDF({ elementId: 'resume-preview-container', filename: 'Test.pdf' })
+    await generatePDF({
+      elementId: 'resume-preview-container',
+      filename: 'Test.pdf',
+    })
 
     expect(printSpy).toHaveBeenCalledOnce()
     document.body.removeChild(el)
@@ -72,7 +75,10 @@ describe('generatePDF — core behavior', () => {
     })
 
     const { generatePDF } = await import('@/lib/pdf/generate-pdf')
-    await generatePDF({ elementId: 'resume-test-title', filename: 'MyResume.pdf' })
+    await generatePDF({
+      elementId: 'resume-test-title',
+      filename: 'MyResume.pdf',
+    })
 
     expect(titleDuringPrint).toBe('MyResume.pdf')
     document.body.removeChild(el)
@@ -85,7 +91,10 @@ describe('generatePDF — core behavior', () => {
     document.body.appendChild(el)
 
     const { generatePDF } = await import('@/lib/pdf/generate-pdf')
-    await generatePDF({ elementId: 'resume-restore-test', filename: 'Temp.pdf' })
+    await generatePDF({
+      elementId: 'resume-restore-test',
+      filename: 'Temp.pdf',
+    })
 
     expect(document.title).toBe('Original Page Title')
     document.body.removeChild(el)

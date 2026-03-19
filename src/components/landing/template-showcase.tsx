@@ -55,7 +55,9 @@ export function TemplateShowcase() {
                 </div>
 
                 <div className="p-4">
-                  <h3 className="mb-1 font-semibold text-foreground">{t.name}</h3>
+                  <h3 className="mb-1 font-semibold text-foreground">
+                    {t.name}
+                  </h3>
                   <p className="mb-3 text-sm text-muted-foreground">
                     {t.description}
                   </p>
