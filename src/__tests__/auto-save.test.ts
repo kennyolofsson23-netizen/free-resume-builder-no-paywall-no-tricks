@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+/// <reference types="vitest/globals" />
+import { vi } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useResumeStore } from '@/store/resume-store'
 
@@ -27,7 +28,7 @@ afterEach(() => {
 })
 
 describe('useAutoSave', () => {
-  it('calls saveToLocalStorage after debounce when resume changes', async () => {
+  it('calls saveToLocalStorage after debounce when resume changes', () => {
     const saveSpy = vi.spyOn(useResumeStore.getState(), 'saveToLocalStorage')
 
     // Create a resume to start
@@ -46,7 +47,7 @@ describe('useAutoSave', () => {
     })
 
     // Advance timers past the debounce
-    await act(async () => {
+    act(() => {
       vi.advanceTimersByTime(600)
     })
 
@@ -54,7 +55,7 @@ describe('useAutoSave', () => {
     expect(result.current.lastSaved).toBeInstanceOf(Date)
   })
 
-  it('debounces multiple rapid changes into a single save', async () => {
+  it('debounces multiple rapid changes into a single save', () => {
     const saveSpy = vi.spyOn(useResumeStore.getState(), 'saveToLocalStorage')
 
     act(() => {
@@ -83,7 +84,7 @@ describe('useAutoSave', () => {
     expect(saveSpy).not.toHaveBeenCalled()
 
     // Advance past the debounce
-    await act(async () => {
+    act(() => {
       vi.advanceTimersByTime(300)
     })
 
@@ -91,7 +92,7 @@ describe('useAutoSave', () => {
     expect(saveSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('shows toast warning when save fails', async () => {
+  it('shows toast warning when save fails', () => {
     act(() => {
       useResumeStore.getState().createNewResume()
     })
@@ -110,7 +111,7 @@ describe('useAutoSave', () => {
       useResumeStore.getState().updatePersonalInfo({ fullName: 'Fail Test' })
     })
 
-    await act(async () => {
+    act(() => {
       vi.advanceTimersByTime(600)
     })
 
