@@ -1,5 +1,6 @@
 'use client'
 
+import { useRef, useState, useEffect } from 'react'
 import { useResumeStore } from '@/store/resume-store'
 import { TemplateRenderer } from '@/components/templates/template-renderer'
 import { X } from 'lucide-react'
@@ -15,6 +16,19 @@ export function MobilePreviewSheet({
   onClose,
 }: MobilePreviewSheetProps) {
   const resume = useResumeStore((state) => state.resume)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(0.42)
+
+  useEffect(() => {
+    if (!containerRef.current) return
+    const ro = new ResizeObserver(([entry]) => {
+      if (entry) {
+        setScale(entry.contentRect.width / 816)
+      }
+    })
+    ro.observe(containerRef.current)
+    return () => ro.disconnect()
+  }, [])
 
   if (!isOpen) return null
 
@@ -36,19 +50,20 @@ export function MobilePreviewSheet({
           <X className="h-4 w-4" />
         </Button>
       </div>
-      <div className="flex-1 overflow-auto p-4">
+      <div ref={containerRef} className="flex-1 overflow-auto p-4">
         {resume ? (
-          <div className="flex justify-center overflow-hidden">
-            <div
-              style={{
-                transform: 'scale(0.45)',
-                transformOrigin: 'top left',
-                width: '816px',
-                minHeight: '400px',
-              }}
-            >
-              <TemplateRenderer resume={resume} />
-            </div>
+          <div
+            style={{
+              transformOrigin: 'top center',
+              transform: `scale(${scale})`,
+              width: '816px',
+              marginLeft:
+                scale < 1 ? `${(816 * scale - 816) / 2}px` : 'auto',
+              marginRight:
+                scale < 1 ? `${(816 * scale - 816) / 2}px` : 'auto',
+            }}
+          >
+            <TemplateRenderer resume={resume} />
           </div>
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">
