@@ -6,8 +6,11 @@ export interface GeneratePDFOptions {
   filename?: string
 }
 
-export async function generatePDF(options: GeneratePDFOptions = {}): Promise<void> {
-  const { elementId = 'resume-preview-container', filename = 'Resume.pdf' } = options
+export async function generatePDF(
+  options: GeneratePDFOptions = {}
+): Promise<void> {
+  const { elementId = 'resume-preview-container', filename = 'Resume.pdf' } =
+    options
 
   const element = document.getElementById(elementId)
   if (!element) {
@@ -65,7 +68,17 @@ export async function generatePDF(options: GeneratePDFOptions = {}): Promise<voi
       pageCanvas.height = sourceH
       const ctx = pageCanvas.getContext('2d')
       if (ctx) {
-        ctx.drawImage(canvas, 0, sourceY, canvasWidth, sourceH, 0, 0, canvasWidth, sourceH)
+        ctx.drawImage(
+          canvas,
+          0,
+          sourceY,
+          canvasWidth,
+          sourceH,
+          0,
+          0,
+          canvasWidth,
+          sourceH
+        )
       }
 
       const pageImgData = pageCanvas.toDataURL('image/jpeg', 0.95)

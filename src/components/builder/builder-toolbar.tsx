@@ -255,11 +255,19 @@ export function BuilderToolbar() {
           disabled={pdfStatus === 'generating'}
           aria-label="Download PDF"
         >
-          {pdfStatus === 'generating' && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
+          {pdfStatus === 'generating' && (
+            <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+          )}
           {pdfStatus === 'success' && <Check className="mr-1.5 h-4 w-4" />}
-          {(pdfStatus === 'idle' || pdfStatus === 'error') && <Download className="mr-1.5 h-4 w-4" />}
+          {(pdfStatus === 'idle' || pdfStatus === 'error') && (
+            <Download className="mr-1.5 h-4 w-4" />
+          )}
           <span className="hidden sm:inline">
-            {pdfStatus === 'generating' ? 'Generating…' : pdfStatus === 'success' ? 'Downloaded!' : 'Download PDF'}
+            {pdfStatus === 'generating'
+              ? 'Generating…'
+              : pdfStatus === 'success'
+                ? 'Downloaded!'
+                : 'Download PDF'}
           </span>
           <span className="sm:hidden">PDF</span>
         </Button>
