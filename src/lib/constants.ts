@@ -9,12 +9,14 @@ export const TEMPLATE_LIST: Array<{
   {
     id: 'modern',
     name: 'Modern',
-    description: 'Clean sans-serif, subtle accent color, two-column skills sidebar',
+    description:
+      'Clean sans-serif, subtle accent color, two-column skills sidebar',
   },
   {
     id: 'classic',
     name: 'Classic',
-    description: 'Traditional single-column, serif headings, horizontal rule separators',
+    description:
+      'Traditional single-column, serif headings, horizontal rule separators',
   },
   {
     id: 'minimal',
@@ -24,7 +26,8 @@ export const TEMPLATE_LIST: Array<{
   {
     id: 'creative',
     name: 'Creative',
-    description: 'Bold accent header, icon-enhanced contact info, modern layout',
+    description:
+      'Bold accent header, icon-enhanced contact info, modern layout',
   },
   {
     id: 'professional',

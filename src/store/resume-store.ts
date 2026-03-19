@@ -110,10 +110,7 @@ interface ResumeStore {
   canRedo: () => boolean
 }
 
-function pushHistory(
-  pastStates: Resume[],
-  currentResume: Resume
-): Resume[] {
+function pushHistory(pastStates: Resume[], currentResume: Resume): Resume[] {
   const next = [...pastStates, currentResume]
   if (next.length > MAX_UNDO_HISTORY) {
     return next.slice(next.length - MAX_UNDO_HISTORY)
@@ -221,7 +218,9 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
     set((state) => {
       if (!state.resume) return state
       const map = new Map(state.resume.experiences.map((e) => [e.id, e]))
-      const reordered = ids.map((id) => map.get(id)).filter(Boolean) as Experience[]
+      const reordered = ids
+        .map((id) => map.get(id))
+        .filter(Boolean) as Experience[]
       return {
         pastStates: pushHistory(state.pastStates, state.resume),
         futureStates: [],
@@ -290,7 +289,9 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
     set((state) => {
       if (!state.resume) return state
       const map = new Map(state.resume.education.map((e) => [e.id, e]))
-      const reordered = ids.map((id) => map.get(id)).filter(Boolean) as Education[]
+      const reordered = ids
+        .map((id) => map.get(id))
+        .filter(Boolean) as Education[]
       return {
         pastStates: pushHistory(state.pastStates, state.resume),
         futureStates: [],
@@ -446,7 +447,9 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
         futureStates: [],
         resume: {
           ...state.resume,
-          certifications: state.resume.certifications.filter((c) => c.id !== id),
+          certifications: state.resume.certifications.filter(
+            (c) => c.id !== id
+          ),
           updatedAt: new Date().toISOString(),
         },
       }
@@ -484,7 +487,11 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
         const parsed = JSON.parse(stored)
         const result = resumeSchema.safeParse(parsed)
         if (result.success) {
-          set({ resume: result.data as unknown as Resume, pastStates: [], futureStates: [] })
+          set({
+            resume: result.data as unknown as Resume,
+            pastStates: [],
+            futureStates: [],
+          })
         } else {
           set({ resume: createEmptyResume(), pastStates: [], futureStates: [] })
         }
