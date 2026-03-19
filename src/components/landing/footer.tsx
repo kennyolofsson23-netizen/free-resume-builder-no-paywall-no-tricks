@@ -50,12 +50,12 @@ export function Footer() {
         </div>
 
         <p className="mb-3 text-center text-sm text-muted-foreground">
-          © 2026 Free Resume Builder. Built with privacy in mind. Zero data
-          collection.
+          © 2026 Free Resume Builder. No data collected. No accounts. No
+          paywall. Ever.
         </p>
         <p className="text-center text-xs text-muted-foreground">
-          We may earn a commission from partner links. This never affects our
-          pricing (which is free).
+          We may earn a commission if you click a partner link. This never
+          influences what we charge you — which is nothing.
         </p>
       </div>
     </footer>

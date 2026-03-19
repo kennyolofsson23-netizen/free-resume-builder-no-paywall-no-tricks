@@ -8,9 +8,9 @@ import { FAQ } from '@/components/landing/faq'
 import { Footer } from '@/components/landing/footer'
 
 export const metadata: Metadata = {
-  title: 'Free Resume Builder  No Paywall, No Tricks',
+  title: 'Free Resume Builder — No Paywall, No Tricks',
   description:
-    "Build a professional resume for free. 5 ATS-friendly templates, real-time PDF preview, instant download. No email. No account. Unlike Zety  we don't charge $29.99/month to download your own resume.",
+    "Build a professional resume for free. 5 ATS-friendly templates, real-time PDF preview, instant download. No email. No account. Unlike Zety — we don't charge $29.99/month to download your own resume.",
   keywords: [
     'free resume builder',
     'resume builder no paywall',
@@ -20,9 +20,9 @@ export const metadata: Metadata = {
     'free CV builder',
   ],
   openGraph: {
-    title: 'Free Resume Builder  No Paywall, No Tricks',
+    title: 'Free Resume Builder — No Paywall, No Tricks',
     description:
-      'Build a resume in minutes. No email. No account. No $1.95 trial that auto-renews. Just your resume, instantly.',
+      'Build a resume in minutes. No email. No account. No "$1.95 trial" that auto-renews at $25.90/month. Just your resume, instantly.',
   },
 }
 
