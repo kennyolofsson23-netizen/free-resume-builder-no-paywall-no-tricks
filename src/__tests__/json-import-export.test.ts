@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach } from 'vitest'
 import { useResumeStore } from '@/store/resume-store'
 import { sampleResume } from '@/lib/templates/sample-data'
 

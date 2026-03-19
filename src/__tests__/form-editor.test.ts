@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useResumeStore } from '@/store/resume-store'
 
 // Reset store before each test

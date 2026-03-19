@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest'
 import * as React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { AffiliateBanner } from '@/components/shared/affiliate-banner'

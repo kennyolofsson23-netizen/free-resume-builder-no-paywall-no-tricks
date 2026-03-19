@@ -3,7 +3,6 @@
  * Verifies ability to create new resumes without losing existing ones.
  */
 /// <reference types="vitest/globals" />
-import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { act } from '@testing-library/react'
 import { useResumeStore } from '@/store/resume-store'
 import { STORAGE_KEY, RESUMES_STORAGE_KEY } from '@/lib/constants'

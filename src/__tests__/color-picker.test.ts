@@ -3,7 +3,6 @@
  * Verifies color picker renders and handles color selection.
  */
 /// <reference types="vitest/globals" />
-import { describe, it, expect, vi } from 'vitest'
 import { render, fireEvent, screen, act } from '@testing-library/react'
 import * as React from 'react'
 

@@ -2,8 +2,6 @@
  * Tests for F004 — Instant PDF Download
  * Verifies PDF generation hook behavior and validation.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-
 // Mock store
 const mockUseResumeStore = vi.fn()
 vi.mock('@/store/resume-store', () => ({

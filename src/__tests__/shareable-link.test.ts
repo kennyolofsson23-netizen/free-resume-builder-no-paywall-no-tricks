@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { encodeResumeData, decodeResumeData } from '@/lib/sharing/url-codec'
 import { SHARE_COMPRESSION_THRESHOLD } from '@/lib/constants'
 
@@ -62,14 +61,6 @@ describe('encodeResumeData / decodeResumeData — roundtrip', () => {
 // useShareableLink hook tests
 // ---------------------------------------------------------------------------
 
-import {
-  describe as describeHook,
-  it as itHook,
-  expect as expectHook,
-  beforeEach as beforeEachHook,
-  vi as viHook,
-  afterEach as afterEachHook,
-} from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useResumeStore } from '@/store/resume-store'
 

@@ -2,7 +2,6 @@
  * Tests for F009 — Print-Optimized Stylesheet
  * Verifies that globals.css contains appropriate print media rules.
  */
-import { describe, it, expect } from 'vitest'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 
