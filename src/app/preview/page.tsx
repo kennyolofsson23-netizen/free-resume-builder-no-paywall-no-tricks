@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { Resume } from '@/types/resume'
-import { decodeResumeData } from '@/lib/sharing/url-codec'
+import { decodeResumeFromURL, decodeResumeData } from '@/lib/sharing/url-codec'
 import { resumeSchema } from '@/lib/schemas/resume-schema'
 import { PreviewViewer } from '@/components/preview/preview-viewer'
 import { PreviewCta } from '@/components/preview/preview-cta'
@@ -24,7 +24,13 @@ export default function PreviewPage() {
     }
 
     try {
-      const decoded = decodeResumeData(hash)
+      // Try new codec first (handles 'z:' compressed and plain base64url)
+      // Fall back to legacy 'c:'/'j:' prefixed format
+      const decoded =
+        hash.startsWith('z:') || (!hash.startsWith('c:') && !hash.startsWith('j:'))
+          ? decodeResumeFromURL(hash)
+          : decodeResumeData(hash)
+
       const result = resumeSchema.safeParse(decoded)
 
       if (result.success) {
@@ -69,7 +75,7 @@ export default function PreviewPage() {
             href="/builder"
             className="inline-block bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Build Your Own Resume
+            Build Your Own Resume — It&apos;s Free
           </Link>
         </div>
       </div>

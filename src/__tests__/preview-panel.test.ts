@@ -4,7 +4,7 @@
  */
 /// <reference types="vitest/globals" />
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, act } from '@testing-library/react'
+import { render, act, renderHook } from '@testing-library/react'
 import * as React from 'react'
 
 // Mock ResizeObserver (not available in jsdom)
@@ -220,7 +220,7 @@ describe('MobilePreviewSheet', () => {
 describe('useMediaQuery', () => {
   it('returns a boolean', () => {
     // The hook uses useEffect which runs after render; initial value is false
-    const result = useMediaQuery('(max-width: 767px)')
-    expect(typeof result).toBe('boolean')
+    const { result } = renderHook(() => useMediaQuery('(max-width: 767px)'))
+    expect(typeof result.current).toBe('boolean')
   })
 })

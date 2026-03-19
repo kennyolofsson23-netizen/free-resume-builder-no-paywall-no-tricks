@@ -29,14 +29,14 @@ export function TemplateGallery() {
         return (
           <article
             key={template.id}
-            id={template.id}
+            id={`template-${template.id}`}
             className="bg-white rounded-2xl shadow-md overflow-hidden"
           >
             {/* Template header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  {template.name} Template
+                  {template.name}
                 </h2>
                 <p className="text-sm text-gray-500 mt-0.5">
                   {template.description}
