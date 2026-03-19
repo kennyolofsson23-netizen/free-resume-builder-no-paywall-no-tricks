@@ -44,7 +44,7 @@ export function BuilderToolbar() {
   }
 
   const handleNewResume = () => {
-    if (confirm('Start fresh? This will clear your current resume.')) {
+    if (confirm('Start a new resume? Your current resume will be saved in the list — nothing will be lost.')) {
       createNewResume()
     }
   }
@@ -60,7 +60,7 @@ export function BuilderToolbar() {
     a.download = `${name.replace(/[^a-z0-9_\- ]/gi, '_')}_resume.json`
     a.click()
     URL.revokeObjectURL(url)
-    toast({ title: 'Resume exported', description: 'Your resume data was saved as a JSON file.' })
+    toast({ title: 'Resume exported', description: 'Saved as a JSON file. Import it anytime to pick up where you left off.' })
   }
 
   const handleImportJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,12 +73,12 @@ export function BuilderToolbar() {
       if (success) {
         toast({
           title: 'Resume imported',
-          description: 'Your resume data has been loaded.',
+          description: 'All your data has been loaded. Everything looks just as you left it.',
         })
       } else {
         toast({
           title: 'Import failed',
-          description: 'That file couldn't be read. Make sure it's a valid resume JSON export.',
+          description: "That file couldn\u2019t be read. Make sure it\u2019s a JSON file exported from this builder \u2014 nothing else was changed.",
           variant: 'destructive',
         })
       }
@@ -208,8 +208,8 @@ export function BuilderToolbar() {
           variant="ghost"
           size="sm"
           onClick={() => fileInputRef.current?.click()}
-          aria-label="Import JSON"
-          title="Import JSON"
+          aria-label="Import resume from JSON file"
+          title="Import resume from JSON file"
         >
           <Upload className="mr-1.5 h-4 w-4" />
           <span className="hidden md:inline">Import</span>
@@ -221,8 +221,8 @@ export function BuilderToolbar() {
           variant="ghost"
           size="sm"
           onClick={handleExportJSON}
-          aria-label="Export JSON"
-          title="Export JSON"
+          aria-label="Export resume as JSON backup"
+          title="Export resume as JSON backup"
         >
           <FileDown className="mr-1.5 h-4 w-4" />
           <span className="hidden md:inline">Export</span>
@@ -234,8 +234,8 @@ export function BuilderToolbar() {
           variant="ghost"
           size="sm"
           onClick={handleNewResume}
-          aria-label="New Resume"
-          title="New Resume"
+          aria-label="Create a new resume"
+          title="Create a new resume"
         >
           <Plus className="mr-1.5 h-4 w-4" />
           <span className="hidden md:inline">New</span>
@@ -264,10 +264,12 @@ export function BuilderToolbar() {
           )}
           <span className="hidden sm:inline">
             {pdfStatus === 'generating'
-              ? 'Generating…'
+              ? 'Building your PDF…'
               : pdfStatus === 'success'
-                ? 'Downloaded!'
-                : 'Download PDF'}
+                ? 'PDF downloaded!'
+                : pdfStatus === 'error'
+                  ? 'Try again'
+                  : 'Download PDF'}
           </span>
           <span className="sm:hidden">PDF</span>
         </Button>

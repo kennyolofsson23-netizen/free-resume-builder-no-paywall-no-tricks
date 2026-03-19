@@ -86,7 +86,7 @@ export function SectionEntry({
           size="sm"
           onClick={onDelete}
           className="shrink-0 text-muted-foreground hover:text-destructive"
-          aria-label="Delete entry"
+          aria-label={`Remove ${title}`}
         >
           <Trash2 className="h-4 w-4" />
         </Button>

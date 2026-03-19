@@ -75,7 +75,7 @@ export function ResumeListPanel() {
 
       {/* Resume list */}
       {resumeList.length === 0 ? (
-        <p className="text-xs text-muted-foreground">No saved resumes yet. Create your first one above.</p>
+        <p className="text-xs text-muted-foreground">No other resumes saved yet. Each resume you create is stored locally in your browser — nothing leaves your device.</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {resumeList.map((item) => {
@@ -141,9 +141,9 @@ export function ResumeListPanel() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Resume</DialogTitle>
+            <DialogTitle>Delete this resume?</DialogTitle>
             <DialogDescription>
-              This will permanently remove the resume. You can't undo this.
+              This permanently removes the resume from your browser. There&apos;s no undo — export it as JSON first if you want a backup.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -166,9 +166,9 @@ export function ResumeListPanel() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Start a New Resume?</DialogTitle>
+            <DialogTitle>Start a new resume?</DialogTitle>
             <DialogDescription>
-              Your current resume will stay in the list. A blank resume will open in its place.
+              Your current resume stays saved in the list below — you can switch back to it anytime. A fresh blank resume will open.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
