@@ -1,0 +1,323 @@
+[
+  {
+    "id": "F000",
+    "name": "Shared Infrastructure",
+    "priority": "infra",
+    "description": "Foundation: TypeScript types, Zod schemas, Zustand store, UI primitives, layouts, constants, test setup",
+    "acceptanceCriteria": [
+      "All TypeScript types in src/types/resume.ts compile without errors",
+      "Zod schemas in src/lib/schemas/resume-schema.ts validate correct data and reject invalid data",
+      "Zustand store exposes all CRUD methods for every resume section",
+      "UI primitives (Button, Input, Textarea, Label, Dialog, Tabs, Toast, Card) render and pass accessibility checks",
+      "Root layout includes fonts, metadata, theme provider, and security headers",
+      "Tailwind config includes all custom colors and design tokens",
+      "Constants file defines template list, skill levels, field limits, and default accent color",
+      "Test setup file configures jsdom environment with Testing Library matchers"
+    ],
+    "dependencies": [],
+    "files": {
+      "types": "src/types/resume.ts",
+      "schemas": "src/lib/schemas/resume-schema.ts",
+      "store": "src/store/resume-store.ts",
+      "constants": "src/lib/constants.ts",
+      "cn": "src/lib/cn.ts",
+      "layout": "src/app/layout.tsx",
+      "buttonUI": "src/components/ui/button.tsx",
+      "inputUI": "src/components/ui/input.tsx",
+      "textareaUI": "src/components/ui/textarea.tsx",
+      "labelUI": "src/components/ui/label.tsx",
+      "dialogUI": "src/components/ui/dialog.tsx",
+      "tabsUI": "src/components/ui/tabs.tsx",
+      "toastUI": "src/components/ui/toast.tsx",
+      "toasterUI": "src/components/ui/toaster.tsx",
+      "cardUI": "src/components/ui/card.tsx",
+      "separatorUI": "src/components/ui/separator.tsx",
+      "tooltipUI": "src/components/ui/tooltip.tsx",
+      "dropdownUI": "src/components/ui/dropdown-menu.tsx",
+      "testSetup": "src/test/setup.ts",
+      "tests": "src/__tests__/resume-store.test.ts"
+    }
+  },
+  {
+    "id": "F001",
+    "name": "Resume Form Editor",
+    "priority": "P0",
+    "description": "Multi-section form for entering all resume data with real-time validation",
+    "acceptanceCriteria": [
+      "Given the builder page loads, When I start typing in any field, Then the preview updates within 200ms",
+      "Given I am in the Experience section, When I click 'Add Experience', Then a new empty experience form appears with all required fields",
+      "Given I have multiple experiences, When I drag an experience to a new position, Then the order updates in both the form and preview",
+      "Given I leave a required field empty (fullName, email), When I attempt to download, Then a validation error highlights the missing field",
+      "Given I enter an invalid email format, When the field loses focus, Then an inline error message appears",
+      "Given I check 'Currently Working', When the form updates, Then the end date field is hidden and 'Present' shows in the preview"
+    ],
+    "dependencies": ["F000"],
+    "files": {
+      "page": "src/app/builder/page.tsx",
+      "formPanel": "src/components/builder/form-panel.tsx",
+      "personalInfoForm": "src/components/builder/sections/personal-info-form.tsx",
+      "experienceForm": "src/components/builder/sections/experience-form.tsx",
+      "educationForm": "src/components/builder/sections/education-form.tsx",
+      "skillsForm": "src/components/builder/sections/skills-form.tsx",
+      "projectsForm": "src/components/builder/sections/projects-form.tsx",
+      "certificationsForm": "src/components/builder/sections/certifications-form.tsx",
+      "sectionEntry": "src/components/builder/section-entry.tsx",
+      "tests": "src/__tests__/form-editor.test.ts"
+    }
+  },
+  {
+    "id": "F002",
+    "name": "Real-Time PDF Preview",
+    "priority": "P0",
+    "description": "Live preview panel that renders the resume exactly as it will appear in the downloaded PDF",
+    "acceptanceCriteria": [
+      "Given I type in any form field, When the input changes, Then the preview panel re-renders within 200ms",
+      "Given the preview is visible, When I view it on desktop (>=1024px), Then it displays side-by-side with the form editor",
+      "Given I am on mobile (<768px), When I tap 'Preview', Then the preview shows full-screen in a bottom sheet",
+      "Given the preview renders, When compared pixel-for-pixel to the downloaded PDF, Then they are identical in layout"
+    ],
+    "dependencies": ["F000", "F001"],
+    "files": {
+      "builderLayout": "src/components/builder/builder-layout.tsx",
+      "previewPanel": "src/components/builder/preview-panel.tsx",
+      "mobileSheet": "src/components/builder/mobile-preview-sheet.tsx",
+      "templateRenderer": "src/components/templates/template-renderer.tsx",
+      "mediaQuery": "src/hooks/use-media-query.ts",
+      "tests": "src/__tests__/preview-panel.test.ts"
+    }
+  },
+  {
+    "id": "F003",
+    "name": "Five Resume Templates",
+    "priority": "P0",
+    "description": "Five distinct, professional, ATS-friendly resume templates: Modern, Classic, Minimal, Creative, Professional",
+    "acceptanceCriteria": [
+      "Given I am on the builder page, When I click a template thumbnail, Then the preview immediately switches to that template",
+      "Given any template is selected, When the resume contains all section types, Then all sections render correctly without overlap or truncation",
+      "Given any template renders, When parsed by standard ATS software, Then all text content is extractable (no text-as-image)",
+      "Given I switch templates, When the preview updates, Then no resume data is lost",
+      "Given a template renders a full-page resume, When the content exceeds one page, Then it cleanly flows to a second page with consistent headers"
+    ],
+    "dependencies": ["F000"],
+    "files": {
+      "modernTemplate": "src/components/templates/modern-template.tsx",
+      "classicTemplate": "src/components/templates/classic-template.tsx",
+      "minimalTemplate": "src/components/templates/minimal-template.tsx",
+      "creativeTemplate": "src/components/templates/creative-template.tsx",
+      "professionalTemplate": "src/components/templates/professional-template.tsx",
+      "sampleData": "src/lib/templates/sample-data.ts",
+      "tests": "src/__tests__/templates.test.ts"
+    }
+  },
+  {
+    "id": "F004",
+    "name": "Instant PDF Download",
+    "priority": "P0",
+    "description": "One-click client-side PDF generation and download via jsPDF + html2canvas",
+    "acceptanceCriteria": [
+      "Given my resume has at minimum fullName and email filled in, When I click 'Download PDF', Then a PDF file downloads within 2 seconds",
+      "Given the PDF downloads, When I open it in any PDF reader, Then the layout matches the preview exactly",
+      "Given the PDF generates, When I check network requests, Then zero HTTP requests are made to any server (fully client-side)",
+      "Given the PDF generates, When I copy text from it, Then all text is selectable and copyable (not rasterized images)",
+      "Given the downloaded file, When I check the filename, Then it is formatted as '{FullName}_Resume.pdf'"
+    ],
+    "dependencies": ["F000", "F002", "F003"],
+    "files": {
+      "pdfGenerator": "src/lib/pdf/generate-pdf.ts",
+      "usePdfHook": "src/hooks/use-pdf-generator.ts",
+      "toolbar": "src/components/builder/builder-toolbar.tsx",
+      "tests": "src/__tests__/pdf-generator.test.ts"
+    }
+  },
+  {
+    "id": "F005",
+    "name": "LocalStorage Persistence",
+    "priority": "P0",
+    "description": "Auto-save all resume data to browser localStorage with debounced writes",
+    "acceptanceCriteria": [
+      "Given I type in any form field, When 1 second passes without further input (debounce), Then the resume data is saved to localStorage",
+      "Given I saved data previously, When I return to the site, Then all my data is restored exactly as I left it",
+      "Given localStorage is full or unavailable, When the save fails, Then a non-blocking toast warns the user",
+      "Given I want to start fresh, When I click 'New Resume', Then a confirmation dialog appears before clearing data"
+    ],
+    "dependencies": ["F000"],
+    "files": {
+      "autoSaveHook": "src/hooks/use-auto-save.ts",
+      "tests": "src/__tests__/auto-save.test.ts"
+    }
+  },
+  {
+    "id": "F006",
+    "name": "Landing Page with Counter-Positioning Copy",
+    "priority": "P0",
+    "description": "SEO-optimized landing page with anti-paywall messaging targeting Zety frustration",
+    "acceptanceCriteria": [
+      "Given a user lands on the homepage, When the page loads, Then the hero section displays 'Free Resume Builder — No Paywall, No Tricks' above the fold",
+      "Given the page content, When I search for counter-positioning copy, Then at least 3 distinct anti-paywall messages appear",
+      "Given the page, When I look for a CTA, Then a prominent 'Build Your Resume — It's Free' button is visible above the fold",
+      "Given the page loads, When I measure Largest Contentful Paint, Then LCP is under 2.5 seconds",
+      "Given the page source, When I inspect meta tags, Then title, description, and OG tags target 'free resume builder no paywall' and 'Zety free alternative' keywords"
+    ],
+    "dependencies": ["F000"],
+    "files": {
+      "page": "src/app/page.tsx",
+      "hero": "src/components/landing/hero.tsx",
+      "featureGrid": "src/components/landing/feature-grid.tsx",
+      "templateShowcase": "src/components/landing/template-showcase.tsx",
+      "trustSignals": "src/components/landing/trust-signals.tsx",
+      "faq": "src/components/landing/faq.tsx",
+      "footer": "src/components/landing/footer.tsx",
+      "header": "src/components/shared/header.tsx",
+      "tests": "src/__tests__/landing-page.test.ts"
+    }
+  },
+  {
+    "id": "F007",
+    "name": "Shareable Resume Preview Link",
+    "priority": "P1",
+    "description": "Generate a URL with compressed resume data in the hash fragment for server-free sharing",
+    "acceptanceCriteria": [
+      "Given I have a resume with data, When I click 'Share', Then a URL is generated containing the resume data encoded in a URL-safe format",
+      "Given the URL is generated, When I copy and open it in a new browser, Then the resume renders in read-only preview mode with all data intact",
+      "Given a shared URL, When it exceeds 8KB of data, Then the data is compressed (pako/gzip) before base64url encoding",
+      "Given a shared URL, When the recipient views it, Then they see a 'Build Your Own — It's Free' CTA but cannot edit the resume",
+      "Given a shared URL, When it is opened, Then no data is sent to any server (decoded entirely client-side)"
+    ],
+    "dependencies": ["F000", "F003"],
+    "files": {
+      "urlCodec": "src/lib/sharing/url-codec.ts",
+      "shareHook": "src/hooks/use-shareable-link.ts",
+      "previewPage": "src/app/preview/page.tsx",
+      "previewViewer": "src/components/preview/preview-viewer.tsx",
+      "previewCta": "src/components/preview/preview-cta.tsx",
+      "tests": "src/__tests__/shareable-link.test.ts"
+    }
+  },
+  {
+    "id": "F008",
+    "name": "JSON Import/Export",
+    "priority": "P1",
+    "description": "Export resume data as JSON file and import from JSON for cross-browser portability",
+    "acceptanceCriteria": [
+      "Given I click 'Export JSON', When the file saves, Then it contains the complete resume data as valid JSON",
+      "Given I have a valid resume JSON file, When I click 'Import JSON' and select it, Then all data loads into the form and preview",
+      "Given I import an invalid JSON file, When the parse fails, Then an error toast appears and no data is overwritten",
+      "Given the exported JSON, When I inspect it, Then it conforms to the Resume TypeScript type schema"
+    ],
+    "dependencies": ["F000"],
+    "files": {
+      "tests": "src/__tests__/json-import-export.test.ts"
+    }
+  },
+  {
+    "id": "F009",
+    "name": "Print-Optimized Stylesheet",
+    "priority": "P1",
+    "description": "CSS print styles so Ctrl+P prints only the resume without UI chrome",
+    "acceptanceCriteria": [
+      "Given I press Ctrl+P / Cmd+P on the preview page, When the print dialog opens, Then only the resume renders (no UI chrome, no navigation)",
+      "Given the print layout, When printed on US Letter paper, Then margins and layout match the PDF download"
+    ],
+    "dependencies": ["F000", "F003"],
+    "files": {
+      "printStyles": "src/app/globals.css",
+      "tests": "src/__tests__/print-styles.test.ts"
+    }
+  },
+  {
+    "id": "F010",
+    "name": "Dark Mode",
+    "priority": "P1",
+    "description": "System-preference-aware dark mode for the editor UI (not the resume preview)",
+    "acceptanceCriteria": [
+      "Given the user's OS is set to dark mode, When they visit the site, Then the editor UI renders in dark theme",
+      "Given dark mode is active, When viewing the resume preview, Then the preview always renders with a white background (as it will print)",
+      "Given the toggle, When I click the dark/light mode switch, Then the UI theme changes immediately without page reload"
+    ],
+    "dependencies": ["F000"],
+    "files": {
+      "themeToggle": "src/components/shared/theme-toggle.tsx",
+      "tests": "src/__tests__/dark-mode.test.ts"
+    }
+  },
+  {
+    "id": "F011",
+    "name": "Multiple Resumes Management",
+    "priority": "P2",
+    "description": "Save and switch between multiple resumes stored in localStorage",
+    "acceptanceCriteria": [
+      "Given I have a resume, When I click 'New Resume', Then I can create a second resume without losing the first",
+      "Given I have multiple resumes, When I view the resume list, Then each shows the name, template, and last-modified date",
+      "Given I have multiple resumes, When I delete one, Then a confirmation dialog appears before deletion"
+    ],
+    "dependencies": ["F000", "F005"],
+    "files": {
+      "tests": "src/__tests__/multiple-resumes.test.ts"
+    }
+  },
+  {
+    "id": "F012",
+    "name": "Custom Accent Color Picker",
+    "priority": "P2",
+    "description": "Let users customize the accent color used in templates that support it",
+    "acceptanceCriteria": [
+      "Given I am using a template with accent colors (Modern, Creative, Professional), When I open the color picker, Then I can choose from 12 preset colors or enter a hex value",
+      "Given I pick a color, When the preview updates, Then all accent elements (headers, lines, icons) use the new color",
+      "Given I pick a very light color, When contrast against white background is below 3:1, Then a warning appears"
+    ],
+    "dependencies": ["F000", "F003"],
+    "files": {
+      "colorPicker": "src/components/ui/color-picker.tsx",
+      "tests": "src/__tests__/color-picker.test.ts"
+    }
+  },
+  {
+    "id": "F013",
+    "name": "Undo/Redo",
+    "priority": "P2",
+    "description": "Standard undo/redo for all form changes via Ctrl+Z / Ctrl+Shift+Z",
+    "acceptanceCriteria": [
+      "Given I make changes in the form, When I press Ctrl+Z, Then the last change is reverted in both form and preview",
+      "Given I have undone a change, When I press Ctrl+Shift+Z, Then the change is re-applied",
+      "Given the undo stack, When it contains more than 50 entries, Then the oldest entries are dropped"
+    ],
+    "dependencies": ["F000"],
+    "files": {
+      "keyboardShortcuts": "src/hooks/use-keyboard-shortcuts.ts",
+      "tests": "src/__tests__/undo-redo.test.ts"
+    }
+  },
+  {
+    "id": "F014",
+    "name": "Template Gallery Page",
+    "priority": "P1",
+    "description": "Static page showing all 5 templates with sample data and 'Use This Template' CTAs for SEO",
+    "acceptanceCriteria": [
+      "Given I navigate to /templates, When the page loads, Then all 5 templates render with realistic sample data",
+      "Given I click 'Use This Template' on a template, When I am redirected, Then the builder opens with that template pre-selected",
+      "Given the page source, When I inspect meta tags, Then they target 'free resume templates' keywords"
+    ],
+    "dependencies": ["F000", "F003"],
+    "files": {
+      "page": "src/app/templates/page.tsx",
+      "tests": "src/__tests__/template-gallery.test.ts"
+    }
+  },
+  {
+    "id": "F015",
+    "name": "Affiliate & Ad Monetization",
+    "priority": "P1",
+    "description": "Kickresume affiliate links and job board display ad placements",
+    "acceptanceCriteria": [
+      "Given the builder page, When I look at the sidebar below the preview, Then a non-intrusive Kickresume affiliate banner is visible",
+      "Given the landing page, When I scroll below the fold, Then job board display ads render without blocking content",
+      "Given any page, When ads load, Then they do not cause layout shift (CLS < 0.1)",
+      "Given the PDF download flow, When I click Download, Then no ads or interstitials appear before the download"
+    ],
+    "dependencies": ["F000", "F006"],
+    "files": {
+      "affiliateBanner": "src/components/shared/affiliate-banner.tsx",
+      "tests": "src/__tests__/monetization.test.ts"
+    }
+  }
+]
