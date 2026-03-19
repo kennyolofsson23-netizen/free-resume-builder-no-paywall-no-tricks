@@ -21,7 +21,7 @@ function SkillRow({ skill, onUpdate, onDelete }: SkillRowProps) {
         value={skill.name}
         maxLength={FIELD_LIMITS.skillName}
         onChange={(e) => onUpdate(skill.id, { name: e.target.value })}
-        placeholder="Skill name"
+        placeholder="e.g. Python, Figma, Leadership"
         aria-label="Skill name"
         className="flex-1"
       />
@@ -40,7 +40,7 @@ function SkillRow({ skill, onUpdate, onDelete }: SkillRowProps) {
         aria-label="Skill level"
         className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
       >
-        <option value="">Level</option>
+        <option value="">Proficiency</option>
         {SKILL_LEVELS.map((level) => (
           <option key={level.value} value={level.value}>
             {level.label}

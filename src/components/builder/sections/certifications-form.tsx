@@ -185,8 +185,12 @@ export function CertificationsForm() {
     <div className="space-y-3">
       {certifications.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          Add licenses, professional certifications, or credentials that
-          strengthen your application.
+          Add certifications, licenses, or credentials that back up your skills.
+          <br />
+          <span className="text-xs">
+            AWS, Google Analytics, PMP, SHRM — anything with a credential ID or
+            verification URL is worth including.
+          </span>
         </p>
       )}
 

@@ -238,7 +238,7 @@ function ExperienceEntryFields({
             value={exp.description}
             maxLength={FIELD_LIMITS.description}
             onChange={(e) => onUpdate(exp.id, { description: e.target.value })}
-            placeholder="Describe your key responsibilities and measurable achievements. Use bullet points starting with action verbs like 'Led', 'Built', 'Reduced', 'Increased'..."
+            placeholder="• Led a team of 5 engineers to ship a new checkout flow, cutting cart abandonment by 22%&#10;• Reduced API response time by 40% through query optimization&#10;• Mentored 3 junior developers through weekly code reviews&#10;&#10;Start each bullet with an action verb. Add numbers wherever you can."
             rows={4}
           />
           <p className="text-xs text-muted-foreground text-right">

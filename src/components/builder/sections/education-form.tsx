@@ -250,6 +250,10 @@ export function EducationForm() {
       {education.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
           List your degrees, diplomas, bootcamps, or relevant coursework.
+          <br />
+          <span className="text-xs">
+            No degree? A bootcamp, online certificate, or relevant coursework all count.
+          </span>
         </p>
       )}
 

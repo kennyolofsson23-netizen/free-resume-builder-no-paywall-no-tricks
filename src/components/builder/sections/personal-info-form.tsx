@@ -33,18 +33,18 @@ export function PersonalInfoForm() {
   const handleBlur = (field: string, value: string) => {
     const newErrors = { ...errors }
     if (field === 'fullName' && !value.trim()) {
-      newErrors.fullName = 'Full name is required'
+      newErrors.fullName = 'Enter your name as it should appear on your resume'
     } else if (field === 'email') {
       if (!value.trim()) {
-        newErrors.email = 'Email is required'
+        newErrors.email = 'Enter your email so employers can reach you'
       } else if (!isValidEmail(value)) {
-        newErrors.email = 'Invalid email address'
+        newErrors.email = 'Enter a valid email — e.g. name@company.com'
       } else {
         delete newErrors.email
       }
     } else if (['website', 'linkedin', 'github'].includes(field)) {
       if (value && !isValidUrl(value)) {
-        newErrors[field] = 'Invalid URL'
+        newErrors[field] = 'Enter a full URL — e.g. https://example.com'
       } else {
         delete newErrors[field]
       }
@@ -213,14 +213,17 @@ export function PersonalInfoForm() {
       {/* Summary */}
       <div className="space-y-1.5">
         <Label htmlFor="summary" className="text-sm font-medium">
-          Summary
+          Professional Summary
         </Label>
+        <p className="text-xs text-muted-foreground">
+          2–4 sentences. Lead with your title and years of experience, name your strongest skill, and end with what you&apos;re looking for.
+        </p>
         <Textarea
           id="summary"
           value={info.summary ?? ''}
           maxLength={FIELD_LIMITS.summary}
           onChange={(e) => updatePersonalInfo({ summary: e.target.value })}
-          placeholder="e.g. 'Software engineer with 5 years of experience building web applications. Passionate about clean code and great user experiences.'"
+          placeholder="e.g. Results-driven marketing coordinator with 5 years of experience driving digital campaigns. Increased lead generation 40% YoY. Seeking a senior role where I can bring both creative and analytical strengths."
           rows={4}
         />
         <p className="text-xs text-muted-foreground text-right">
