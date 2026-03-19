@@ -14,7 +14,6 @@ interface CertFieldErrors {
   name?: string
   issuer?: string
   issueDate?: string
-  credentialUrl?: string
 }
 
 interface CertEntryProps {
@@ -23,29 +22,15 @@ interface CertEntryProps {
   onDelete: (id: string) => void
 }
 
-function isValidUrl(value: string): boolean {
-  if (!value) return true
-  try {
-    new URL(value)
-    return true
-  } catch {
-    return false
-  }
-}
-
-function CertEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
+function CertificationEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
   const [errors, setErrors] = React.useState<CertFieldErrors>({})
 
   const handleBlur = (field: keyof CertFieldErrors, value: string) => {
     const newErrors = { ...errors }
-    if (field === 'name' && !value.trim()) {
-      newErrors.name = 'Certification name is required'
-    } else if (field === 'issuer' && !value.trim()) {
-      newErrors.issuer = 'Issuer is required'
-    } else if (field === 'issueDate' && !value.trim()) {
-      newErrors.issueDate = 'Issue date is required'
-    } else if (field === 'credentialUrl' && value && !isValidUrl(value)) {
-      newErrors.credentialUrl = 'Invalid URL'
+    if (!value.trim()) {
+      if (field === 'name') newErrors.name = 'Certification name is required'
+      else if (field === 'issuer') newErrors.issuer = 'Issuer is required'
+      else if (field === 'issueDate') newErrors.issueDate = 'Issue date is required'
     } else {
       delete newErrors[field]
     }
@@ -53,7 +38,7 @@ function CertEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
   }
 
   const title = cert.name || 'New Certification'
-  const subtitle = cert.issuer || undefined
+  const subtitle = cert.issuer || ''
 
   return (
     <SectionEntry
@@ -64,11 +49,8 @@ function CertEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
       <div className="space-y-4">
         {/* Name */}
         <div className="space-y-1.5">
-          <Label
-            htmlFor={`cert-name-${cert.id}`}
-            className="text-sm font-medium"
-          >
-            Name <span className="text-destructive">*</span>
+          <Label htmlFor={`cert-name-${cert.id}`} className="text-sm font-medium">
+            Certification Name <span className="text-destructive">*</span>
           </Label>
           <Input
             id={`cert-name-${cert.id}`}
@@ -88,10 +70,7 @@ function CertEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
 
         {/* Issuer */}
         <div className="space-y-1.5">
-          <Label
-            htmlFor={`cert-issuer-${cert.id}`}
-            className="text-sm font-medium"
-          >
+          <Label htmlFor={`cert-issuer-${cert.id}`} className="text-sm font-medium">
             Issuer <span className="text-destructive">*</span>
           </Label>
           <Input
@@ -113,10 +92,7 @@ function CertEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
         <div className="grid grid-cols-2 gap-3">
           {/* Issue Date */}
           <div className="space-y-1.5">
-            <Label
-              htmlFor={`cert-issueDate-${cert.id}`}
-              className="text-sm font-medium"
-            >
+            <Label htmlFor={`cert-issueDate-${cert.id}`} className="text-sm font-medium">
               Issue Date <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -136,10 +112,7 @@ function CertEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
 
           {/* Expiration Date */}
           <div className="space-y-1.5">
-            <Label
-              htmlFor={`cert-expDate-${cert.id}`}
-              className="text-sm font-medium"
-            >
+            <Label htmlFor={`cert-expDate-${cert.id}`} className="text-sm font-medium">
               Expiration Date{' '}
               <span className="text-xs text-muted-foreground">(optional)</span>
             </Label>
@@ -147,19 +120,14 @@ function CertEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
               id={`cert-expDate-${cert.id}`}
               type="month"
               value={cert.expirationDate ?? ''}
-              onChange={(e) =>
-                onUpdate(cert.id, { expirationDate: e.target.value })
-              }
+              onChange={(e) => onUpdate(cert.id, { expirationDate: e.target.value })}
             />
           </div>
         </div>
 
         {/* Credential URL */}
         <div className="space-y-1.5">
-          <Label
-            htmlFor={`cert-url-${cert.id}`}
-            className="text-sm font-medium"
-          >
+          <Label htmlFor={`cert-url-${cert.id}`} className="text-sm font-medium">
             Credential URL{' '}
             <span className="text-xs text-muted-foreground">(optional)</span>
           </Label>
@@ -168,17 +136,9 @@ function CertEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
             type="url"
             value={cert.credentialUrl ?? ''}
             maxLength={FIELD_LIMITS.url}
-            onChange={(e) =>
-              onUpdate(cert.id, { credentialUrl: e.target.value })
-            }
-            onBlur={(e) => handleBlur('credentialUrl', e.target.value)}
-            placeholder="https://credentials.example.com/abc123"
-            aria-invalid={!!errors.credentialUrl}
-            className={errors.credentialUrl ? 'border-destructive' : ''}
+            onChange={(e) => onUpdate(cert.id, { credentialUrl: e.target.value })}
+            placeholder="https://www.credly.com/badges/..."
           />
-          {errors.credentialUrl && (
-            <p className="text-sm text-destructive">{errors.credentialUrl}</p>
-          )}
         </div>
       </div>
     </SectionEntry>
@@ -188,12 +148,8 @@ function CertEntryFields({ cert, onUpdate, onDelete }: CertEntryProps) {
 export function CertificationsForm() {
   const resume = useResumeStore((state) => state.resume)
   const addCertification = useResumeStore((state) => state.addCertification)
-  const updateCertification = useResumeStore(
-    (state) => state.updateCertification
-  )
-  const removeCertification = useResumeStore(
-    (state) => state.removeCertification
-  )
+  const updateCertification = useResumeStore((state) => state.updateCertification)
+  const removeCertification = useResumeStore((state) => state.removeCertification)
 
   const certifications = resume?.certifications ?? []
 
@@ -201,13 +157,12 @@ export function CertificationsForm() {
     <div className="space-y-3">
       {certifications.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No certifications yet. Click &quot;Add Certification&quot; to get
-          started.
+          No certifications yet. Click &quot;Add Certification&quot; to get started.
         </p>
       )}
 
       {certifications.map((cert) => (
-        <CertEntryFields
+        <CertificationEntryFields
           key={cert.id}
           cert={cert}
           onUpdate={updateCertification}

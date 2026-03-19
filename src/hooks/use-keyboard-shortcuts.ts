@@ -1,57 +1,47 @@
 'use client'
-
-import * as React from 'react'
+import { useEffect, useCallback } from 'react'
 import { useResumeStore } from '@/store/resume-store'
 
 interface UseKeyboardShortcutsOptions {
   enabled?: boolean
 }
 
-/**
- * useKeyboardShortcuts - registers keyboard shortcuts for undo, redo, and save.
- *
- * Shortcuts:
- * - Ctrl+Z / Cmd+Z        → undo
- * - Ctrl+Shift+Z / Cmd+Shift+Z → redo
- * - Ctrl+S / Cmd+S        → save to localStorage (prevents default browser save)
- */
-export function useKeyboardShortcuts({
-  enabled = true,
-}: UseKeyboardShortcutsOptions = {}) {
+export function useKeyboardShortcuts({ enabled = true }: UseKeyboardShortcutsOptions = {}) {
   const undo = useResumeStore((state) => state.undo)
   const redo = useResumeStore((state) => state.redo)
-  const saveToLocalStorage = useResumeStore((state) => state.saveToLocalStorage)
+  const canUndo = useResumeStore((state) => state.canUndo)
+  const canRedo = useResumeStore((state) => state.canRedo)
 
-  React.useEffect(() => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Don't intercept when user is typing in input/textarea
+    const target = e.target as HTMLElement
+    const isInputFocused = ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+
+    const isMac = navigator.platform.toUpperCase().includes('MAC')
+    const modKey = isMac ? e.metaKey : e.ctrlKey
+
+    if (modKey && e.key === 'z' && !e.shiftKey) {
+      // Only intercept Ctrl+Z when NOT in text input
+      // (allow native text undo in inputs)
+      if (!isInputFocused) {
+        e.preventDefault()
+        if (canUndo()) undo()
+      }
+    }
+
+    if ((modKey && e.shiftKey && e.key === 'z') || (modKey && e.key === 'y')) {
+      if (!isInputFocused) {
+        e.preventDefault()
+        if (canRedo()) redo()
+      }
+    }
+  }, [undo, redo, canUndo, canRedo])
+
+  useEffect(() => {
     if (!enabled) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const isMac = navigator.platform.toUpperCase().includes('MAC')
-      const ctrlOrCmd = isMac ? event.metaKey : event.ctrlKey
-
-      if (!ctrlOrCmd) return
-
-      if (event.key === 'z' || event.key === 'Z') {
-        event.preventDefault()
-        if (event.shiftKey) {
-          redo()
-        } else {
-          undo()
-        }
-        return
-      }
-
-      if (event.key === 's' || event.key === 'S') {
-        event.preventDefault()
-        saveToLocalStorage()
-        return
-      }
-    }
-
     window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [enabled, handleKeyDown])
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [enabled, undo, redo, saveToLocalStorage])
+  return { undo, redo, canUndo, canRedo }
 }

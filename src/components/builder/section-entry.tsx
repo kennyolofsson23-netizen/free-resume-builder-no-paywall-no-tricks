@@ -10,6 +10,7 @@ interface SectionEntryProps {
   subtitle?: string
   onDelete: () => void
   children: React.ReactNode
+  defaultOpen?: boolean
   isDragging?: boolean
   dragHandleProps?: React.HTMLAttributes<HTMLDivElement>
 }
@@ -19,10 +20,11 @@ export function SectionEntry({
   subtitle,
   onDelete,
   children,
+  defaultOpen = true,
   isDragging = false,
   dragHandleProps,
 }: SectionEntryProps) {
-  const [isExpanded, setIsExpanded] = React.useState(true)
+  const [isExpanded, setIsExpanded] = React.useState(defaultOpen)
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {

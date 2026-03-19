@@ -55,7 +55,7 @@ function EducationEntryFields({
     ? edu.field
       ? `${edu.degree} in ${edu.field}`
       : edu.degree
-    : undefined
+    : ''
 
   return (
     <SectionEntry

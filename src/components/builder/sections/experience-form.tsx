@@ -52,7 +52,7 @@ function ExperienceEntryFields({
   }
 
   const title = exp.jobTitle || 'New Experience'
-  const subtitle = exp.company || undefined
+  const subtitle = exp.company || ''
 
   return (
     <SectionEntry

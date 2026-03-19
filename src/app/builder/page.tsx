@@ -1,23 +1,43 @@
-import { Metadata } from 'next'
+'use client'
 
-export const metadata: Metadata = {
-  title: 'Resume Builder - Free Resume Builder',
-}
+import * as React from 'react'
+import { useResumeStore } from '@/store/resume-store'
+import { BuilderLayout } from '@/components/builder/builder-layout'
+import { TEMPLATE_LIST } from '@/lib/constants'
+import type { ResumeTemplate } from '@/types/resume'
 
 export default function BuilderPage() {
-  return (
-    <main id="main-content" className="min-h-screen bg-background">
-      <div className="flex items-center justify-center py-24">
-        <div className="text-center">
-          <h1 className="mb-4 text-4xl font-bold text-foreground">
-            Resume Builder
-          </h1>
-          <p className="text-muted-foreground">
-            This page will contain the interactive resume builder interface.
-          </p>
-          <p className="mt-4 text-sm text-muted-foreground">Coming soon...</p>
-        </div>
-      </div>
-    </main>
+  const resume = useResumeStore((state) => state.resume)
+  const loadFromLocalStorage = useResumeStore(
+    (state) => state.loadFromLocalStorage
   )
-}
+  const updateTemplate = useResumeStore((state) => state.updateTemplate)
+
+  React.useEffect(() => {
+    // Load from localStorage (creates new resume if nothing stored)
+    loadFromLocalStorage()
+  }, [loadFromLocalStorage])
+
+  React.useEffect(() => {
+    if (!resume) return
+
+    // Apply ?template=X URL param if valid
+    const searchParams = new URLSearchParams(window.location.search)
+    const templateParam = searchParams.get('template')
+    if (templateParam) {
+      const isValid = TEMPLATE_LIST.some((t) => t.id === templateParam)
+      if (isValid) {
+        updateTemplate(templateParam as ResumeTemplate)
+      }
+    }
+  }, [resume, updateTemplate])
+
+  if (!resume) {
+    return (
+      <main id="main-content" className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-muted-foreground text-sm">Loading resume builder...</p>
+      </main>
+    )
+  }
+
+  return <BuilderLayout />
