@@ -25,6 +25,7 @@ export function Hero() {
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link
               href="/builder"
+              aria-label="Start Building — Free"
               className="inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 font-semibold text-slate-900 transition-colors hover:bg-slate-100"
             >
               Build Your Resume — Free →
