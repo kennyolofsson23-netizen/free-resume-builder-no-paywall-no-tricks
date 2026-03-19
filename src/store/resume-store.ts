@@ -91,6 +91,7 @@ interface ResumeStore {
   addCertification: () => void
   updateCertification: (id: string, data: Partial<Certification>) => void
   removeCertification: (id: string) => void
+  reorderCertifications: (ids: string[]) => void
 
   // Template & styling
   updateTemplate: (template: ResumeTemplate) => void
@@ -455,6 +456,24 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
           certifications: state.resume.certifications.filter(
             (c) => c.id !== id
           ),
+          updatedAt: new Date().toISOString(),
+        },
+      }
+    }),
+
+  reorderCertifications: (ids: string[]) =>
+    set((state) => {
+      if (!state.resume) return state
+      const map = new Map(state.resume.certifications.map((c) => [c.id, c]))
+      const reordered = ids
+        .map((id) => map.get(id))
+        .filter(Boolean) as Certification[]
+      return {
+        pastStates: pushHistory(state.pastStates, state.resume),
+        futureStates: [],
+        resume: {
+          ...state.resume,
+          certifications: reordered,
           updatedAt: new Date().toISOString(),
         },
       }

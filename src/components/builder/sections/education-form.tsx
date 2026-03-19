@@ -2,6 +2,23 @@
 
 import * as React from 'react'
 import { Plus } from 'lucide-react'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { useResumeStore } from '@/store/resume-store'
 import { FIELD_LIMITS } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
@@ -24,6 +41,8 @@ interface EducationEntryProps {
   onMoveDown: () => void
   isFirst: boolean
   isLast: boolean
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>
+  isDragging?: boolean
 }
 
 function EducationEntryFields({
@@ -34,6 +53,8 @@ function EducationEntryFields({
   onMoveDown,
   isFirst,
   isLast,
+  dragHandleProps,
+  isDragging,
 }: EducationEntryProps) {
   const [errors, setErrors] = React.useState<EducationFieldErrors>({})
 
@@ -62,8 +83,11 @@ function EducationEntryFields({
       title={title}
       subtitle={subtitle}
       onDelete={() => onDelete(edu.id)}
+      isDragging={isDragging ?? false}
       dragHandleProps={{
+        ...dragHandleProps,
         onKeyDown: (e) => {
+          dragHandleProps?.onKeyDown?.(e)
           if (e.key === 'ArrowUp') {
             e.preventDefault()
             onMoveUp()
@@ -242,6 +266,58 @@ function EducationEntryFields({
   )
 }
 
+interface SortableEducationEntryProps {
+  edu: Education
+  onUpdate: (id: string, data: Partial<Education>) => void
+  onDelete: (id: string) => void
+  onMoveUp: () => void
+  onMoveDown: () => void
+  isFirst: boolean
+  isLast: boolean
+  activeId: string | null
+}
+
+function SortableEducationEntry({
+  edu,
+  onUpdate,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
+  activeId,
+}: SortableEducationEntryProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: edu.id })
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <EducationEntryFields
+        edu={edu}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onMoveUp={onMoveUp}
+        onMoveDown={onMoveDown}
+        isFirst={isFirst}
+        isLast={isLast}
+        dragHandleProps={({ ...attributes, ...listeners } as React.HTMLAttributes<HTMLDivElement>)}
+        isDragging={Boolean(isDragging) || activeId === edu.id}
+      />
+    </div>
+  )
+}
+
 export function EducationForm() {
   const resume = useResumeStore((state) => state.resume)
   const addEducation = useResumeStore((state) => state.addEducation)
@@ -250,6 +326,14 @@ export function EducationForm() {
   const reorderEducation = useResumeStore((state) => state.reorderEducation)
 
   const education = resume?.education ?? []
+  const [activeId, setActiveId] = React.useState<string | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
 
   const handleMoveUp = (index: number) => {
     if (index === 0) return
@@ -269,6 +353,21 @@ export function EducationForm() {
     reorderEducation(newIds)
   }
 
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    setActiveId(null)
+    if (over && active.id !== over.id) {
+      const oldIndex = education.findIndex((e) => e.id === active.id)
+      const newIndex = education.findIndex((e) => e.id === over.id)
+      const newIds = arrayMove(
+        education.map((e) => e.id),
+        oldIndex,
+        newIndex
+      )
+      reorderEducation(newIds)
+    }
+  }
+
   return (
     <div className="space-y-3">
       {education.length === 0 && (
@@ -282,18 +381,34 @@ export function EducationForm() {
         </p>
       )}
 
-      {education.map((edu, index) => (
-        <EducationEntryFields
-          key={edu.id}
-          edu={edu}
-          onUpdate={updateEducation}
-          onDelete={removeEducation}
-          onMoveUp={() => handleMoveUp(index)}
-          onMoveDown={() => handleMoveDown(index)}
-          isFirst={index === 0}
-          isLast={index === education.length - 1}
-        />
-      ))}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={(event) => setActiveId(String(event.active.id))}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => setActiveId(null)}
+      >
+        <SortableContext
+          items={education.map((e) => e.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-3">
+            {education.map((edu, index) => (
+              <SortableEducationEntry
+                key={edu.id}
+                edu={edu}
+                onUpdate={updateEducation}
+                onDelete={removeEducation}
+                onMoveUp={() => handleMoveUp(index)}
+                onMoveDown={() => handleMoveDown(index)}
+                isFirst={index === 0}
+                isLast={index === education.length - 1}
+                activeId={activeId}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
 
       <Button
         type="button"

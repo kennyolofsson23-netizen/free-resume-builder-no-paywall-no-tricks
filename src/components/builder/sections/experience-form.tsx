@@ -2,6 +2,23 @@
 
 import * as React from 'react'
 import { Plus } from 'lucide-react'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { useResumeStore } from '@/store/resume-store'
 import { FIELD_LIMITS } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
@@ -25,6 +42,8 @@ interface ExperienceEntryProps {
   onMoveDown: () => void
   isFirst: boolean
   isLast: boolean
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>
+  isDragging?: boolean
 }
 
 function ExperienceEntryFields({
@@ -35,6 +54,8 @@ function ExperienceEntryFields({
   onMoveDown,
   isFirst,
   isLast,
+  dragHandleProps,
+  isDragging,
 }: ExperienceEntryProps) {
   const [errors, setErrors] = React.useState<ExperienceFieldErrors>({})
 
@@ -59,8 +80,11 @@ function ExperienceEntryFields({
       title={title}
       subtitle={subtitle}
       onDelete={() => onDelete(exp.id)}
+      isDragging={isDragging ?? false}
       dragHandleProps={{
+        ...dragHandleProps,
         onKeyDown: (e) => {
+          dragHandleProps?.onKeyDown?.(e)
           if (e.key === 'ArrowUp') {
             e.preventDefault()
             onMoveUp()
@@ -274,6 +298,58 @@ function ExperienceEntryFields({
   )
 }
 
+interface SortableExperienceEntryProps {
+  exp: Experience
+  onUpdate: (id: string, data: Partial<Experience>) => void
+  onDelete: (id: string) => void
+  onMoveUp: () => void
+  onMoveDown: () => void
+  isFirst: boolean
+  isLast: boolean
+  activeId: string | null
+}
+
+function SortableExperienceEntry({
+  exp,
+  onUpdate,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
+  activeId,
+}: SortableExperienceEntryProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: exp.id })
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <ExperienceEntryFields
+        exp={exp}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onMoveUp={onMoveUp}
+        onMoveDown={onMoveDown}
+        isFirst={isFirst}
+        isLast={isLast}
+        dragHandleProps={({ ...attributes, ...listeners } as React.HTMLAttributes<HTMLDivElement>)}
+        isDragging={Boolean(isDragging) || activeId === exp.id}
+      />
+    </div>
+  )
+}
+
 export function ExperienceForm() {
   const resume = useResumeStore((state) => state.resume)
   const addExperience = useResumeStore((state) => state.addExperience)
@@ -282,6 +358,14 @@ export function ExperienceForm() {
   const reorderExperiences = useResumeStore((state) => state.reorderExperiences)
 
   const experiences = resume?.experiences ?? []
+  const [activeId, setActiveId] = React.useState<string | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
 
   const handleMoveUp = (index: number) => {
     if (index === 0) return
@@ -301,6 +385,21 @@ export function ExperienceForm() {
     reorderExperiences(newIds)
   }
 
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    setActiveId(null)
+    if (over && active.id !== over.id) {
+      const oldIndex = experiences.findIndex((e) => e.id === active.id)
+      const newIndex = experiences.findIndex((e) => e.id === over.id)
+      const newIds = arrayMove(
+        experiences.map((e) => e.id),
+        oldIndex,
+        newIndex
+      )
+      reorderExperiences(newIds)
+    }
+  }
+
   return (
     <div className="space-y-3">
       {experiences.length === 0 && (
@@ -314,18 +413,34 @@ export function ExperienceForm() {
         </p>
       )}
 
-      {experiences.map((exp, index) => (
-        <ExperienceEntryFields
-          key={exp.id}
-          exp={exp}
-          onUpdate={updateExperience}
-          onDelete={removeExperience}
-          onMoveUp={() => handleMoveUp(index)}
-          onMoveDown={() => handleMoveDown(index)}
-          isFirst={index === 0}
-          isLast={index === experiences.length - 1}
-        />
-      ))}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={(event) => setActiveId(String(event.active.id))}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => setActiveId(null)}
+      >
+        <SortableContext
+          items={experiences.map((e) => e.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-3">
+            {experiences.map((exp, index) => (
+              <SortableExperienceEntry
+                key={exp.id}
+                exp={exp}
+                onUpdate={updateExperience}
+                onDelete={removeExperience}
+                onMoveUp={() => handleMoveUp(index)}
+                onMoveDown={() => handleMoveDown(index)}
+                isFirst={index === 0}
+                isLast={index === experiences.length - 1}
+                activeId={activeId}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
 
       <Button
         type="button"

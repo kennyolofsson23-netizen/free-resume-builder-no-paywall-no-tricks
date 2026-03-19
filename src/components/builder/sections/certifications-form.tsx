@@ -2,6 +2,23 @@
 
 import * as React from 'react'
 import { Plus } from 'lucide-react'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { useResumeStore } from '@/store/resume-store'
 import { FIELD_LIMITS } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
@@ -20,12 +37,24 @@ interface CertEntryProps {
   cert: Certification
   onUpdate: (id: string, data: Partial<Certification>) => void
   onDelete: (id: string) => void
+  onMoveUp: () => void
+  onMoveDown: () => void
+  isFirst: boolean
+  isLast: boolean
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>
+  isDragging?: boolean
 }
 
 function CertificationEntryFields({
   cert,
   onUpdate,
   onDelete,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
+  dragHandleProps,
+  isDragging,
 }: CertEntryProps) {
   const [errors, setErrors] = React.useState<CertFieldErrors>({})
 
@@ -50,8 +79,46 @@ function CertificationEntryFields({
       title={title}
       subtitle={subtitle}
       onDelete={() => onDelete(cert.id)}
+      isDragging={isDragging ?? false}
+      dragHandleProps={{
+        ...dragHandleProps,
+        onKeyDown: (e) => {
+          dragHandleProps?.onKeyDown?.(e)
+          if (e.key === 'ArrowUp') {
+            e.preventDefault()
+            onMoveUp()
+          }
+          if (e.key === 'ArrowDown') {
+            e.preventDefault()
+            onMoveDown()
+          }
+        },
+      }}
     >
       <div className="space-y-4">
+        {/* Reorder buttons */}
+        <div className="flex gap-1 justify-end">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onMoveUp}
+            disabled={isFirst}
+            aria-label="Move up"
+          >
+            ↑
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onMoveDown}
+            disabled={isLast}
+            aria-label="Move down"
+          >
+            ↓
+          </Button>
+        </div>
         {/* Name */}
         <div className="space-y-1.5">
           <Label
@@ -193,6 +260,58 @@ function CertificationEntryFields({
   )
 }
 
+interface SortableCertEntryProps {
+  cert: Certification
+  onUpdate: (id: string, data: Partial<Certification>) => void
+  onDelete: (id: string) => void
+  onMoveUp: () => void
+  onMoveDown: () => void
+  isFirst: boolean
+  isLast: boolean
+  activeId: string | null
+}
+
+function SortableCertificationEntry({
+  cert,
+  onUpdate,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
+  activeId,
+}: SortableCertEntryProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: cert.id })
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <CertificationEntryFields
+        cert={cert}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onMoveUp={onMoveUp}
+        onMoveDown={onMoveDown}
+        isFirst={isFirst}
+        isLast={isLast}
+        dragHandleProps={({ ...attributes, ...listeners } as React.HTMLAttributes<HTMLDivElement>)}
+        isDragging={Boolean(isDragging) || activeId === cert.id}
+      />
+    </div>
+  )
+}
+
 export function CertificationsForm() {
   const resume = useResumeStore((state) => state.resume)
   const addCertification = useResumeStore((state) => state.addCertification)
@@ -202,8 +321,52 @@ export function CertificationsForm() {
   const removeCertification = useResumeStore(
     (state) => state.removeCertification
   )
+  const reorderCertifications = useResumeStore(
+    (state) => state.reorderCertifications
+  )
 
   const certifications = resume?.certifications ?? []
+  const [activeId, setActiveId] = React.useState<string | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  const handleMoveUp = (index: number) => {
+    if (index === 0) return
+    const newIds = certifications.map((c) => c.id)
+    const tmp = newIds[index - 1]!
+    newIds[index - 1] = newIds[index]!
+    newIds[index] = tmp
+    reorderCertifications(newIds)
+  }
+
+  const handleMoveDown = (index: number) => {
+    if (index === certifications.length - 1) return
+    const newIds = certifications.map((c) => c.id)
+    const tmp = newIds[index]!
+    newIds[index] = newIds[index + 1]!
+    newIds[index + 1] = tmp
+    reorderCertifications(newIds)
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    setActiveId(null)
+    if (over && active.id !== over.id) {
+      const oldIndex = certifications.findIndex((c) => c.id === active.id)
+      const newIndex = certifications.findIndex((c) => c.id === over.id)
+      const newIds = arrayMove(
+        certifications.map((c) => c.id),
+        oldIndex,
+        newIndex
+      )
+      reorderCertifications(newIds)
+    }
+  }
 
   return (
     <div className="space-y-3">
@@ -218,14 +381,34 @@ export function CertificationsForm() {
         </p>
       )}
 
-      {certifications.map((cert) => (
-        <CertificationEntryFields
-          key={cert.id}
-          cert={cert}
-          onUpdate={updateCertification}
-          onDelete={removeCertification}
-        />
-      ))}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={(event) => setActiveId(String(event.active.id))}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => setActiveId(null)}
+      >
+        <SortableContext
+          items={certifications.map((c) => c.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-3">
+            {certifications.map((cert, index) => (
+              <SortableCertificationEntry
+                key={cert.id}
+                cert={cert}
+                onUpdate={updateCertification}
+                onDelete={removeCertification}
+                onMoveUp={() => handleMoveUp(index)}
+                onMoveDown={() => handleMoveDown(index)}
+                isFirst={index === 0}
+                isLast={index === certifications.length - 1}
+                activeId={activeId}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
 
       <Button
         type="button"
