@@ -160,17 +160,34 @@ describe('Resume Store — exportAsJSON', () => {
   })
 })
 
+const validResumeJSON = JSON.stringify({
+  id: 'test-id-123',
+  template: 'modern',
+  personalInfo: {
+    fullName: 'John Doe',
+    email: 'john@example.com',
+    phone: '555-0100',
+    location: 'New York, NY',
+    website: '',
+    linkedin: '',
+    github: '',
+    summary: '',
+  },
+  experiences: [],
+  education: [],
+  skills: [],
+  projects: [],
+  certifications: [],
+  accentColor: '#2563eb',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+})
+
 describe('Resume Store — importFromJSON', () => {
   it('imports valid JSON', () => {
-    useResumeStore.getState().createNewResume()
-    useResumeStore.getState().updatePersonalInfo({ fullName: 'John' })
-    const json = useResumeStore.getState().exportAsJSON()
-
-    // Reset and import
-    useResumeStore.setState({ resume: null, pastStates: [], futureStates: [] })
-    const success = useResumeStore.getState().importFromJSON(json)
+    const success = useResumeStore.getState().importFromJSON(validResumeJSON)
     expect(success).toBe(true)
-    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('John')
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('John Doe')
   })
 
   it('rejects invalid JSON', () => {
@@ -192,5 +209,131 @@ describe('Resume Store — accentColor', () => {
     useResumeStore.getState().createNewResume()
     useResumeStore.getState().updateAccentColor('#ff0000')
     expect(useResumeStore.getState().resume?.accentColor).toBe('#ff0000')
+  })
+})
+
+describe('Resume Store — education CRUD', () => {
+  it('adds an education entry', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addEducation()
+    expect(useResumeStore.getState().resume?.education).toHaveLength(1)
+  })
+
+  it('removes an education entry', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addEducation()
+    useResumeStore.getState().addEducation()
+    const id = useResumeStore.getState().resume!.education[0]!.id
+    useResumeStore.getState().removeEducation(id)
+    expect(useResumeStore.getState().resume?.education).toHaveLength(1)
+  })
+
+  it('updates an education entry', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addEducation()
+    const id = useResumeStore.getState().resume!.education[0]!.id
+    useResumeStore.getState().updateEducation(id, { school: 'MIT', degree: 'BS' })
+    expect(useResumeStore.getState().resume?.education[0]?.school).toBe('MIT')
+  })
+
+  it('reorders education entries', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addEducation()
+    useResumeStore.getState().addEducation()
+    const edu = useResumeStore.getState().resume!.education
+    const [first, second] = edu
+    useResumeStore.getState().reorderEducation([second!.id, first!.id])
+    const reordered = useResumeStore.getState().resume!.education
+    expect(reordered[0]!.id).toBe(second!.id)
+  })
+})
+
+describe('Resume Store — projects CRUD', () => {
+  it('adds a project', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addProject()
+    expect(useResumeStore.getState().resume?.projects).toHaveLength(1)
+  })
+
+  it('removes a project', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addProject()
+    useResumeStore.getState().addProject()
+    const id = useResumeStore.getState().resume!.projects[0]!.id
+    useResumeStore.getState().removeProject(id)
+    expect(useResumeStore.getState().resume?.projects).toHaveLength(1)
+  })
+
+  it('updates a project', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addProject()
+    const id = useResumeStore.getState().resume!.projects[0]!.id
+    useResumeStore.getState().updateProject(id, { title: 'My App' })
+    expect(useResumeStore.getState().resume?.projects[0]?.title).toBe('My App')
+  })
+})
+
+describe('Resume Store — certifications CRUD', () => {
+  it('adds a certification', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addCertification()
+    expect(useResumeStore.getState().resume?.certifications).toHaveLength(1)
+  })
+
+  it('removes a certification', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addCertification()
+    useResumeStore.getState().addCertification()
+    const id = useResumeStore.getState().resume!.certifications[0]!.id
+    useResumeStore.getState().removeCertification(id)
+    expect(useResumeStore.getState().resume?.certifications).toHaveLength(1)
+  })
+
+  it('updates a certification', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().addCertification()
+    const id = useResumeStore.getState().resume!.certifications[0]!.id
+    useResumeStore.getState().updateCertification(id, { name: 'AWS', issuer: 'Amazon' })
+    expect(useResumeStore.getState().resume?.certifications[0]?.name).toBe('AWS')
+  })
+})
+
+describe('Resume Store — generateShareableURL', () => {
+  it('returns empty string when no resume', () => {
+    const url = useResumeStore.getState().generateShareableURL()
+    expect(url).toBe('')
+  })
+
+  it('generates a URL containing /preview# and encoded data', () => {
+    useResumeStore.getState().createNewResume()
+    useResumeStore.getState().updatePersonalInfo({ fullName: 'Shareable User' })
+    const url = useResumeStore.getState().generateShareableURL()
+    expect(url).toContain('/preview#')
+    expect(url.length).toBeGreaterThan(20)
+  })
+})
+
+describe('Resume Store — loadFromShareableURL', () => {
+  it('loads a resume from a valid encoded hash', () => {
+    // Use a schema-valid resume as source
+    useResumeStore.getState().importFromJSON(validResumeJSON)
+    const url = useResumeStore.getState().generateShareableURL()
+    const hash = url.split('#')[1]!
+
+    useResumeStore.setState({ resume: null, pastStates: [], futureStates: [] })
+    const result = useResumeStore.getState().loadFromShareableURL(hash)
+    expect(result).toBe(true)
+    expect(useResumeStore.getState().resume?.personalInfo.fullName).toBe('John Doe')
+  })
+
+  it('returns false for an invalid hash', () => {
+    const result = useResumeStore.getState().loadFromShareableURL('!!! not base64 !!!')
+    expect(result).toBe(false)
+  })
+
+  it('returns false for a hash decoding to invalid data', () => {
+    const bad = btoa(JSON.stringify({ foo: 'bar' }))
+    const result = useResumeStore.getState().loadFromShareableURL(bad)
+    expect(result).toBe(false)
   })
 })
