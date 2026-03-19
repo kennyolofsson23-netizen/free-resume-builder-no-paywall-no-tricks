@@ -7,22 +7,38 @@ import { MinimalTemplate } from './minimal-template'
 import { CreativeTemplate } from './creative-template'
 import { ProfessionalTemplate } from './professional-template'
 
-interface TemplateRendererProps {
+interface Props {
   resume: Resume
+  className?: string
 }
 
-export function TemplateRenderer({ resume }: TemplateRendererProps) {
+export function TemplateRenderer({ resume, className }: Props) {
+  const templateProps = { resume, accentColor: resume.accentColor }
+
+  let content: React.ReactNode
+
   switch (resume.template) {
     case 'classic':
-      return <ClassicTemplate resume={resume} />
+      content = <ClassicTemplate {...templateProps} />
+      break
     case 'minimal':
-      return <MinimalTemplate resume={resume} />
+      content = <MinimalTemplate {...templateProps} />
+      break
     case 'creative':
-      return <CreativeTemplate resume={resume} />
+      content = <CreativeTemplate {...templateProps} />
+      break
     case 'professional':
-      return <ProfessionalTemplate resume={resume} />
+      content = <ProfessionalTemplate {...templateProps} />
+      break
     case 'modern':
     default:
-      return <ModernTemplate resume={resume} />
+      content = <ModernTemplate {...templateProps} />
+      break
   }
+
+  return (
+    <div id="resume-preview" className={`resume-preview bg-white${className ? ' ' + className : ''}`}>
+      {content}
+    </div>
+  )
 }

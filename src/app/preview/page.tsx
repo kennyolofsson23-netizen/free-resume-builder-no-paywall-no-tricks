@@ -41,7 +41,7 @@ export default function PreviewPage() {
   const templateName = resume
     ? (TEMPLATE_LIST.find((t) => t.id === resume.template)?.name ??
       resume.template)
-    : undefined
+    : ''
 
   if (state === 'loading') {
     return (
