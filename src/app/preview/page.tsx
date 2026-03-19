@@ -66,10 +66,10 @@ export default function PreviewPage() {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <h1 className="text-2xl font-bold text-gray-900 mb-3">
-            This share link didn't work
+            This resume link didn&apos;t load
           </h1>
           <p className="text-gray-600 mb-6">
-            The link may be incomplete or from an older version. Ask the person who shared it to generate a fresh link from their resume builder.
+            The link may be truncated, corrupted, or from an older version of the builder. Ask the person who shared it to hit <strong>Share</strong> again and send you the new link.
           </p>
           <Link
             href="/builder"

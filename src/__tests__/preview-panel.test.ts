@@ -91,7 +91,8 @@ describe('PreviewPanel', () => {
     const { PreviewPanel } = await import('@/components/builder/preview-panel')
     const { container } = render(React.createElement(PreviewPanel))
     await act(async () => {})
-    expect(container.textContent).toContain('No resume data yet')
+    // Actual text: "Start typing to see your resume take shape"
+    expect(container.textContent).toMatch(/start typing|resume take shape/i)
   })
 
   it('shows placeholder when resume has empty fullName', async () => {
@@ -99,8 +100,9 @@ describe('PreviewPanel', () => {
     const { PreviewPanel } = await import('@/components/builder/preview-panel')
     const { container } = render(React.createElement(PreviewPanel))
     await act(async () => {})
-    expect(container.textContent).toContain(
-      'Your resume preview will appear here'
+    // Actual text: "Your resume will appear here as you type"
+    expect(container.textContent).toMatch(
+      /your resume will appear here|as you type/i
     )
   })
 

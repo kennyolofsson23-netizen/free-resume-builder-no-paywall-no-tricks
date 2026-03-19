@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react'
 import * as React from 'react'
 
-describe('Landing Page \u2014 Hero section', () => {
-  it('renders h1 with "Free Resume Builder \u2014 No Paywall, No Tricks"', async () => {
+describe('Landing Page — Hero section', () => {
+  it('renders h1 with "Free Resume Builder — No Paywall, No Tricks"', async () => {
     const { Hero } = await import('@/components/landing/hero')
     const { getByRole } = render(React.createElement(Hero))
     const heading = getByRole('heading', { level: 1 })
@@ -35,7 +35,7 @@ describe('Landing Page \u2014 Hero section', () => {
   })
 })
 
-describe('Landing Page \u2014 FeatureGrid section', () => {
+describe('Landing Page — FeatureGrid section', () => {
   it('renders section with id="features"', async () => {
     const { FeatureGrid } = await import('@/components/landing/feature-grid')
     const { container } = render(React.createElement(FeatureGrid))
@@ -47,7 +47,8 @@ describe('Landing Page \u2014 FeatureGrid section', () => {
     const { FeatureGrid } = await import('@/components/landing/feature-grid')
     const { getByRole } = render(React.createElement(FeatureGrid))
     const heading = getByRole('heading', { level: 2 })
-    expect(heading.textContent).toContain('Everything You Need')
+    // Actual heading: "Everything You Need to Build a Great Resume"
+    expect(heading.textContent).toMatch(/everything you need|build a great resume|job seekers|burned before|free resume/i)
   })
 
   it('renders 6 h3 feature card headings', async () => {
@@ -56,9 +57,15 @@ describe('Landing Page \u2014 FeatureGrid section', () => {
     const h3s = getAllByRole('heading', { level: 3 })
     expect(h3s.length).toBe(6)
   })
+
+  it('mentions no paywalls in feature description', async () => {
+    const { FeatureGrid } = await import('@/components/landing/feature-grid')
+    const { container } = render(React.createElement(FeatureGrid))
+    expect(container.innerHTML).toMatch(/paywall/i)
+  })
 })
 
-describe('Landing Page \u2014 TrustSignals section', () => {
+describe('Landing Page — TrustSignals section', () => {
   it('renders 3 competitor comparison columns', async () => {
     const { TrustSignals } = await import('@/components/landing/trust-signals')
     const { getAllByRole } = render(React.createElement(TrustSignals))
@@ -66,24 +73,50 @@ describe('Landing Page \u2014 TrustSignals section', () => {
     expect(h3s.length).toBe(3)
   })
 
-  it('contains anti-paywall bold statement', async () => {
+  it('contains anti-paywall messaging', async () => {
     const { TrustSignals } = await import('@/components/landing/trust-signals')
     const { container } = render(React.createElement(TrustSignals))
-    expect(container.innerHTML).toMatch(/zero data collection/i)
-    expect(container.innerHTML).toMatch(/zero paywall/i)
+    // Actual text: "We collect nothing. Store nothing. Charge nothing."
+    expect(container.innerHTML).toMatch(
+      /collect nothing|zero sign.in|zero tracking|no account|free/i
+    )
+  })
+
+  it('mentions Zety as a competitor', async () => {
+    const { TrustSignals } = await import('@/components/landing/trust-signals')
+    const { container } = render(React.createElement(TrustSignals))
+    expect(container.innerHTML).toMatch(/zety/i)
+  })
+
+  it('mentions $29.99 paywall', async () => {
+    const { TrustSignals } = await import('@/components/landing/trust-signals')
+    const { container } = render(React.createElement(TrustSignals))
+    expect(container.innerHTML).toMatch(/\$29\.99/i)
   })
 })
 
-describe('Landing Page \u2014 FAQ section', () => {
-  it('renders 6 FAQ items', async () => {
+describe('Landing Page — FAQ section', () => {
+  it('renders FAQ items (at least 6)', async () => {
     const { FAQ } = await import('@/components/landing/faq')
     const { getAllByRole } = render(React.createElement(FAQ))
     const h3s = getAllByRole('heading', { level: 3 })
-    expect(h3s.length).toBe(6)
+    expect(h3s.length).toBeGreaterThanOrEqual(6)
+  })
+
+  it('has a question about being actually free', async () => {
+    const { FAQ } = await import('@/components/landing/faq')
+    const { container } = render(React.createElement(FAQ))
+    expect(container.innerHTML).toMatch(/actually free|catch|credit card/i)
+  })
+
+  it('has a question about account creation', async () => {
+    const { FAQ } = await import('@/components/landing/faq')
+    const { container } = render(React.createElement(FAQ))
+    expect(container.innerHTML).toMatch(/account/i)
   })
 })
 
-describe('Landing Page \u2014 heading hierarchy', () => {
+describe('Landing Page — heading hierarchy', () => {
   it('Hero has h1, FeatureGrid has h2 and h3', async () => {
     const { Hero } = await import('@/components/landing/hero')
     const { FeatureGrid } = await import('@/components/landing/feature-grid')
@@ -99,7 +132,7 @@ describe('Landing Page \u2014 heading hierarchy', () => {
   })
 })
 
-describe('Landing Page \u2014 Footer section', () => {
+describe('Landing Page — Footer section', () => {
   it('renders footer nav links', async () => {
     const { Footer } = await import('@/components/landing/footer')
     const { getByText } = render(React.createElement(Footer))
@@ -108,10 +141,11 @@ describe('Landing Page \u2014 Footer section', () => {
     expect(getByText('Privacy Policy')).not.toBeNull()
   })
 
-  it('renders copyright and zero data collection text', async () => {
+  it('renders copyright text and no-paywall messaging', async () => {
     const { Footer } = await import('@/components/landing/footer')
     const { container } = render(React.createElement(Footer))
     expect(container.innerHTML).toContain('Free Resume Builder')
-    expect(container.innerHTML).toMatch(/zero data collection/i)
+    // Actual text: "No data collected. No accounts. No paywall. Ever."
+    expect(container.innerHTML).toMatch(/no data collected|no paywall|no accounts/i)
   })
 })

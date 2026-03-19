@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { z } from 'zod'
 import type {
   Resume,
   ResumeTemplate,
@@ -9,7 +10,7 @@ import type {
   Project,
   Certification,
 } from '@/types/resume'
-import { resumeSchema } from '@/lib/schemas/resume-schema'
+import { resumeSchema, resumeTemplateSchema } from '@/lib/schemas/resume-schema'
 import {
   DEFAULT_ACCENT_COLOR,
   MAX_UNDO_HISTORY,
@@ -485,7 +486,35 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       const stored = localStorage.getItem(STORAGE_KEY)
       if (stored) {
         const parsed = JSON.parse(stored)
-        const result = resumeSchema.safeParse(parsed)
+        // Use a lenient schema for loading stored data so that in-progress
+        // resumes (with empty required fields) are still restored correctly.
+        const lenientPersonalInfoSchema = resumeSchema.shape.personalInfo.extend({
+          fullName: z.string().default(''),
+          email: z.string().default(''),
+        })
+        const lenientExperienceSchema = z.object({
+          id: z.string(),
+          jobTitle: z.string().default(''),
+          company: z.string().default(''),
+          location: z.string().optional().default(''),
+          startDate: z.string().default(''),
+          endDate: z.string().optional().default(''),
+          currentlyWorking: z.boolean().default(false),
+          description: z.string().default(''),
+        })
+        const lenientSkillSchema = z.object({
+          id: z.string(),
+          name: z.string().default(''),
+          level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
+        })
+        const lenientSchema = resumeSchema.extend({
+          personalInfo: lenientPersonalInfoSchema,
+          experiences: z.array(lenientExperienceSchema).default([]),
+          skills: z.array(lenientSkillSchema).default([]),
+          template: resumeTemplateSchema.default('modern'),
+          accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).default(DEFAULT_ACCENT_COLOR),
+        })
+        const result = lenientSchema.safeParse(parsed)
         if (result.success) {
           set({
             resume: result.data as unknown as Resume,

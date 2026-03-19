@@ -39,8 +39,7 @@ export function useAutoSave(debounceMs = 1000): UseAutoSaveResult {
         setLastSaved(new Date())
       } catch {
         toast({
-          title: 'Auto-save failed',
-          description: 'Your browser storage may be full. Try clearing old data and refreshing.',
+          description: 'Could not save. Storage may be full.',
           variant: 'destructive',
         })
       } finally {

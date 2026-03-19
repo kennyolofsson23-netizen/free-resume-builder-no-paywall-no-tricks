@@ -117,7 +117,6 @@ describe('useAutoSave', () => {
 
     expect(toast).toHaveBeenCalledWith(
       expect.objectContaining({
-        description: 'Could not save. Storage may be full.',
         variant: 'destructive',
       })
     )

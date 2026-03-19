@@ -69,11 +69,11 @@ export default function TemplatesPage() {
       <div className="bg-blue-600 py-16">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to build your resume?
+            No paywall waiting for you at the end.
           </h2>
           <p className="text-blue-100 mb-8">
-            Pick a template and start building instantly. Your PDF is free to
-            download — always.
+            Pick a template, fill in your details, and download your PDF — all
+            free. No account. No credit card. No last-minute surprise.
           </p>
           <Link
             href="/builder"

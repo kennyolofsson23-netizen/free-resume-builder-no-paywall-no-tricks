@@ -2,6 +2,7 @@
 import { useState, useCallback } from 'react'
 import { useResumeStore } from '@/store/resume-store'
 import { useToast } from '@/hooks/use-toast'
+import { generatePDF } from '@/lib/pdf/generate-pdf'
 
 export type PDFGeneratorStatus = 'idle' | 'generating' | 'success' | 'error'
 
@@ -32,8 +33,6 @@ export function usePdfGenerator() {
 
     setStatus('generating')
     try {
-      // Dynamically import to keep initial bundle small
-      const { generatePDF } = await import('@/lib/pdf/generate-pdf')
       const name = resume?.personalInfo.fullName?.trim() ?? 'Resume'
       const filename = `${name.replace(/\s+/g, '_')}_Resume.pdf`
       await generatePDF({ elementId: 'resume-preview-container', filename })

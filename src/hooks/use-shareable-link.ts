@@ -40,7 +40,7 @@ export function useShareableLink(): UseShareableLinkReturn {
       await navigator.clipboard.writeText(url)
       setIsCopied(true)
       toast({
-        title: 'Link copied!',
+        title: 'Link copied to clipboard!',
         description: 'Anyone with this link can view your resume — no account required.',
       })
 
