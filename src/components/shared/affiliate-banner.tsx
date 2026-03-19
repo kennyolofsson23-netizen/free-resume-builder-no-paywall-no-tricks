@@ -21,17 +21,17 @@ export function AffiliateBanner({ className }: AffiliateBannerProps) {
     >
       <div className="flex items-center gap-2 min-w-0">
         <span className="text-xs text-muted-foreground shrink-0">
-          [Partner]
+          Sponsored
         </span>
         <span className="text-muted-foreground">
-          Need more resume help?{' '}
+          Want AI-powered writing help?{' '}
           <a
             href="https://kickresume.com/?ref=freeresumebuilder"
             target="_blank"
             rel="noopener noreferrer nofollow"
             className="font-medium text-foreground underline-offset-2 hover:underline"
           >
-            Try Kickresume — AI-powered resume builder
+            Try Kickresume — AI suggestions for every section
             <ExternalLink className="ml-1 inline h-3 w-3" />
           </a>
         </span>

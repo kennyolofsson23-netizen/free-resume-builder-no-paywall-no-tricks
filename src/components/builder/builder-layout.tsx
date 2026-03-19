@@ -23,7 +23,7 @@ export function BuilderLayout() {
       {/* Auto-save status bar */}
       {lastSaved && (
         <div className="shrink-0 bg-green-50 dark:bg-green-950 px-4 py-0.5 text-xs text-green-700 dark:text-green-300 text-right">
-          Saved {lastSaved.toLocaleTimeString()}
+          Saved at {lastSaved.toLocaleTimeString()}
         </div>
       )}
 
