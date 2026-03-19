@@ -113,7 +113,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
                   className={cn(
                     'relative h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
                     'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring',
-                    value === color ? 'border-gray-800' : 'border-transparent'
+                    value === color ? 'border-foreground' : 'border-transparent'
                   )}
                   style={{ backgroundColor: color }}
                 >

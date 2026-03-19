@@ -57,10 +57,8 @@ export function MobilePreviewSheet({
               transformOrigin: 'top center',
               transform: `scale(${scale})`,
               width: '816px',
-              marginLeft:
-                scale < 1 ? `${(816 * scale - 816) / 2}px` : 'auto',
-              marginRight:
-                scale < 1 ? `${(816 * scale - 816) / 2}px` : 'auto',
+              marginLeft: scale < 1 ? `${(816 * scale - 816) / 2}px` : 'auto',
+              marginRight: scale < 1 ? `${(816 * scale - 816) / 2}px` : 'auto',
             }}
           >
             <TemplateRenderer resume={resume} />

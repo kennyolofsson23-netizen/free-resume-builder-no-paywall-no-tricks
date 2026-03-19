@@ -138,24 +138,26 @@ export function BuilderToolbar() {
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={undo}
             disabled={!canUndo()}
             aria-label="Undo (Ctrl+Z)"
             title="Undo"
           >
             <Undo2 className="h-4 w-4" />
+            <span className="ml-1 text-xs">Undo</span>
           </Button>
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={redo}
             disabled={!canRedo()}
             aria-label="Redo (Ctrl+Shift+Z)"
             title="Redo"
           >
             <Redo2 className="h-4 w-4" />
+            <span className="ml-1 text-xs">Redo</span>
           </Button>
         </div>
 
