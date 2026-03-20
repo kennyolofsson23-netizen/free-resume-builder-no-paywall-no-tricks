@@ -127,13 +127,19 @@ export function BuilderToolbar() {
   return (
     <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-background px-4 py-2">
       <div className="flex items-center gap-2">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <Link
+          href="/"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        >
           <FileText className="h-5 w-5 text-primary" aria-hidden="true" />
           <span className="text-sm font-semibold text-foreground hidden sm:inline">
             Free Resume Builder
           </span>
         </Link>
-        <Link href="/templates" className="text-xs text-muted-foreground hover:text-foreground transition-colors hidden md:inline">
+        <Link
+          href="/templates"
+          className="text-xs text-muted-foreground hover:text-foreground transition-colors hidden md:inline"
+        >
           Templates
         </Link>
       </div>

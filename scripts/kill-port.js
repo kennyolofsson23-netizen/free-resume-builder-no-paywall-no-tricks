@@ -9,7 +9,10 @@ const PORT = 3100
 
 try {
   if (process.platform === 'win32') {
-    const output = execSync('netstat -ano', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] })
+    const output = execSync('netstat -ano', {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'ignore'],
+    })
     const re = new RegExp(`:${PORT}\\s+\\S+\\s+LISTENING\\s+(\\d+)`, 'g')
     let match
     while ((match = re.exec(output)) !== null) {

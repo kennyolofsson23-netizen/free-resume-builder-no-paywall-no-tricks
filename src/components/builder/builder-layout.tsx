@@ -54,7 +54,9 @@ export function BuilderLayout() {
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="flex flex-1 flex-col overflow-hidden">
             <div className="border-b border-border flex h-10">
-              <span className="flex-1 flex items-center justify-center text-sm font-medium">Edit</span>
+              <span className="flex-1 flex items-center justify-center text-sm font-medium">
+                Edit
+              </span>
               <button
                 type="button"
                 className="flex-1 flex items-center justify-center text-sm font-medium border-l border-border"
