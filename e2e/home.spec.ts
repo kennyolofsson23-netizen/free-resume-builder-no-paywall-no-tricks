@@ -30,7 +30,7 @@ test.describe('Home Page', () => {
     await page.goto('/')
     // h2 heading in the FeatureGrid section
     const heading = page.getByRole('heading', {
-      name: /job seekers|burned before|free resume|everything you need/i,
+      name: /job seekers|burned before|everything you need/i,
     })
     await expect(heading).toBeVisible()
   })
