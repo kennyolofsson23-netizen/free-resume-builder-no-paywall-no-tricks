@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { cn } from '@/lib/cn'
 
@@ -25,16 +27,28 @@ export function PreviewCta({ templateName }: PreviewCtaProps) {
           )}
         </div>
         <div className="flex flex-col items-center gap-1">
-          <Link
-            href="/builder"
-            className={cn(
-              'inline-block bg-white text-blue-600 font-bold text-sm sm:text-base',
-              'px-5 py-2 rounded-full whitespace-nowrap',
-              'hover:bg-blue-50 transition-colors'
-            )}
-          >
-            Build Your Own Resume — It&apos;s Free
-          </Link>
+          <div className="flex flex-row gap-2">
+            <button
+              onClick={() => window.print()}
+              className={cn(
+                'inline-block bg-white text-blue-600 font-bold text-sm sm:text-base',
+                'px-5 py-2 rounded-full whitespace-nowrap',
+                'hover:bg-blue-50 transition-colors'
+              )}
+            >
+              Download PDF
+            </button>
+            <Link
+              href="/builder"
+              className={cn(
+                'inline-block bg-white text-blue-600 font-bold text-sm sm:text-base',
+                'px-5 py-2 rounded-full whitespace-nowrap',
+                'hover:bg-blue-50 transition-colors'
+              )}
+            >
+              Build Your Own Resume — It&apos;s Free
+            </Link>
+          </div>
           <span className="text-blue-200 text-xs">
             No account required. No paywall. Ever.
           </span>

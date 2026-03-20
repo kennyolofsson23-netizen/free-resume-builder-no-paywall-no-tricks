@@ -8,7 +8,6 @@ import { FormPanel } from '@/components/builder/form-panel'
 import { PreviewPanel } from '@/components/builder/preview-panel'
 import { MobilePreviewSheet } from '@/components/builder/mobile-preview-sheet'
 import { AffiliateBanner } from '@/components/shared/affiliate-banner'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 
 export function BuilderLayout() {
   const isMobile = useIsMobile()
@@ -51,42 +50,23 @@ export function BuilderLayout() {
           </div>
         </div>
       ) : (
-        /* Mobile (<768px): tabbed layout with MobilePreviewSheet */
+        /* Mobile (<768px): simple layout with MobilePreviewSheet */
         <div className="flex flex-1 flex-col overflow-hidden">
-          <Tabs
-            defaultValue="edit"
-            className="flex flex-1 flex-col overflow-hidden"
-          >
-            <div className="border-b border-border">
-              <TabsList className="w-full rounded-none bg-transparent h-10 gap-0 p-0">
-                <TabsTrigger
-                  value="edit"
-                  className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-                >
-                  Edit
-                </TabsTrigger>
-                <TabsTrigger
-                  value="preview"
-                  className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-                  onClick={() => setMobilePreviewOpen(true)}
-                >
-                  Preview
-                </TabsTrigger>
-              </TabsList>
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="border-b border-border flex h-10">
+              <span className="flex-1 flex items-center justify-center text-sm font-medium">Edit</span>
+              <button
+                type="button"
+                className="flex-1 flex items-center justify-center text-sm font-medium border-l border-border"
+                onClick={() => setMobilePreviewOpen(true)}
+              >
+                Preview
+              </button>
             </div>
-
-            <TabsContent
-              data-form-panel=""
-              value="edit"
-              className="m-0 flex-1 overflow-hidden"
-            >
+            <div data-form-panel="" className="flex-1 overflow-hidden">
               <FormPanel />
-            </TabsContent>
-            <TabsContent value="preview" className="m-0 flex-1 overflow-hidden">
-              {/* Fallback inline preview if sheet is closed */}
-              <PreviewPanel />
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
 
           <MobilePreviewSheet
             isOpen={mobilePreviewOpen}

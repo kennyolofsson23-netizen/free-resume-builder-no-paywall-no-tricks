@@ -24,9 +24,9 @@ export const metadata: Metadata = {
 
 export default function TemplatesPage() {
   return (
-    <main id="main-content" className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+    <>
+      {/* Header — outside <main> so it gets role="banner" */}
+      <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link
             href="/"
@@ -49,48 +49,55 @@ export default function TemplatesPage() {
             </Link>
           </nav>
         </div>
-      </div>
+      </header>
 
-      {/* Hero */}
-      <div className="bg-white border-b border-gray-200 py-12">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            5 Free Professional Resume Templates
-          </h1>
-          <p className="text-xl text-gray-600 mb-6">
-            All templates are ATS-friendly, professionally designed, and 100%
-            free to download. No account. No paywall. No tricks.
-          </p>
-          <p className="text-sm text-gray-500">
-            Unlike Zety and Resume.io, we never charge you to download your
-            resume.
-          </p>
+      <main id="main-content" className="min-h-screen bg-gray-50">
+        {/* Hero */}
+        <div className="bg-white border-b border-gray-200 py-12">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              5 Free Professional Resume Templates
+            </h1>
+            <p className="text-xl text-gray-600 mb-6">
+              All templates are ATS-friendly, professionally designed, and 100%
+              free to download. No account. No paywall. No tricks.
+            </p>
+            <p className="text-sm text-gray-500">
+              Unlike Zety and Resume.io, we never charge you to download your
+              resume.
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Template gallery */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <TemplateGallery />
-      </div>
-
-      {/* Bottom CTA */}
-      <div className="bg-blue-600 py-16">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            No paywall waiting for you at the end.
-          </h2>
-          <p className="text-blue-100 mb-8">
-            Pick a template, fill in your details, and download your PDF — all
-            free. No account. No credit card. No last-minute surprise.
-          </p>
-          <Link
-            href="/builder"
-            className="inline-block bg-white text-blue-600 font-bold text-lg px-8 py-4 rounded-xl hover:bg-blue-50 transition-colors"
-          >
-            Build Your Resume — It&apos;s Free
-          </Link>
+        {/* Template gallery */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <TemplateGallery />
         </div>
-      </div>
-    </main>
+
+        {/* Bottom CTA */}
+        <div className="bg-blue-600 py-16">
+          <div className="max-w-3xl mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              No paywall waiting for you at the end.
+            </h2>
+            <p className="text-blue-100 mb-8">
+              Pick a template, fill in your details, and download your PDF — all
+              free. No account. No credit card. No last-minute surprise.
+            </p>
+            <Link
+              href="/builder"
+              className="inline-block bg-white text-blue-600 font-bold text-lg px-8 py-4 rounded-xl hover:bg-blue-50 transition-colors"
+            >
+              Build Your Resume — It&apos;s Free
+            </Link>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer — outside <main> so it gets role="contentinfo" */}
+      <footer className="bg-gray-900 text-gray-400 py-8 text-center text-sm">
+        <p>Free Resume Builder — No paywall. No account. No tricks.</p>
+      </footer>
+    </>
   )
 }

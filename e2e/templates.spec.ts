@@ -132,8 +132,12 @@ test.describe('Templates Page — preview sample data', () => {
 
   test('scaled preview containers use CSS transform', async ({ page }) => {
     await page.goto('/templates')
-    // Preview wrappers apply a CSS transform for scale
-    const scaledEls = page.locator('[style*="transform: scale"]')
+    // Preview wrappers apply a CSS transform for scale.
+    // Match both SSR format (no space: "transform:scale") and
+    // post-hydration browser format (space: "transform: scale").
+    const scaledEls = page.locator(
+      '[style*="transform:scale"],[style*="transform: scale"]'
+    )
     const count = await scaledEls.count()
     expect(count).toBeGreaterThan(0)
   })

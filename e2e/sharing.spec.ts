@@ -160,7 +160,14 @@ test.describe('Builder — Share button copies a /preview URL', () => {
   test('clicking Share button copies a URL to clipboard', async ({
     page,
     context,
+    browserName,
   }) => {
+    // Firefox doesn't support clipboard-read; WebKit doesn't support clipboard-write.
+    // Clipboard permission granting is only fully supported in Chromium.
+    test.skip(
+      browserName !== 'chromium',
+      'Clipboard permissions only fully supported in Chromium'
+    )
     // Grant clipboard permissions so the hook can write
     await context.grantPermissions(['clipboard-read', 'clipboard-write'])
 

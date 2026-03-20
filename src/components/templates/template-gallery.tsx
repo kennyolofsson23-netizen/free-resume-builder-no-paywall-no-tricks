@@ -45,7 +45,6 @@ export function TemplateGallery() {
               <Link
                 href={`/builder?template=${template.id}`}
                 className="bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
-                aria-label={`Use ${template.name} template`}
               >
                 Use This Template
               </Link>

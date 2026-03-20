@@ -74,7 +74,7 @@ export function ProfessionalTemplate({ resume }: Props) {
           color: '#fff',
         }}
       >
-        <h1
+        <h2
           style={{
             fontSize: '22px',
             fontWeight: '800',
@@ -84,7 +84,7 @@ export function ProfessionalTemplate({ resume }: Props) {
           }}
         >
           {p.fullName}
-        </h1>
+        </h2>
         <div
           style={{
             display: 'flex',

@@ -73,7 +73,7 @@ export function MinimalTemplate({ resume }: Props) {
     >
       {/* Header */}
       <div style={{ marginBottom: '32px' }}>
-        <h1
+        <h2
           style={{
             fontSize: '32px',
             fontWeight: '700',
@@ -83,7 +83,7 @@ export function MinimalTemplate({ resume }: Props) {
           }}
         >
           {p.fullName}
-        </h1>
+        </h2>
         {contactItems.length > 0 && (
           <div
             style={{

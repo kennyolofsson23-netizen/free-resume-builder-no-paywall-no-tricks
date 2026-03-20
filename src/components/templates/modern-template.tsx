@@ -64,7 +64,7 @@ export function ModernTemplate({ resume }: Props) {
           color: '#fff',
         }}
       >
-        <h1
+        <h2
           style={{
             fontSize: '28px',
             fontWeight: '700',
@@ -73,7 +73,7 @@ export function ModernTemplate({ resume }: Props) {
           }}
         >
           {p.fullName}
-        </h1>
+        </h2>
         <div
           style={{
             display: 'flex',

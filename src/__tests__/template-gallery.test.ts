@@ -126,7 +126,7 @@ describe('Template Gallery Page — Use This Template CTAs', () => {
 
   it('each CTA links to /builder?template={id}', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
-    render(React.createElement(TemplatesPage))
+    const { container } = render(React.createElement(TemplatesPage))
     const templateIds = [
       'modern',
       'classic',
@@ -135,36 +135,41 @@ describe('Template Gallery Page — Use This Template CTAs', () => {
       'professional',
     ]
     for (const id of templateIds) {
-      const links = screen.getAllByRole('link', {
-        name: new RegExp('use ' + id + ' template', 'i'),
-      })
-      expect(links.length).toBeGreaterThan(0)
-      const firstLink = links[0]
-      expect(firstLink?.getAttribute('href')).toBe('/builder?template=' + id)
+      const section = container.querySelector('#template-' + id)
+      expect(section).not.toBeNull()
+      const link = section?.querySelector(
+        `a[href="/builder?template=${id}"]`
+      ) as HTMLAnchorElement | null
+      expect(link).not.toBeNull()
+      expect(link?.getAttribute('href')).toBe('/builder?template=' + id)
     }
   })
 
   it('modern template CTA links to /builder?template=modern', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
-    render(React.createElement(TemplatesPage))
-    const link = screen.getByRole('link', { name: /use modern template/i })
-    expect(link.getAttribute('href')).toBe('/builder?template=modern')
+    const { container } = render(React.createElement(TemplatesPage))
+    const link = container.querySelector(
+      '#template-modern a[href="/builder?template=modern"]'
+    )
+    expect(link).not.toBeNull()
   })
 
   it('professional template CTA links to /builder?template=professional', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
-    render(React.createElement(TemplatesPage))
-    const link = screen.getByRole('link', {
-      name: /use professional template/i,
-    })
-    expect(link.getAttribute('href')).toBe('/builder?template=professional')
+    const { container } = render(React.createElement(TemplatesPage))
+    const link = container.querySelector(
+      '#template-professional a[href="/builder?template=professional"]'
+    )
+    expect(link).not.toBeNull()
   })
 
   it('creative template CTA links to /builder?template=creative', async () => {
     const { default: TemplatesPage } = await import('@/app/templates/page')
-    render(React.createElement(TemplatesPage))
-    const link = screen.getByRole('link', { name: /use creative template/i })
-    expect(link.getAttribute('href')).toBe('/builder?template=creative')
+    const { container } = render(React.createElement(TemplatesPage))
+    const link = container.querySelector(
+      '#template-creative a[href="/builder?template=creative"]'
+    )
+    expect(link).not.toBeNull()
   })
 })
 

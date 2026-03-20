@@ -78,7 +78,7 @@ export function ClassicTemplate({ resume }: Props) {
     >
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-        <h1
+        <h2
           style={{
             fontSize: '24px',
             fontWeight: '700',
@@ -88,7 +88,7 @@ export function ClassicTemplate({ resume }: Props) {
           }}
         >
           {p.fullName}
-        </h1>
+        </h2>
         {contactParts.length > 0 && (
           <div style={{ fontSize: '10px', color: '#6b7280' }}>
             {contactParts.join(' · ')}

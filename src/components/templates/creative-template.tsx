@@ -77,7 +77,7 @@ export function CreativeTemplate({ resume }: Props) {
       >
         {/* Name */}
         <div style={{ marginBottom: '28px' }}>
-          <h1
+          <h2
             style={{
               fontSize: '20px',
               fontWeight: '800',
@@ -87,7 +87,7 @@ export function CreativeTemplate({ resume }: Props) {
             }}
           >
             {p.fullName}
-          </h1>
+          </h2>
         </div>
 
         {/* Contact */}
