@@ -28,9 +28,9 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run dev -- --port 3100',
+    command: 'node -e "require(\'fs\').rmSync(\'.next\', {recursive: true, force: true})" && npm run dev -- --port 3100',
     url: 'http://localhost:3100',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
 })
