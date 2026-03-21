@@ -471,8 +471,8 @@ describe('Form Editor — Validation via Zod schemas', () => {
     })
     expect(result.success).toBe(false)
     if (!result.success) {
-      const websiteIssue = result.error.issues.find((i: { path: (string | number)[] }) =>
-        i.path.includes('website')
+      const websiteIssue = result.error.issues.find(
+        (i: { path: (string | number)[] }) => i.path.includes('website')
       )
       expect(websiteIssue).toBeDefined()
     }
