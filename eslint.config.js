@@ -7,7 +7,14 @@ const compat = new FlatCompat({
 
 module.exports = [
   {
-    ignores: ['.next/**', 'node_modules/**', 'out/**', 'build/**', 'test-results/**', 'playwright-report/**'],
+    ignores: [
+      '.next/**',
+      'node_modules/**',
+      'out/**',
+      'build/**',
+      'test-results/**',
+      'playwright-report/**',
+    ],
   },
   ...compat.extends('next/core-web-vitals'),
   {
