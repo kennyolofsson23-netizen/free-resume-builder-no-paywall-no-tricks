@@ -64,7 +64,7 @@ export function PreviewPanel() {
               Your resume updates as you type
             </p>
             <p className="text-sm">
-              Enter your name in the Personal tab to see it take shape
+              Enter your name in Personal Info to see it take shape
             </p>
           </div>
         </div>

@@ -39,7 +39,9 @@ export function useAutoSave(debounceMs = 1000): UseAutoSaveResult {
         setLastSaved(new Date())
       } catch {
         toast({
-          description: 'Could not save. Storage may be full.',
+          title: 'Auto-save paused',
+          description:
+            "Your browser's storage may be full. Export your resume as JSON to keep a backup.",
           variant: 'destructive',
         })
       } finally {

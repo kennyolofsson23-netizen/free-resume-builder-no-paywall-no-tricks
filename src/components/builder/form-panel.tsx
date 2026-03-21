@@ -12,7 +12,7 @@ import { ResumeListPanel } from '@/components/builder/resume-list-panel'
 
 export function FormPanel() {
   const resume = useResumeStore((state) => state.resume)
-  const resumeName = resume?.personalInfo?.fullName?.trim() || 'Untitled Resume'
+  const resumeName = resume?.personalInfo?.fullName?.trim() || 'My Resume'
   const [showResumes, setShowResumes] = React.useState(false)
 
   if (showResumes) {
@@ -25,7 +25,7 @@ export function FormPanel() {
             onClick={() => setShowResumes(false)}
             className="text-xs text-muted-foreground hover:text-foreground"
           >
-            ← Back
+            ← Editor
           </button>
         </div>
         <div className="flex-1 overflow-y-auto">

@@ -26,9 +26,9 @@ export function usePdfGenerator() {
   const validateResume = useCallback((): string | null => {
     if (!resume) return 'Add your details in the editor first'
     if (!resume.personalInfo.fullName?.trim())
-      return 'Add your name in the Personal tab before downloading'
+      return 'Add your name in the Personal Info section to continue'
     if (!resume.personalInfo.email?.trim())
-      return 'Add your email in the Personal tab before downloading'
+      return 'Add your email address in the Personal Info section to continue'
     return null
   }, [resume])
 
