@@ -93,7 +93,7 @@ describe('useResumeList — saveCurrentToList', () => {
     expect(result.current.resumeList[0]?.name).toBe('Jane Doe')
   })
 
-  it('uses "Untitled Resume" when fullName is empty', () => {
+  it('uses "My Resume" when fullName is empty', () => {
     act(() => {
       useResumeStore.getState().createNewResume()
     })
@@ -104,7 +104,7 @@ describe('useResumeList — saveCurrentToList', () => {
       result.current.saveCurrentToList()
     })
 
-    expect(result.current.resumeList[0]?.name).toBe('Untitled Resume')
+    expect(result.current.resumeList[0]?.name).toBe('My Resume')
   })
 
   it('stores the correct template in the list item', () => {
