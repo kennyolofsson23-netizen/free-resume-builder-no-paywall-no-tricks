@@ -61,17 +61,21 @@ function CertificationEntryFields({
   const handleBlur = (field: keyof CertFieldErrors, value: string) => {
     const newErrors = { ...errors }
     if (!value.trim()) {
-      if (field === 'name') newErrors.name = 'Certification name is required'
-      else if (field === 'issuer') newErrors.issuer = 'Issuer is required'
+      if (field === 'name')
+        newErrors.name =
+          'Add the certification name as it appears on your credential'
+      else if (field === 'issuer')
+        newErrors.issuer =
+          "Add the issuing organization — e.g. 'Amazon Web Services', 'Google', 'Coursera'"
       else if (field === 'issueDate')
-        newErrors.issueDate = 'Issue date is required'
+        newErrors.issueDate = 'Add the date this certification was issued'
     } else {
       delete newErrors[field]
     }
     setErrors(newErrors)
   }
 
-  const title = cert.name || 'Untitled Certification'
+  const title = cert.name || 'New Certification'
   const subtitle = cert.issuer || ''
 
   return (
@@ -377,11 +381,11 @@ export function CertificationsForm() {
     <div className="space-y-3">
       {certifications.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          Add certifications, licenses, or credentials that back up your skills.
+          Certifications, licenses, and credentials that prove what you know.
           <br />
           <span className="text-xs">
-            AWS, Google Analytics, PMP, SHRM — anything with a credential ID or
-            verification URL is worth including.
+            AWS, Google Analytics, PMP, CompTIA — anything with a credential ID
+            or verification URL strengthens your application.
           </span>
         </p>
       )}

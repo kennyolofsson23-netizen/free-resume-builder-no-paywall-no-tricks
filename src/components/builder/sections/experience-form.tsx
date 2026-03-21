@@ -62,17 +62,21 @@ function ExperienceEntryFields({
   const handleBlur = (field: keyof ExperienceFieldErrors, value: string) => {
     const newErrors = { ...errors }
     if (!value.trim()) {
-      if (field === 'jobTitle') newErrors.jobTitle = 'Job title is required'
-      else if (field === 'company') newErrors.company = 'Company is required'
+      if (field === 'jobTitle')
+        newErrors.jobTitle =
+          "Add a job title — even 'Marketing Intern' or 'Freelancer' works"
+      else if (field === 'company')
+        newErrors.company =
+          "Add the company name — use 'Freelance' or 'Self-Employed' if you worked for yourself"
       else if (field === 'startDate')
-        newErrors.startDate = 'Start date is required'
+        newErrors.startDate = 'Pick a start date for this role'
     } else {
       delete newErrors[field]
     }
     setErrors(newErrors)
   }
 
-  const title = exp.jobTitle || 'New Position'
+  const title = exp.jobTitle || 'New Experience'
   const subtitle = exp.company || ''
 
   return (
@@ -409,11 +413,12 @@ export function ExperienceForm() {
     <div className="space-y-3">
       {experiences.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          Your work history goes here — even one entry makes a difference.
+          Your work history belongs here — even one entry makes a real
+          difference.
           <br />
           <span className="text-xs">
-            Add internships, part-time roles, freelance work, or volunteer
-            positions.
+            Internships, part-time roles, freelance gigs, and volunteer work all
+            count.
           </span>
         </p>
       )}

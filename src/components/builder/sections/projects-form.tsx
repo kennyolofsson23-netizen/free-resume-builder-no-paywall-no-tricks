@@ -31,7 +31,8 @@ function ProjectEntryFields({
   const handleBlur = (field: keyof ProjectFieldErrors, value: string) => {
     const newErrors = { ...errors }
     if (!value.trim() && field === 'title') {
-      newErrors.title = 'Project title is required'
+      newErrors.title =
+        "Give this project a name — 'Portfolio Site' or 'Capstone Project' works fine"
     } else {
       delete newErrors[field]
     }
@@ -50,7 +51,7 @@ function ProjectEntryFields({
 
   return (
     <SectionEntry
-      title={project.title || 'Untitled Project'}
+      title={project.title || 'New Project'}
       onDelete={() => onDelete(project.id)}
     >
       <div className="space-y-4">
@@ -200,8 +201,13 @@ export function ProjectsForm() {
     <div className="space-y-3">
       {projects.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
-          Show off what you&apos;ve built — side projects, freelance work, open
-          source contributions, or class projects all count.
+          Anything you&apos;ve built belongs here — side projects, freelance
+          work, open source contributions, or class projects.
+          <br />
+          <span className="text-xs">
+            Projects are especially powerful if you&apos;re light on formal work
+            experience.
+          </span>
         </p>
       )}
 

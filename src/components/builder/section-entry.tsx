@@ -68,7 +68,9 @@ export function SectionEntry({
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-foreground">
               {title || (
-                <span className="text-muted-foreground italic">Untitled</span>
+                <span className="text-muted-foreground italic">
+                  Untitled entry
+                </span>
               )}
             </p>
             {subtitle && (

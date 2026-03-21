@@ -61,17 +61,21 @@ function EducationEntryFields({
   const handleBlur = (field: keyof EducationFieldErrors, value: string) => {
     const newErrors = { ...errors }
     if (!value.trim()) {
-      if (field === 'school') newErrors.school = 'School is required'
-      else if (field === 'degree') newErrors.degree = 'Degree is required'
+      if (field === 'school')
+        newErrors.school =
+          'Add your school — bootcamps, community colleges, and online programs all count'
+      else if (field === 'degree')
+        newErrors.degree =
+          "Add your degree — 'B.S.', 'Certificate', or 'Some College' all work"
       else if (field === 'startDate')
-        newErrors.startDate = 'Start date is required'
+        newErrors.startDate = 'Add a start date for this program'
     } else {
       delete newErrors[field]
     }
     setErrors(newErrors)
   }
 
-  const title = edu.school || 'Untitled Degree'
+  const title = edu.school || 'New Education'
   const subtitle = edu.degree
     ? edu.field
       ? `${edu.degree} in ${edu.field}`
@@ -380,8 +384,8 @@ export function EducationForm() {
           List your degrees, diplomas, bootcamps, or relevant coursework.
           <br />
           <span className="text-xs">
-            No degree? A bootcamp, online certificate, or relevant coursework
-            all count.
+            No four-year degree? A bootcamp certificate, online course, or
+            &ldquo;Some College&rdquo; still belongs here.
           </span>
         </p>
       )}
