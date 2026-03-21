@@ -1,9 +1,8 @@
 /**
  * Tests for F004 — Instant PDF Download
- * Tests the actual generate-pdf.ts module (not a mock).
+ * Tests the actual generate-pdf.ts module with jsPDF mocked.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import type { MockInstance } from 'vitest'
 import type { Resume } from '@/types/resume'
 
 const sampleResume: Resume = {
@@ -25,80 +24,98 @@ const sampleResume: Resume = {
   updatedAt: new Date().toISOString(),
 }
 
+// Mock jsPDF
+const mockSave = vi.fn()
+const mockAddImage = vi.fn()
+const mockAddPage = vi.fn()
+const mockGetWidth = vi.fn().mockReturnValue(612)
+const mockGetHeight = vi.fn().mockReturnValue(792)
+
+vi.mock('jspdf', () => ({
+  default: vi.fn().mockImplementation(() => ({
+    internal: {
+      pageSize: {
+        getWidth: mockGetWidth,
+        getHeight: mockGetHeight,
+      },
+    },
+    addImage: mockAddImage,
+    addPage: mockAddPage,
+    save: mockSave,
+  })),
+}))
+
+// Mock html2canvas
+vi.mock('html2canvas', () => ({
+  default: vi.fn().mockResolvedValue({
+    width: 816,
+    height: 1056,
+    toDataURL: vi.fn().mockReturnValue('data:image/jpeg;base64,fake'),
+  }),
+}))
+
+let generatePDF: (options?: { elementId?: string; filename?: string }) => Promise<void>
+
+beforeAll(async () => {
+  const mod = await import('@/lib/pdf/generate-pdf')
+  generatePDF = mod.generatePDF
+})
+
 describe('generatePDF — core behavior', () => {
-  let printSpy: MockInstance<[], void>
-  let originalTitle: string
-
   beforeEach(() => {
-    vi.resetModules()
-    originalTitle = document.title
-    printSpy = vi.spyOn(window, 'print').mockImplementation(() => {
-      // Simulate afterprint event synchronously in tests
-      window.dispatchEvent(new Event('afterprint'))
-    })
-  })
-
-  afterEach(() => {
-    document.title = originalTitle
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it('throws when element is not found', async () => {
-    const { generatePDF } = await import('@/lib/pdf/generate-pdf')
     await expect(
       generatePDF({ elementId: 'nonexistent-element' })
     ).rejects.toThrow('Element #nonexistent-element not found')
   })
 
-  it('calls window.print() when element exists', async () => {
+  it('calls pdf.save() with the given filename when element exists', async () => {
     const el = document.createElement('div')
     el.id = 'resume-preview-container'
     document.body.appendChild(el)
 
-    const { generatePDF } = await import('@/lib/pdf/generate-pdf')
     await generatePDF({
       elementId: 'resume-preview-container',
-      filename: 'Test.pdf',
+      filename: 'Test_Resume.pdf',
     })
 
-    expect(printSpy).toHaveBeenCalledOnce()
+    expect(mockSave).toHaveBeenCalledWith('Test_Resume.pdf')
     document.body.removeChild(el)
   })
 
-  it('sets document.title to filename before printing', async () => {
+  it('calls html2canvas on the element', async () => {
+    const html2canvas = (await import('html2canvas')).default
     const el = document.createElement('div')
-    el.id = 'resume-test-title'
+    el.id = 'resume-canvas-test'
     document.body.appendChild(el)
 
-    let titleDuringPrint = ''
-    printSpy.mockImplementation(() => {
-      titleDuringPrint = document.title
-      window.dispatchEvent(new Event('afterprint'))
-    })
+    await generatePDF({ elementId: 'resume-canvas-test', filename: 'Test.pdf' })
 
-    const { generatePDF } = await import('@/lib/pdf/generate-pdf')
-    await generatePDF({
-      elementId: 'resume-test-title',
-      filename: 'MyResume.pdf',
-    })
-
-    expect(titleDuringPrint).toBe('MyResume.pdf')
+    expect(html2canvas).toHaveBeenCalledWith(
+      el,
+      expect.objectContaining({ scale: 2 })
+    )
     document.body.removeChild(el)
   })
 
-  it('restores document.title after printing', async () => {
-    document.title = 'Original Page Title'
+  it('calls addImage with JPEG data', async () => {
     const el = document.createElement('div')
-    el.id = 'resume-restore-test'
+    el.id = 'resume-image-test'
     document.body.appendChild(el)
 
-    const { generatePDF } = await import('@/lib/pdf/generate-pdf')
-    await generatePDF({
-      elementId: 'resume-restore-test',
-      filename: 'Temp.pdf',
-    })
+    await generatePDF({ elementId: 'resume-image-test', filename: 'Test.pdf' })
 
-    expect(document.title).toBe('Original Page Title')
+    expect(mockAddImage).toHaveBeenCalledWith(
+      'data:image/jpeg;base64,fake',
+      'JPEG',
+      expect.any(Number),
+      expect.any(Number),
+      expect.any(Number),
+      expect.any(Number)
+    )
     document.body.removeChild(el)
   })
 })

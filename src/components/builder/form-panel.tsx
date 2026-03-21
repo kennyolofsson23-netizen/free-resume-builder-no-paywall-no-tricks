@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { useResumeStore } from '@/store/resume-store'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PersonalInfoForm } from '@/components/builder/sections/personal-info-form'
 import { ExperienceForm } from '@/components/builder/sections/experience-form'
 import { EducationForm } from '@/components/builder/sections/education-form'
@@ -14,6 +15,13 @@ export function FormPanel() {
   const resume = useResumeStore((state) => state.resume)
   const resumeName = resume?.personalInfo?.fullName?.trim() || 'My Resume'
   const [showResumes, setShowResumes] = React.useState(false)
+
+  // Compute counts for tab badges
+  const expCount = resume?.experiences?.length ?? 0
+  const eduCount = resume?.education?.length ?? 0
+  const skillCount = resume?.skills?.length ?? 0
+  const projCount = resume?.projects?.length ?? 0
+  const certCount = resume?.certifications?.length ?? 0
 
   if (showResumes) {
     return (
@@ -54,62 +62,69 @@ export function FormPanel() {
         </button>
       </div>
 
-      {/* Scrollable Content — all sections always visible */}
-      <div className="flex-1 overflow-y-auto">
-        <section className="border-b border-border">
-          <h3 className="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Personal Info
-          </h3>
-          <div className="px-4 pb-4">
-            <PersonalInfoForm />
-          </div>
-        </section>
+      {/* Tabbed sections */}
+      <Tabs defaultValue="personal" className="flex flex-1 flex-col overflow-hidden">
+        {/* Scrollable tab bar */}
+        <div className="shrink-0 border-b border-border bg-background overflow-x-auto">
+          <TabsList className="inline-flex h-10 rounded-none bg-transparent p-0 w-max">
+            <TabsTrigger
+              value="personal"
+              className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-medium data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap"
+            >
+              Personal
+            </TabsTrigger>
+            <TabsTrigger
+              value="experience"
+              className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-medium data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap"
+            >
+              Experience{expCount > 0 && ` (${expCount})`}
+            </TabsTrigger>
+            <TabsTrigger
+              value="education"
+              className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-medium data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap"
+            >
+              Education{eduCount > 0 && ` (${eduCount})`}
+            </TabsTrigger>
+            <TabsTrigger
+              value="skills"
+              className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-medium data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap"
+            >
+              Skills{skillCount > 0 && ` (${skillCount})`}
+            </TabsTrigger>
+            <TabsTrigger
+              value="projects"
+              className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-medium data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap"
+            >
+              Projects{projCount > 0 && ` (${projCount})`}
+            </TabsTrigger>
+            <TabsTrigger
+              value="certifications"
+              className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-medium data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap"
+            >
+              Certs{certCount > 0 && ` (${certCount})`}
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-        <section className="border-b border-border">
-          <h3 className="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Experience
-          </h3>
-          <div className="px-4 pb-4">
-            <ExperienceForm />
-          </div>
-        </section>
-
-        <section className="border-b border-border">
-          <h3 className="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Education
-          </h3>
-          <div className="px-4 pb-4">
-            <EducationForm />
-          </div>
-        </section>
-
-        <section className="border-b border-border">
-          <h3 className="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Skills
-          </h3>
-          <div className="px-4 pb-4">
-            <SkillsForm />
-          </div>
-        </section>
-
-        <section className="border-b border-border">
-          <h3 className="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Projects
-          </h3>
-          <div className="px-4 pb-4">
-            <ProjectsForm />
-          </div>
-        </section>
-
-        <section>
-          <h3 className="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Certifications
-          </h3>
-          <div className="px-4 pb-4">
-            <CertificationsForm />
-          </div>
-        </section>
-      </div>
+        <TabsContent value="personal" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+          <PersonalInfoForm />
+        </TabsContent>
+        <TabsContent value="experience" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+          <ExperienceForm />
+        </TabsContent>
+        <TabsContent value="education" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+          <EducationForm />
+        </TabsContent>
+        <TabsContent value="skills" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+          <SkillsForm />
+        </TabsContent>
+        <TabsContent value="projects" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+          <ProjectsForm />
+        </TabsContent>
+        <TabsContent value="certifications" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+          <CertificationsForm />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

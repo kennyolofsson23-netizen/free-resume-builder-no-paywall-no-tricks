@@ -73,7 +73,12 @@ export function PreviewPanel() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-muted/40">
+    <div
+      className="flex h-full flex-col overflow-hidden bg-muted/40"
+      role="region"
+      aria-label="Resume preview"
+      aria-live="polite"
+    >
       {/* Scale indicator */}
       <div className="shrink-0 border-b border-border bg-background px-4 py-2">
         <p className="text-xs text-muted-foreground">

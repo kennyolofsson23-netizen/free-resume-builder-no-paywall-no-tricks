@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useIsMobile } from '@/hooks/use-media-query'
+import { useIsMobile, useIsTablet } from '@/hooks/use-media-query'
 import { useAutoSave } from '@/hooks/use-auto-save'
 import { BuilderToolbar } from '@/components/builder/builder-toolbar'
 import { FormPanel } from '@/components/builder/form-panel'
@@ -11,11 +11,13 @@ import { AffiliateBanner } from '@/components/shared/affiliate-banner'
 
 export function BuilderLayout() {
   const isMobile = useIsMobile()
+  const isTablet = useIsTablet()
+  const useStackedLayout = isMobile || isTablet
   const { lastSaved } = useAutoSave(1000)
   const [mobilePreviewOpen, setMobilePreviewOpen] = React.useState(false)
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
+    <div id="main-content" className="flex h-screen flex-col overflow-hidden">
       {/* Top toolbar */}
       <BuilderToolbar />
 
@@ -27,7 +29,7 @@ export function BuilderLayout() {
         </div>
       )}
 
-      {!isMobile ? (
+      {!useStackedLayout ? (
         /* Desktop (≥1024px via useIsMobile cutoff): split-pane layout */
         <div className="flex flex-1 overflow-hidden">
           {/* Left: form panel */}
@@ -50,15 +52,22 @@ export function BuilderLayout() {
           </div>
         </div>
       ) : (
-        /* Mobile (<768px): simple layout with MobilePreviewSheet */
+        /* Mobile/Tablet (<1024px): simple layout with MobilePreviewSheet */
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="flex flex-1 flex-col overflow-hidden">
             <div className="border-b border-border flex h-10">
-              <span className="flex-1 flex items-center justify-center text-sm font-medium">
-                Edit
-              </span>
               <button
                 type="button"
+                aria-selected={true}
+                role="tab"
+                className="flex-1 flex items-center justify-center text-sm font-medium border-b-2 border-primary"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={false}
                 className="flex-1 flex items-center justify-center text-sm font-medium border-l border-border"
                 onClick={() => setMobilePreviewOpen(true)}
               >

@@ -21,13 +21,13 @@ export function Footer() {
             Templates
           </Link>
           <Link
-            href="#"
+            href="/privacy"
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Privacy Policy
           </Link>
           <Link
-            href="#"
+            href="/about"
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             About

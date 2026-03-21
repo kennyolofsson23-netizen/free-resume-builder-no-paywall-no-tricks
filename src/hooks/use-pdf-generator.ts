@@ -46,7 +46,7 @@ export function usePdfGenerator() {
     setStatus('generating')
     try {
       const name = resume?.personalInfo.fullName?.trim() ?? 'Resume'
-      const filename = `${name.replace(/\s+/g, '_')}_Resume.pdf`
+      const filename = `${name.replace(/[^a-z0-9_\- ]/gi, '_').trim()}_Resume.pdf`
       await generatePDF({ elementId: 'resume-preview-container', filename })
       if (mountedRef.current) {
         setStatus('success')

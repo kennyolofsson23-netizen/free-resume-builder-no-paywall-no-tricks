@@ -566,14 +566,10 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
     if (typeof window === 'undefined') return
     const { resume } = get()
     if (!resume) return
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ ...resume, updatedAt: new Date().toISOString() })
-      )
-    } catch (error) {
-      throw error
-    }
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ ...resume, updatedAt: new Date().toISOString() })
+    )
   },
 
   exportAsJSON: () => {
@@ -606,10 +602,12 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
           .regex(/^#[0-9a-fA-F]{6}$/)
           .default(DEFAULT_ACCENT_COLOR),
       })
+      type LenientResume = z.infer<typeof lenientSchema>
       const result = lenientSchema.safeParse(parsed)
       if (result.success) {
+        const data: LenientResume = result.data
         set({
-          resume: result.data as Resume,
+          resume: data as Resume,
           pastStates: [],
           futureStates: [],
         })

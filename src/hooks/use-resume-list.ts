@@ -2,7 +2,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useResumeStore } from '@/store/resume-store'
 import { RESUMES_STORAGE_KEY, STORAGE_KEY } from '@/lib/constants'
-import type { Resume } from '@/types/resume'
+import { resumeSchema } from '@/lib/schemas/resume-schema'
 
 interface ResumeListItem {
   id: string
@@ -50,7 +50,11 @@ export function useResumeList() {
         existing >= 0
           ? prev.map((r, i) => (i === existing ? item : r))
           : [...prev, item]
-      localStorage.setItem(RESUMES_STORAGE_KEY, JSON.stringify(next))
+      try {
+        localStorage.setItem(RESUMES_STORAGE_KEY, JSON.stringify(next))
+      } catch {
+        /* ignore quota errors */
+      }
       return next
     })
     // Also save full resume data keyed by ID
@@ -70,9 +74,15 @@ export function useResumeList() {
       try {
         const stored = localStorage.getItem(`resume-${id}`)
         if (stored) {
-          const parsed = JSON.parse(stored) as Resume
-          setResume(parsed)
-          localStorage.setItem(STORAGE_KEY, stored) // update active resume
+          const rawParsed: unknown = JSON.parse(stored)
+          const result = resumeSchema.safeParse(rawParsed)
+          if (!result.success) return
+          setResume(result.data)
+          try {
+            localStorage.setItem(STORAGE_KEY, stored) // update active resume
+          } catch {
+            /* ignore quota errors */
+          }
         }
       } catch {
         /* ignore */
@@ -86,7 +96,11 @@ export function useResumeList() {
     localStorage.removeItem(`resume-${id}`)
     setResumeList((prev) => {
       const next = prev.filter((r) => r.id !== id)
-      localStorage.setItem(RESUMES_STORAGE_KEY, JSON.stringify(next))
+      try {
+        localStorage.setItem(RESUMES_STORAGE_KEY, JSON.stringify(next))
+      } catch {
+        /* ignore quota errors */
+      }
       return next
     })
   }, [])

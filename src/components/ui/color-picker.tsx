@@ -102,7 +102,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
               Preset Colors
             </p>
-            <div className="grid grid-cols-6 gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {PRESET_ACCENT_COLORS.map((color) => (
                 <button
                   key={color}
@@ -111,7 +111,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
                   title={color}
                   aria-label={`Select color ${color}`}
                   className={cn(
-                    'relative h-8 w-8 rounded-full border-2 transition-transform hover:scale-110',
+                    'relative h-11 w-11 rounded-full border-2 transition-transform hover:scale-110',
                     'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring',
                     value === color ? 'border-foreground' : 'border-transparent'
                   )}

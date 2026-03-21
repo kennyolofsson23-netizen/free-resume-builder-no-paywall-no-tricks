@@ -125,7 +125,7 @@ export function BuilderToolbar() {
     : false
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-background px-4 py-2">
+    <header className="sticky top-0 z-40 h-14 flex flex-wrap items-center justify-between gap-2 border-b border-border bg-background px-4">
       <div className="flex items-center gap-2">
         <Link
           href="/"
@@ -146,7 +146,7 @@ export function BuilderToolbar() {
 
       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
         {/* Undo / Redo */}
-        <div className="flex items-center gap-1">
+        <div className="hidden sm:flex items-center gap-1">
           <Button
             type="button"
             variant="ghost"
@@ -254,6 +254,7 @@ export function BuilderToolbar() {
           onClick={() => fileInputRef.current?.click()}
           aria-label="Import resume from JSON file"
           title="Import resume from JSON file"
+          className="hidden sm:inline-flex"
         >
           <Upload className="mr-1.5 h-4 w-4" />
           <span>Import</span>
@@ -267,6 +268,7 @@ export function BuilderToolbar() {
           onClick={handleExportJSON}
           aria-label="Export resume as JSON backup"
           title="Export resume as JSON backup"
+          className="hidden sm:inline-flex"
         >
           <FileDown className="mr-1.5 h-4 w-4" />
           <span>Export</span>
@@ -280,6 +282,7 @@ export function BuilderToolbar() {
           onClick={handleNewResume}
           aria-label="Create a new resume"
           title="Create a new resume"
+          className="hidden sm:inline-flex"
         >
           <Plus className="mr-1.5 h-4 w-4" />
           <span>New</span>

@@ -52,10 +52,10 @@ export function PreviewPageClient() {
 
   if (state === 'loading') {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-r-transparent" />
-          <p className="mt-3 text-gray-600">Loading resume preview&hellip;</p>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary border-r-transparent" />
+          <p className="mt-3 text-muted-foreground">Loading resume preview&hellip;</p>
         </div>
       </div>
     )
@@ -63,21 +63,21 @@ export function PreviewPageClient() {
 
   if (state === 'invalid') {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">
+          <h1 className="text-2xl font-bold text-foreground mb-3">
             Share link didn&apos;t work
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             The link may be truncated, corrupted, or from an older version of
             the builder. Ask the person who shared it to hit{' '}
             <strong>Share</strong> again and send you the new link.
           </p>
           <Link
             href="/builder"
-            className="inline-block bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-block bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
           >
-            Build Your Own Resume — It&apos;s Free
+            Build Your Own Resume &mdash; It&apos;s Free
           </Link>
         </div>
       </div>

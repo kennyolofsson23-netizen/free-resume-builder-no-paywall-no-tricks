@@ -1,3 +1,5 @@
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
+
 const faqs = [
   {
     question: 'Is this actually free, or is there a catch?',
@@ -44,19 +46,18 @@ export function FAQ() {
           Frequently Asked Questions
         </h2>
 
-        <div className="space-y-6">
+        <Accordion type="multiple" className="rounded-lg border border-border bg-card px-6">
           {faqs.map((faq) => (
-            <div
-              key={faq.question}
-              className="rounded-lg border border-border bg-card p-6"
-            >
-              <h3 className="mb-3 text-lg font-semibold text-foreground">
+            <AccordionItem key={faq.question} value={faq.question}>
+              <AccordionTrigger className="text-base font-semibold text-foreground">
                 {faq.question}
-              </h3>
-              <p className="text-muted-foreground">{faq.answer}</p>
-            </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-muted-foreground">{faq.answer}</p>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </section>
   )
