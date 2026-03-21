@@ -1,7 +1,9 @@
 # USER REVIEW — ITERATION 4
+
 ## Free Resume Builder — No Paywall, No Tricks
 
 ### Test Environment
+
 - **Dev Server:** Running on localhost:3000
 - **Test Framework:** Playwright E2E + Vitest units
 - **Browser Coverage:** Chromium, Firefox, WebKit
@@ -31,10 +33,12 @@ This is a **production-ready product**. Every feature from FEATURES.json is impl
 ## Core Flows
 
 ### ✅ F000 - Shared Infrastructure
+
 - **Status:** [OK] All TypeScript types compile, Zod schemas validate, Zustand store fully functional
 - **Evidence:** All 6 infrastructure files present and tested
 
 ### ✅ F001 - Resume Form Editor
+
 - **Status:** [OK] Multi-section form with real-time validation working flawlessly
 - **Verified:**
   - Personal info (Full Name, Email, Phone, Location) all have visible labels
@@ -45,6 +49,7 @@ This is a **production-ready product**. Every feature from FEATURES.json is impl
   - "Currently Working" checkbox hides end date as expected
 
 ### ✅ F002 - Real-Time PDF Preview
+
 - **Status:** [OK] Live preview updates within <200ms of input changes
 - **Verified:**
   - Desktop (1280px+): Side-by-side layout works perfectly
@@ -52,6 +57,7 @@ This is a **production-ready product**. Every feature from FEATURES.json is impl
   - No lag or jank observed
 
 ### ✅ F003 - Five Resume Templates
+
 - **Status:** [OK] All 5 templates render correctly, template switching is instant
 - **Templates Verified:**
   1. Modern ✓ (clean sans-serif, accent color sidebar)
@@ -62,14 +68,16 @@ This is a **production-ready product**. Every feature from FEATURES.json is impl
 - **Verified:** No data loss when switching templates, all sections render without truncation
 
 ### ✅ F004 - Instant PDF Download
+
 - **Status:** [OK] Download button visible and enabled after filling name + email
 - **Verified:**
   - Download button present in toolbar
   - Can only trigger with valid fullName + email
   - Uses browser's print-to-PDF capability (client-side, no server requests)
-  - Filename formatted as "{Name}_Resume.pdf"
+  - Filename formatted as "{Name}\_Resume.pdf"
 
 ### ✅ F005 - LocalStorage Persistence
+
 - **Status:** [OK] Auto-save working with 1-second debounce
 - **Verified:**
   - Resume data persists across page reloads
@@ -77,6 +85,7 @@ This is a **production-ready product**. Every feature from FEATURES.json is impl
   - localStorage key correctly stores resume data
 
 ### ✅ F006 - Landing Page with Counter-Positioning Copy
+
 - **Status:** [OK] **Exceptional messaging** — directly addresses Zety frustration
 - **Counter-Positioning Copy Found:**
   1. "Unlike Zety — we don't lock your PDF behind a $29.99/month subscription" (hero badge)
@@ -86,6 +95,7 @@ This is a **production-ready product**. Every feature from FEATURES.json is impl
 - **SEO:** Metadata includes all recommended keywords
 
 ### ✅ F007 - Shareable Resume Preview Link
+
 - **Status:** [OK] URL encoding with compression working perfectly
 - **Verified:**
   - Share button generates `/preview#` URL with base64url-encoded data
@@ -95,35 +105,42 @@ This is a **production-ready product**. Every feature from FEATURES.json is impl
   - No server requests on preview (fully client-side decode)
 
 ### ✅ F008 - JSON Import/Export
+
 - **Status:** [OK] Export/import infrastructure present and tested
 - **Files Present:** Full implementation with unit tests
 - **Verified:** Unit tests passing
 
 ### ✅ F009 - Print-Optimized Stylesheet
+
 - **Status:** [OK] Print styles (@media print) present in globals.css
 - **Verified:** CSS file contains print media queries for hiding UI chrome
 
 ### ✅ F010 - Dark Mode
+
 - **Status:** [OK] Dark mode component and tests present
 - **Files Present:** Theme toggle component + comprehensive unit tests
 - **Note:** Theme respects system preferences (prefers-color-scheme)
 
 ### ✅ F011 - Multiple Resumes Management
+
 - **Status:** [OK] Infrastructure and tests present
 - **Files Present:** Full implementation with unit tests
 - **Verified:** Create/switch/delete multiple resumes
 
 ### ✅ F012 - Custom Accent Color Picker
+
 - **Status:** [OK] Color picker component implemented
 - **Files Present:** Full color picker with presets and hex input
 - **Verified:** Tests passing, supports contrast warnings
 
 ### ✅ F013 - Undo/Redo
+
 - **Status:** [OK] Undo/redo buttons visible in toolbar
 - **Verified:** Both buttons present and enabled in builder
 - **Implementation:** Uses keyboard shortcuts (Ctrl+Z / Ctrl+Shift+Z)
 
 ### ✅ F014 - Template Gallery Page
+
 - **Status:** [OK] Full gallery page at `/templates`
 - **Verified:**
   - All 5 templates render with sample data
@@ -131,6 +148,7 @@ This is a **production-ready product**. Every feature from FEATURES.json is impl
   - Navigation back to home and builder present
 
 ### ✅ F015 - Affiliate & Ad Monetization
+
 - **Status:** [OK] Non-intrusive affiliate banner present
 - **Verified:**
   - Affiliate component exists and integrated
@@ -161,14 +179,17 @@ This is a **production-ready product**. Every feature from FEATURES.json is impl
 ## Overall: 9.5/10
 
 ### Would Pay?
+
 **No** — because it's **free** (as promised). If forced to evaluate: **Highly Recommended**.
 
 ### Top Delight 🎉
+
 The **counter-positioning copy** is absolutely brilliant. Instead of hiding the fact that competitors like Zety have paywalls, this product puts it front and center: "Unlike Zety — we don't lock your PDF behind a $29.99/month subscription." This builds instant trust with frustrated users coming from Zety.
 
 The **real-time preview** is buttery smooth and makes the editing experience feel premium. The **shareable links** are an underrated feature — you can share your resume via URL without requiring recipients to create an account.
 
 ### Top Frustration 😤
+
 **Honestly?** There isn't one. The only minor observation is that some advanced features (Undo/Redo, Color Picker, Dark Mode) are tested but not immediately obvious in the UI on first look. Users might not discover them. A small "Pro Tips" onboarding tooltip would unlock these features.
 
 The **affiliate banner** is so non-intrusive I almost didn't notice it (which is exactly right — smart monetization without being pushy).
@@ -194,6 +215,6 @@ The technical execution is flawless — client-side only, no server requests, da
 
 ---
 
-*Review conducted: 2026-03-21*
-*Iteration 4 (No code changes detected)*
-*All 892 tests passing, no regressions detected*
+_Review conducted: 2026-03-21_
+_Iteration 4 (No code changes detected)_
+_All 892 tests passing, no regressions detected_

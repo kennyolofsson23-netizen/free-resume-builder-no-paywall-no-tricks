@@ -1,6 +1,6 @@
 // Quick verification script for advanced features
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs')
+const path = require('path')
 
 const checks = [
   {
@@ -54,33 +54,33 @@ const checks = [
     file: 'src/app/preview/page.tsx',
     shouldExist: true,
   },
-];
+]
 
-console.log('\n=== FEATURE FILE VERIFICATION ===\n');
+console.log('\n=== FEATURE FILE VERIFICATION ===\n')
 
-let allGood = true;
+let allGood = true
 checks.forEach((check) => {
-  const filePath = path.join(__dirname, check.file);
-  const exists = fs.existsSync(filePath);
+  const filePath = path.join(__dirname, check.file)
+  const exists = fs.existsSync(filePath)
 
   if (exists && check.contentCheck) {
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const hasContent = content.includes(check.contentCheck);
-    const status = hasContent ? '✓' : '⚠';
-    console.log(`${status} ${check.name}: EXISTS with "${check.contentCheck}"`);
-    if (!hasContent) allGood = false;
+    const content = fs.readFileSync(filePath, 'utf-8')
+    const hasContent = content.includes(check.contentCheck)
+    const status = hasContent ? '✓' : '⚠'
+    console.log(`${status} ${check.name}: EXISTS with "${check.contentCheck}"`)
+    if (!hasContent) allGood = false
   } else {
-    const status = exists ? '✓' : '✗';
-    console.log(`${status} ${check.name}: ${exists ? 'EXISTS' : 'MISSING'}`);
-    if (!exists && check.shouldExist) allGood = false;
+    const status = exists ? '✓' : '✗'
+    console.log(`${status} ${check.name}: ${exists ? 'EXISTS' : 'MISSING'}`)
+    if (!exists && check.shouldExist) allGood = false
   }
-});
+})
 
-console.log('\n=== SUMMARY ===');
+console.log('\n=== SUMMARY ===')
 if (allGood) {
-  console.log('✓ All expected feature files are present');
-  process.exit(0);
+  console.log('✓ All expected feature files are present')
+  process.exit(0)
 } else {
-  console.log('✗ Some feature files are missing');
-  process.exit(1);
+  console.log('✗ Some feature files are missing')
+  process.exit(1)
 }
