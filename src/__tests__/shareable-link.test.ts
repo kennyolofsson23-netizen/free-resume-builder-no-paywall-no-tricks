@@ -48,7 +48,10 @@ describe('encodeResumeData / decodeResumeData — roundtrip', () => {
 
   it('returns null for corrupted plain base64url payload', () => {
     // base64 that decodes to non-JSON
-    const b64 = btoa('not json at all').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+    const b64 = btoa('not json at all')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '')
     expect(decodeResumeData(b64)).toBeNull()
   })
 

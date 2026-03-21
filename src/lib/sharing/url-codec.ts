@@ -75,4 +75,5 @@ export function decodeResumeFromURL(hash: string): object | null {
 export const encodeResumeData: (data: object) => string = encodeResumeForURL
 
 /** Alias for decodeResumeFromURL. Use decodeResumeFromURL for new code. */
-export const decodeResumeData: (hash: string) => object | null = decodeResumeFromURL
+export const decodeResumeData: (hash: string) => object | null =
+  decodeResumeFromURL

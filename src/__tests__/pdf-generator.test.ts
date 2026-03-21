@@ -65,9 +65,7 @@ describe('generatePDF — core behavior', () => {
   })
 
   it('does NOT call window.print() when element is missing', async () => {
-    await expect(
-      generatePDF({ elementId: 'does-not-exist' })
-    ).rejects.toThrow()
+    await expect(generatePDF({ elementId: 'does-not-exist' })).rejects.toThrow()
     expect(mockPrint).not.toHaveBeenCalled()
   })
 
@@ -81,7 +79,10 @@ describe('generatePDF — core behavior', () => {
       capturedTitle = document.title
     })
 
-    await generatePDF({ elementId: 'resume-title-test', filename: 'Jane_Smith_Resume.pdf' })
+    await generatePDF({
+      elementId: 'resume-title-test',
+      filename: 'Jane_Smith_Resume.pdf',
+    })
 
     expect(capturedTitle).toBe('Jane_Smith_Resume')
     document.body.removeChild(el)
@@ -94,7 +95,10 @@ describe('generatePDF — core behavior', () => {
 
     const originalTitle = document.title
 
-    await generatePDF({ elementId: 'resume-restore-test', filename: 'Test.pdf' })
+    await generatePDF({
+      elementId: 'resume-restore-test',
+      filename: 'Test.pdf',
+    })
 
     expect(document.title).toBe(originalTitle)
     document.body.removeChild(el)
@@ -106,7 +110,9 @@ describe('generatePDF — core behavior', () => {
     document.body.appendChild(el)
 
     const originalTitle = document.title
-    window.print = vi.fn().mockImplementation(() => { throw new Error('print failed') })
+    window.print = vi.fn().mockImplementation(() => {
+      throw new Error('print failed')
+    })
 
     await expect(
       generatePDF({ elementId: 'resume-throw-test', filename: 'Test.pdf' })
