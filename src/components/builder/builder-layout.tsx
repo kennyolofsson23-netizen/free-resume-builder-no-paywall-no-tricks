@@ -58,16 +58,13 @@ export function BuilderLayout() {
             <div className="border-b border-border flex h-10">
               <button
                 type="button"
-                aria-selected={true}
-                role="tab"
                 className="flex-1 flex items-center justify-center text-sm font-medium border-b-2 border-primary"
               >
                 Edit
               </button>
               <button
                 type="button"
-                role="tab"
-                aria-selected={false}
+                aria-label="Preview"
                 className="flex-1 flex items-center justify-center text-sm font-medium border-l border-border"
                 onClick={() => setMobilePreviewOpen(true)}
               >

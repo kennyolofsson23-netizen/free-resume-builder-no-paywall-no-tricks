@@ -364,7 +364,7 @@ describe('ExperienceForm — field updates', () => {
 // ---------------------------------------------------------------------------
 
 describe('ExperienceForm — delete experience', () => {
-  it('clicking delete opens confirmation dialog, then removes on confirm', async () => {
+  it('clicking delete removes the entry immediately', () => {
     act(() => {
       useResumeStore.getState().addExperience()
       const id = useResumeStore.getState().resume!.experiences[0]!.id
@@ -375,16 +375,10 @@ describe('ExperienceForm — delete experience', () => {
 
     render(React.createElement(ExperienceForm))
 
-    // Click the trash icon — opens confirmation dialog
+    // Click the trash icon — removes immediately (undo with Ctrl+Z)
     const deleteBtn = screen.getByLabelText('Remove Dev')
     act(() => {
       fireEvent.click(deleteBtn)
-    })
-
-    // Confirm removal by clicking the "Remove" button in the dialog
-    const confirmBtn = await screen.findByRole('button', { name: 'Remove' })
-    act(() => {
-      fireEvent.click(confirmBtn)
     })
 
     expect(useResumeStore.getState().resume?.experiences).toHaveLength(0)
