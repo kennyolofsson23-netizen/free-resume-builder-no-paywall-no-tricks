@@ -12,9 +12,7 @@ export default function NotFound() {
       id="main-content"
       className="flex min-h-screen flex-col items-center justify-center px-4 text-center"
     >
-      <h1 className="text-6xl font-bold tracking-tight text-foreground">
-        404
-      </h1>
+      <h1 className="text-6xl font-bold tracking-tight text-foreground">404</h1>
       <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
         Page Not Found
       </h2>
