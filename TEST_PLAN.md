@@ -1,1155 +1,1674 @@
 # TEST_PLAN.md — Free Resume Builder: No Paywall, No Tricks
 
-> Every acceptance criterion from SPEC.md maps to at least one test case in this plan.
-> Test tooling: **Vitest** (unit/component), **React Testing Library** (component integration), **Playwright** (E2E).
+> **Generated:** 2026-03-21
+> **Stack:** Next.js 16 (App Router) · TypeScript 5.8 · Zustand 4 · Zod 3 · jsPDF 2.5 · pako 2.1
+> **Test runners:** Vitest 1 (unit/integration) · Playwright 1.40 (E2E)
+> **Coverage tool:** `@vitest/coverage-v8`
 
 ---
 
-## 1. Test Strategy & Pyramid Ratios
+## 0. Acceptance Criteria Index
 
-### Why This Ratio
+Every SPEC.md acceptance criterion is tagged below and referenced throughout this plan.
 
-This is a **fully client-side, zero-API application**. There are no HTTP routes, no database queries, and no auth flows to verify with integration tests in the traditional sense. The risk surface lives entirely in:
+| ID | Feature | Criterion |
+|----|---------|-----------|
+| AC-F001-1 | Form Editor | Preview updates within 200 ms of any keystroke |
+| AC-F001-2 | Form Editor | "Add Experience" creates an empty form with all required fields |
+| AC-F001-3 | Form Editor | Drag-reorder updates order in form and preview |
+| AC-F001-4 | Form Editor | Downloading with empty fullName or email shows a validation error |
+| AC-F001-5 | Form Editor | Invalid email format shows inline error on blur |
+| AC-F001-6 | Form Editor | "Currently Working" hides end date and shows "Present" in preview |
+| AC-F002-1 | Preview | Preview re-renders within 200 ms on input change |
+| AC-F002-2 | Preview | Desktop (≥ 1024 px) shows side-by-side layout |
+| AC-F002-3 | Preview | Mobile (< 768 px) shows full-screen bottom sheet on tap |
+| AC-F002-4 | Preview | PDF layout is pixel-identical to preview (print engine) |
+| AC-F003-1 | Templates | Clicking a template thumbnail switches immediately |
+| AC-F003-2 | Templates | All sections render correctly in every template |
+| AC-F003-3 | Templates | Text is extractable (not rasterized images) — print-based PDF |
+| AC-F003-4 | Templates | Template switch does not lose resume data |
+| AC-F003-5 | Templates | Content overflowing one page flows cleanly to second page |
+| AC-F004-1 | PDF Download | PDF downloads within 2 s when fullName + email are present |
+| AC-F004-2 | PDF Download | PDF layout matches preview |
+| AC-F004-3 | PDF Download | Zero network requests during PDF generation |
+| AC-F004-4 | PDF Download | Text in PDF is selectable/copyable |
+| AC-F004-5 | PDF Download | Filename is `{FullName}_Resume.pdf` |
+| AC-F005-1 | Persistence | Data auto-saves to localStorage with 1 s debounce |
+| AC-F005-2 | Persistence | Data restored exactly on return visit |
+| AC-F005-3 | Persistence | Toast warning when localStorage is unavailable/full |
+| AC-F005-4 | Persistence | "New Resume" requires confirmation before clearing |
+| AC-F006-1 | Landing Page | Hero shows "Free Resume Builder — No Paywall, No Tricks" above fold |
+| AC-F006-2 | Landing Page | ≥ 3 distinct anti-paywall messages |
+| AC-F006-3 | Landing Page | "Build Your Resume — It's Free" CTA visible above fold |
+| AC-F006-4 | Landing Page | LCP < 2.5 s |
+| AC-F006-5 | Landing Page | meta title, description, OG tags target "free resume builder no paywall" |
+| AC-F007-1 | Share Link | Clicking "Share" generates a URL-encoded resume link |
+| AC-F007-2 | Share Link | Link opens read-only preview with all data intact |
+| AC-F007-3 | Share Link | Data > 8 KB is compressed with pako before base64url encoding |
+| AC-F007-4 | Share Link | Shared view shows "Build Your Own" CTA; editing is disabled |
+| AC-F007-5 | Share Link | No server request when decoding (fragment stays client-side) |
+| AC-F008-1 | JSON Export | Exported file contains complete, valid JSON |
+| AC-F008-2 | JSON Import | Valid JSON loads all data into form and preview |
+| AC-F008-3 | JSON Import | Invalid JSON shows error toast; existing data is preserved |
+| AC-F008-4 | JSON Export | Exported JSON conforms to Resume TypeScript schema |
+| AC-F009-1 | Print | Ctrl+P on preview page renders only the resume (no UI chrome) |
+| AC-F009-2 | Print | US Letter margins and layout match the PDF download |
+| AC-F010-1 | Dark Mode | OS dark-mode preference activates dark theme on load |
+| AC-F010-2 | Dark Mode | Resume preview always has white background regardless of theme |
+| AC-F010-3 | Dark Mode | Theme toggle changes theme immediately without page reload |
+| AC-F011-1 | Multi-Resume | "New Resume" creates second resume without losing first |
+| AC-F011-2 | Multi-Resume | Resume list shows name, template, last-modified date |
+| AC-F011-3 | Multi-Resume | Delete requires confirmation dialog |
+| AC-F012-1 | Color Picker | 12 preset colors + hex input available for accent-color templates |
+| AC-F012-2 | Color Picker | Picking a color updates all accent elements in preview |
+| AC-F012-3 | Color Picker | Low-contrast color (< 3:1 against white) shows a warning |
+| AC-F013-1 | Undo | Ctrl+Z reverts last change in form and preview |
+| AC-F013-2 | Undo | Ctrl+Shift+Z re-applies undone change |
+| AC-F013-3 | Undo | Undo stack caps at 50 entries, dropping oldest |
 
-1. **Pure logic** — Zod schemas, URL codec (compress/decompress), store reducers, PDF filename generation, undo/redo stack management.
-2. **React component behavior** — real-time preview updates, form validation messages, template switching, mobile layout switching, dark mode toggle.
-3. **Full user flows in a real browser** — PDF download initiates a file save, clipboard writes succeed, localStorage round-trips, `window.location.hash` is read on `/preview`.
+---
+
+## 1. Test Strategy
+
+### 1.1 Project-Specific Context
+
+This application has **zero API routes, zero database, and zero server-side state**. All logic runs in the browser. The testing architecture reflects this:
+
+- There is **no backend to mock** — integration tests target the Zustand store (the application's effective "API") and browser-native APIs (`localStorage`, URL fragments, `window.print`).
+- **Serialization correctness is critical** — the URL codec and JSON import/export are the only inter-system boundaries. Property-based testing is a natural fit for these.
+- **PDF generation uses `window.print()`**, not canvas rasterization. Text selectability is a first-class requirement. E2E tests must verify this cannot regress.
+- **Performance is a product differentiator.** LCP, INP, and preview re-render timing need automated gates in CI so they can never silently degrade.
+- The **Zustand store is the "API"** — it has 30+ public methods that are the boundary between UI and data. Its full contract must be covered at the integration layer.
+
+### 1.2 Test Pyramid
 
 ```
-                   ┌───────────────┐
-                   │    E2E (15%)  │  Playwright — 15 critical flows
-                   │   ~25 tests   │
-              ┌────┴───────────────┴────┐
-              │ Component/Integration   │  React Testing Library — per-component
-              │        (35%)            │  ~90 tests
-         ┌────┴─────────────────────────┴────┐
-         │          Unit (50%)               │  Vitest — pure logic, schemas, hooks
-         │         ~130 tests                │
-         └───────────────────────────────────┘
+             ╔═══════════════════════╗
+             ║  E2E (Playwright)     ║  ~15 %
+             ║  ~15 spec files       ║
+             ║  ~120 tests           ║
+             ╠═══════════════════════╣
+             ║  Integration          ║  ~25 %
+             ║  (Store + Hooks +     ║
+             ║   Component RTL)      ║
+             ║  ~15 test files       ║
+             ║  ~200 tests           ║
+             ╠═══════════════════════╣
+             ║  Unit                 ║  ~60 %
+             ║  (Pure functions)     ║
+             ║  ~20 test files       ║
+             ║  ~400 tests           ║
+             ╚═══════════════════════╝
 ```
 
-| Layer     | Tools        | Focus                                                   | Target Count |
-| --------- | ------------ | ------------------------------------------------------- | ------------ |
-| Unit      | Vitest       | Schemas, store methods, codec, PDF options, hook logic  | ~130         |
-| Component | Vitest + RTL | Form sections, templates, toolbar, preview panel, pages | ~90          |
-| E2E       | Playwright   | Complete user flows from landing → PDF download         | ~25          |
-| **Total** |              |                                                         | **~245**     |
+| Layer | Tool | Run Where | Primary Purpose |
+|-------|------|-----------|-----------------|
+| Unit | Vitest + jsdom | Local + CI every PR | Pure functions, Zod schemas, URL codec, utilities |
+| Integration | Vitest + React Testing Library | Local + CI every PR | Zustand store operations, hooks with mocked browser APIs, component interaction |
+| E2E | Playwright | Local + CI every PR (Chromium); nightly (Firefox, WebKit) | Full user flows, real browser APIs, visual correctness |
+| Performance | Lighthouse CI | CI every PR on built app | LCP, INP, CLS, Lighthouse score, bundle size |
+| Property-based | fast-check (inside Vitest) | Local + CI every PR | Serialization roundtrips, validator invariants, stack bounds |
 
-### Key Testing Principles
+### 1.3 CI Gates (must all pass before merge)
 
-- **No server to mock** — mock `localStorage`, `navigator.clipboard`, `document.getElementById`, `html2canvas`, `jsPDF`, and `window.location`.
-- **Data isolation** — every test that touches `useResumeStore` calls `useResumeStore.getState().reset()` in `beforeEach`.
-- **Deterministic IDs** — mock `Date.now()` and `Math.random()` when testing ID generation.
-- **PDF generation** — mock `html2canvas` + `jsPDF` at the module boundary; test _filename logic_ and _validation gating_ independently of the canvas pipeline.
-- **Compression threshold** — the `SHARE_COMPRESSION_THRESHOLD` is 8192 bytes; test both branches explicitly (small payload → `j:` prefix, large payload → `z:` prefix).
+```
+type-check → lint → unit+integration (--run) → build
+                                                  └── e2e:chromium → lighthouse-ci
+                                                  └── e2e:firefox  [parallel, nightly]
+                                                  └── e2e:webkit   [parallel, nightly]
+```
+
+**Lighthouse CI thresholds** (`lighthouserc.json`):
+```json
+{
+  "assert": {
+    "assertions": {
+      "categories:performance": ["error", {"minScore": 0.90}],
+      "categories:accessibility": ["error", {"minScore": 0.90}],
+      "categories:best-practices": ["error", {"minScore": 0.90}],
+      "categories:seo": ["error", {"minScore": 0.90}]
+    }
+  }
+}
+```
 
 ---
 
 ## 2. Unit Tests
 
+All unit tests live in `src/__tests__/` and run under Vitest + jsdom. These test pure functions with no browser API dependencies. Mock only when a global is unavoidable (e.g., `btoa`/`atob` in Node — polyfill them in `src/test/setup.ts`).
+
+---
+
 ### 2.1 `src/lib/schemas/resume-schema.ts`
 
-**Coverage target: 100%**
+**File:** `src/__tests__/resume-schema.test.ts`
+**Coverage target:** 100 % lines / 100 % branches
 
 #### `personalInfoSchema`
 
-| Test     | Scenario                                  | Expected                                    |
-| -------- | ----------------------------------------- | ------------------------------------------- |
-| `PI-001` | Valid full object with all fields         | `success: true`                             |
-| `PI-002` | `fullName: ''`                            | Fails with `'Full name is required'`        |
-| `PI-003` | `fullName` with 101 chars                 | Fails max(100)                              |
-| `PI-004` | `email: 'not-an-email'`                   | Fails with `'Invalid email address'`        |
-| `PI-005` | `email: ''`                               | Fails (min 1 implicit from email validator) |
-| `PI-006` | `phone` with 21 chars                     | Fails max(20)                               |
-| `PI-007` | `website: 'https://example.com'`          | Passes                                      |
-| `PI-008` | `website: ''`                             | Passes (`.or(z.literal(''))`)               |
-| `PI-009` | `website: 'not-a-url'`                    | Fails with `'Invalid URL'`                  |
-| `PI-010` | `linkedin`, `github` same URL/empty logic | Same as `website`                           |
-| `PI-011` | `summary` with 2001 chars                 | Fails max(2000)                             |
-| `PI-012` | `summary` omitted entirely                | Passes (optional)                           |
+| Test | Input | Expected | AC |
+|------|-------|----------|----|
+| valid full object | all fields populated | `success: true` | — |
+| minimum valid (name + email only) | fullName + email, rest defaults | `success: true` | AC-F001-4 |
+| empty fullName | `fullName: ""` | `ZodError` on `fullName` | AC-F001-4 |
+| empty email | `email: ""` | `ZodError` on `email` | AC-F001-4 |
+| invalid email format | `email: "notanemail"` | `ZodError` on `email` | AC-F001-5 |
+| email with valid RFC 5321 format | `email: "a+b@sub.example.co.uk"` | `success: true` | — |
+| fullName at max (100 chars) | 100-char string | `success: true` | — |
+| fullName over max (101 chars) | 101-char string | `ZodError` | — |
+| fullName with Unicode | `"张伟"` (Chinese) | `success: true` | — |
+| valid URL on website | `"https://example.com"` | `success: true` | — |
+| empty-string website allowed | `website: ""` | `success: true` (optional-or-empty) | — |
+| malformed URL on website | `"not-a-url"` | `ZodError` | — |
+| summary at limit (2000 chars) | 2000-char string | `success: true` | — |
+| summary over limit (2001 chars) | 2001-char string | `ZodError` | — |
+| XSS payload in summary | `"<script>alert(1)</script>"` | `success: true` (Zod passes; React escapes) | — |
 
 #### `experienceSchema`
 
-| Test     | Scenario                                | Expected                              |
-| -------- | --------------------------------------- | ------------------------------------- |
-| `EX-001` | Valid experience with all fields        | `success: true`                       |
-| `EX-002` | `jobTitle: ''`                          | Fails with `'Job title is required'`  |
-| `EX-003` | `company: ''`                           | Fails with `'Company is required'`    |
-| `EX-004` | `startDate: ''`                         | Fails with `'Start date is required'` |
-| `EX-005` | `currentlyWorking: true`, `endDate: ''` | Passes                                |
-| `EX-006` | `description` with 5001 chars           | Fails max(5000)                       |
-| `EX-007` | `id` is empty string                    | Passes (string, no min)               |
+| Test | Input | Expected | AC |
+|------|-------|----------|----|
+| valid complete entry | all fields | `success: true` | — |
+| missing jobTitle | `jobTitle: ""` | `ZodError` | AC-F001-4 |
+| missing company | `company: ""` | `ZodError` | AC-F001-4 |
+| missing startDate | `startDate: ""` | `ZodError` | — |
+| currentlyWorking true with empty endDate | allowed by schema | `success: true` | AC-F001-6 |
+| description at limit (5000 chars) | 5000-char string | `success: true` | — |
+| description over limit (5001 chars) | 5001-char string | `ZodError` | — |
+| id is required | `id: ""` | `ZodError` | — |
 
 #### `educationSchema`
 
-| Test     | Scenario                        | Expected                     |
-| -------- | ------------------------------- | ---------------------------- |
-| `ED-001` | Valid education                 | `success: true`              |
-| `ED-002` | `school: ''`                    | Fails `'School is required'` |
-| `ED-003` | `degree: ''`                    | Fails `'Degree is required'` |
-| `ED-004` | `gpa: '12345678901'` (11 chars) | Fails max(10)                |
-| `ED-005` | `endDate` omitted               | Passes (optional)            |
+| Test | Input | Expected |
+|------|-------|----------|
+| valid entry | all fields | `success: true` |
+| missing school | `school: ""` | `ZodError` |
+| missing degree | `degree: ""` | `ZodError` |
+| missing startDate | `startDate: ""` | `ZodError` |
+| GPA optional, empty ok | `gpa: ""` | `success: true` |
+| GPA at limit (10 chars) | 10-char string | `success: true` |
 
 #### `skillSchema`
 
-| Test     | Scenario             | Expected                         |
-| -------- | -------------------- | -------------------------------- |
-| `SK-001` | `name: ''`           | Fails `'Skill name is required'` |
-| `SK-002` | `name` with 51 chars | Fails max(50)                    |
-| `SK-003` | `level: 'expert'`    | Passes                           |
-| `SK-004` | `level: 'master'`    | Fails (not in enum)              |
-| `SK-005` | `level` omitted      | Passes (optional)                |
+| Test | Input | Expected |
+|------|-------|----------|
+| valid entry with level | `{ id, name, level: 'expert' }` | `success: true` |
+| valid entry without level | `{ id, name }` | `success: true` (level is optional) |
+| invalid level value | `level: 'wizard'` | `ZodError` |
+| all 4 level enum values accepted | `beginner`/`intermediate`/`advanced`/`expert` | `success: true` each |
+| name at max (50 chars) | 50-char string | `success: true` |
+| name over max (51 chars) | 51-char string | `ZodError` |
 
 #### `projectSchema`
 
-| Test     | Scenario                                | Expected                            |
-| -------- | --------------------------------------- | ----------------------------------- |
-| `PJ-001` | Valid project                           | `success: true`                     |
-| `PJ-002` | `title: ''`                             | Fails `'Project title is required'` |
-| `PJ-003` | `link: 'not-url'`                       | Fails                               |
-| `PJ-004` | `link: ''`                              | Passes                              |
-| `PJ-005` | `technologies: ['React', 'TypeScript']` | Passes                              |
+| Test | Input | Expected |
+|------|-------|----------|
+| valid entry | all fields | `success: true` |
+| missing title | `title: ""` | `ZodError` |
+| technologies empty array | `technologies: []` | `success: true` |
+| technologies with multiple strings | `["React", "TypeScript"]` | `success: true` |
+| empty link allowed | `link: ""` | `success: true` |
+| malformed link | `link: "not-a-url"` | `ZodError` |
 
 #### `certificationSchema`
 
-| Test     | Scenario                             | Expected                         |
-| -------- | ------------------------------------ | -------------------------------- |
-| `CE-001` | Valid certification                  | `success: true`                  |
-| `CE-002` | `name: ''`                           | Fails                            |
-| `CE-003` | `issuer: ''`                         | Fails                            |
-| `CE-004` | `issueDate: ''`                      | Fails `'Issue date is required'` |
-| `CE-005` | `credentialUrl: 'https://valid.com'` | Passes                           |
-| `CE-006` | `credentialUrl: ''`                  | Passes                           |
+| Test | Input | Expected |
+|------|-------|----------|
+| valid entry | all fields | `success: true` |
+| missing name | `name: ""` | `ZodError` |
+| missing issuer | `issuer: ""` | `ZodError` |
+| missing issueDate | `issueDate: ""` | `ZodError` |
+| credentialUrl empty | `credentialUrl: ""` | `success: true` |
+| malformed credentialUrl | `"not-a-url"` | `ZodError` |
 
-#### `resumeSchema`
+#### `resumeSchema` (top-level)
 
-| Test     | Scenario                                | Expected                        |
-| -------- | --------------------------------------- | ------------------------------- |
-| `RS-001` | Complete valid resume                   | `success: true`                 |
-| `RS-002` | `template: 'unknown'`                   | Fails (not in enum)             |
-| `RS-003` | `accentColor: '#GGGGGG'`                | Fails regex                     |
-| `RS-004` | `accentColor: '#2563eb'`                | Passes                          |
-| `RS-005` | `accentColor: '#2563EB'`                | Passes (case-insensitive regex) |
-| `RS-006` | `accentColor` missing — default applied | Default `'#2563eb'`             |
-| `RS-007` | `experiences` missing — default `[]`    | Empty array                     |
-| `RS-008` | All optional arrays missing             | All default to `[]`             |
-
----
-
-### 2.2 `src/store/resume-store.ts`
-
-**Coverage target: 95%**
-
-Setup: `beforeEach` — `useResumeStore.setState({ resume: null, pastStates: [], futureStates: [] })`
-
-#### `createNewResume`
-
-| Test     | Scenario                                          | Expected                                                                                     |
-| -------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `ST-001` | Call `createNewResume()`                          | `resume` is not null, `template === 'modern'`, `accentColor === '#2563eb'`, all arrays empty |
-| `ST-002` | `id` is unique across two calls                   | Two different IDs                                                                            |
-| `ST-003` | `createdAt` and `updatedAt` are valid ISO strings | Parseable by `new Date()`                                                                    |
-| `ST-004` | `pastStates` and `futureStates` cleared           | Both `[]`                                                                                    |
-
-#### `updatePersonalInfo`
-
-| Test     | Scenario                              | Expected                               |
-| -------- | ------------------------------------- | -------------------------------------- |
-| `ST-010` | Update `fullName`                     | `resume.personalInfo.fullName` updated |
-| `ST-011` | Partial update preserves other fields | Other fields unchanged                 |
-| `ST-012` | `updatedAt` timestamp advances        | `updatedAt > createdAt`                |
-| `ST-013` | Pushes previous state to `pastStates` | `pastStates.length === 1`              |
-| `ST-014` | Clears `futureStates`                 | `futureStates === []`                  |
-| `ST-015` | Called when `resume === null`         | State unchanged (no-op)                |
-
-#### `addExperience` / `updateExperience` / `removeExperience`
-
-| Test     | Scenario                                         | Expected                                                  |
-| -------- | ------------------------------------------------ | --------------------------------------------------------- |
-| `ST-020` | `addExperience()` on empty list                  | `experiences.length === 1`, entry has empty string fields |
-| `ST-021` | `addExperience()` twice                          | `experiences.length === 2`, distinct IDs                  |
-| `ST-022` | `updateExperience(id, { jobTitle: 'Engineer' })` | Target entry updated, others unchanged                    |
-| `ST-023` | `updateExperience` with unknown ID               | No entries mutated                                        |
-| `ST-024` | `removeExperience(id)`                           | Entry removed, `experiences.length` decremented           |
-| `ST-025` | `removeExperience` with unknown ID               | List unchanged                                            |
-
-#### `reorderExperiences`
-
-| Test     | Scenario                      | Expected                                      |
-| -------- | ----------------------------- | --------------------------------------------- |
-| `ST-030` | Provide IDs in reversed order | `experiences` reordered accordingly           |
-| `ST-031` | Include unknown ID in array   | Unknown IDs filtered out (`.filter(Boolean)`) |
-| `ST-032` | Empty array                   | `experiences` becomes `[]`                    |
-
-_(Same CRUD + reorder patterns apply for Education, Skills, Projects, Certifications — each section needs counterpart tests `ST-033..ST-039` etc.)_
-
-#### `updateTemplate` / `updateAccentColor`
-
-| Test     | Scenario                                           | Expected                           |
-| -------- | -------------------------------------------------- | ---------------------------------- |
-| `ST-040` | `updateTemplate('classic')`                        | `resume.template === 'classic'`    |
-| `ST-041` | `updateTemplate` does **not** push to `pastStates` | `pastStates` length unchanged      |
-| `ST-042` | `updateAccentColor('#7c3aed')`                     | `resume.accentColor === '#7c3aed'` |
-
-#### `saveToLocalStorage` / `loadFromLocalStorage`
-
-| Test     | Scenario                                     | Expected                                         |
-| -------- | -------------------------------------------- | ------------------------------------------------ |
-| `ST-050` | Save valid resume                            | `localStorage.setItem` called with `STORAGE_KEY` |
-| `ST-051` | Save round-trips: save → clear store → load  | Store restored to saved state                    |
-| `ST-052` | `loadFromLocalStorage` with no stored data   | `createEmptyResume()` called (empty resume)      |
-| `ST-053` | `loadFromLocalStorage` with corrupted JSON   | Catches error, creates empty resume              |
-| `ST-054` | `loadFromLocalStorage` with invalid schema   | Zod failure → creates empty resume               |
-| `ST-055` | `saveToLocalStorage` throws (quota exceeded) | Error is re-thrown (caller handles toast)        |
-| `ST-056` | `typeof window === 'undefined'` (SSR guard)  | Returns early, no crash                          |
-
-#### `exportAsJSON` / `importFromJSON`
-
-| Test     | Scenario                                                | Expected                         |
-| -------- | ------------------------------------------------------- | -------------------------------- |
-| `ST-060` | `exportAsJSON()` returns valid JSON string              | `JSON.parse()` succeeds          |
-| `ST-061` | Exported JSON parsed by `resumeSchema`                  | `success: true`                  |
-| `ST-062` | `exportAsJSON()` when `resume === null`                 | Returns `''`                     |
-| `ST-063` | `importFromJSON(validJson)`                             | Returns `true`, store updated    |
-| `ST-064` | `importFromJSON('not json')`                            | Returns `false`                  |
-| `ST-065` | `importFromJSON(jsonFailingSchema)`                     | Returns `false`, store unchanged |
-| `ST-066` | `importFromJSON` resets `pastStates` and `futureStates` | Both `[]` after import           |
-
-#### `generateShareableURL` / `loadFromShareableURL`
-
-| Test     | Scenario                                                    | Expected                      |
-| -------- | ----------------------------------------------------------- | ----------------------------- |
-| `ST-070` | `generateShareableURL()` returns URL containing `/preview#` | String includes `/preview#`   |
-| `ST-071` | Round-trip: generate → load                                 | Loaded resume equals original |
-| `ST-072` | `generateShareableURL()` when `resume === null`             | Returns `''`                  |
-| `ST-073` | `loadFromShareableURL('')`                                  | Returns `false`               |
-| `ST-074` | `loadFromShareableURL(invalidBase64)`                       | Returns `false`, no crash     |
-| `ST-075` | `loadFromShareableURL(validHashBadSchema)`                  | Returns `false`               |
-
-#### `undo` / `redo`
-
-| Test     | Scenario                                       | Expected                                     |
-| -------- | ---------------------------------------------- | -------------------------------------------- |
-| `ST-080` | `canUndo()` with empty `pastStates`            | `false`                                      |
-| `ST-081` | After one update, `canUndo()`                  | `true`                                       |
-| `ST-082` | `undo()` restores previous state               | `resume` equals pre-update value             |
-| `ST-083` | `undo()` moves current state to `futureStates` | `futureStates.length === 1`                  |
-| `ST-084` | `canRedo()` after undo                         | `true`                                       |
-| `ST-085` | `redo()` re-applies future state               | `resume` restored                            |
-| `ST-086` | New mutation after undo clears `futureStates`  | `futureStates === []`                        |
-| `ST-087` | 51 mutations: `pastStates.length` stays ≤ 50   | Oldest entry dropped (MAX_UNDO_HISTORY = 50) |
-| `ST-088` | `undo()` when `pastStates` is empty            | No-op, state unchanged                       |
-| `ST-089` | `redo()` when `futureStates` is empty          | No-op, state unchanged                       |
+| Test | Input | Expected | AC |
+|------|-------|----------|----|
+| valid complete resume | all sections populated | `success: true` | AC-F008-4 |
+| all 5 template enum values | `'modern'`…`'professional'` | `success: true` each | — |
+| invalid template value | `template: "fancy"` | `ZodError` | — |
+| accentColor valid 6-char hex | `"#2563eb"` | `success: true` | AC-F012-1 |
+| accentColor invalid — name | `"blue"` | `ZodError` | AC-F012-1 |
+| accentColor invalid — 3-char | `"#abc"` | `ZodError` | AC-F012-1 |
+| accentColor uppercase hex | `"#AABBCC"` | `success: true` | — |
+| timestamps not ISO 8601 | `createdAt: "yesterday"` | `ZodError` | — |
+| empty arrays allowed for all section arrays | `experiences: []` etc. | `success: true` | — |
+| extra unknown keys stripped | `{ ...validData, foo: 'bar' }` | `success: true`, `foo` absent from output | — |
 
 ---
 
-### 2.3 `src/lib/sharing/url-codec.ts`
+### 2.2 `src/lib/sharing/url-codec.ts`
 
-**Coverage target: 100%**
+**File:** `src/__tests__/url-codec-extended.test.ts`
+**Coverage target:** 100 % lines / 100 % branches
 
-| Test     | Scenario                                             | Expected                            |
-| -------- | ---------------------------------------------------- | ----------------------------------- |
-| `UC-001` | `encodeResumeData` with small object (< 8192 bytes)  | Returns string starting with `'j:'` |
-| `UC-002` | `encodeResumeData` with large object (> 8192 bytes)  | Returns string starting with `'c:'` |
-| `UC-003` | `decodeResumeData('j:' + encoded)` round-trip        | Returns original object             |
-| `UC-004` | `decodeResumeData('c:' + compressed)` round-trip     | Returns original object             |
-| `UC-005` | `decodeResumeData('garbage')`                        | Returns `null` (no prefix match)    |
-| `UC-006` | `decodeResumeData` with malformed base64             | Returns `null` (caught)             |
-| `UC-007` | `encodeResumeForURL` small payload                   | No `'z:'` prefix, plain base64url   |
-| `UC-008` | `encodeResumeForURL` large payload (> 8192 bytes)    | Returns string starting with `'z:'` |
-| `UC-009` | `decodeResumeFromURL('z:' + encoded)`                | Returns original object             |
-| `UC-010` | `decodeResumeFromURL` plain base64url                | Returns original object             |
-| `UC-011` | `decodeResumeFromURL` corrupted `z:` payload         | Returns `null`                      |
-| `UC-012` | `decodeResumeFromURL` empty string                   | Returns `null`                      |
-| `UC-013` | Encoded string is URL-safe (no `+`, `/`, `=`)        | `!/[+/=]/.test(encoded)`            |
-| `UC-014` | Unicode resume data (international name e.g. "张伟") | Round-trips correctly               |
-
----
-
-### 2.4 `src/lib/pdf/generate-pdf.ts`
-
-**Coverage target: 80%** (canvas APIs mocked at module boundary)
-
-Mock strategy: `vi.mock('html2canvas', ...)` returning a fixed canvas stub; `vi.mock('jspdf', ...)` capturing `addImage` / `save` calls.
-
-| Test      | Scenario                                                                         | Expected                                               |
-| --------- | -------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `PDF-001` | `generatePDF()` when element not found                                           | Throws `'Element #resume-preview-container not found'` |
-| `PDF-002` | Single-page content (canvas height ≤ page height)                                | `pdf.addImage` called once, `pdf.addPage` not called   |
-| `PDF-003` | Multi-page content (canvas height > page height)                                 | `pdf.addPage` called for each additional page          |
-| `PDF-004` | Default filename is `'Resume.pdf'`                                               | `pdf.save('Resume.pdf')` called                        |
-| `PDF-005` | Custom filename passed via options                                               | `pdf.save(customFilename)` called                      |
-| `PDF-006` | `html2canvas` options: `scale: 2`, `backgroundColor: '#ffffff'`, `useCORS: true` | Options match exactly                                  |
-| `PDF-007` | PDF format is `'letter'`, orientation `'portrait'`                               | jsPDF constructed with these options                   |
+| Test | Scenario | Expected | AC |
+|------|----------|----------|----|
+| `encodeResumeData` → `decodeResumeData` roundtrip (small < 8 KB) | small object | decoded equals original; prefix `j:` | AC-F007-1 |
+| `encodeResumeData` → `decodeResumeData` roundtrip (large > 8 KB) | large object | decoded equals original; prefix `c:` | AC-F007-3 |
+| `encodeResumeForURL` → `decodeResumeFromURL` roundtrip (small) | small object | no `z:` prefix; decoded equals original | AC-F007-1 |
+| `encodeResumeForURL` → `decodeResumeFromURL` roundtrip (large) | large object | `z:` prefix; decoded equals original | AC-F007-3 |
+| `decodeResumeData` with unknown prefix `x:` | `"x:abc"` | returns `null` | — |
+| `decodeResumeData` with empty string | `""` | returns `null` (no throw) | — |
+| `decodeResumeData` with malformed base64 | `"j:!!!"` | returns `null` (no throw) | — |
+| `decodeResumeFromURL` with corrupted compressed bytes | mangled `z:` payload | returns `null` (no throw) | — |
+| `decodeResumeFromURL` with non-JSON inside | `encodeResumeForURL` of non-object | returns the value (passes through JSON.parse) | — |
+| encoded string is URL-safe | any bytes | result matches `/^[A-Za-z0-9\-_.:]*$/` | AC-F007-1 |
+| threshold boundary exactly 8192 bytes | 8192-byte JSON | uses uncompressed path (no `z:` or `c:`) | AC-F007-3 |
+| threshold boundary 8193 bytes | 8193-byte JSON | uses compressed path (`z:` or `c:`) | AC-F007-3 |
+| empty object roundtrips | `{}` | `decodeResumeFromURL(encodeResumeForURL({}))` equals `{}` | — |
+| special chars in strings roundtrip | `{ name: "O'Brien & <Co>" }` | survives both encode+decode | — |
+| Unicode strings roundtrip | `{ name: "张伟 αβγ" }` | survives both encode+decode | — |
 
 ---
 
-### 2.5 `src/hooks/use-auto-save.ts`
+### 2.3 `src/lib/pdf/generate-pdf.ts`
 
-**Coverage target: 90%** (using `vi.useFakeTimers()`)
+**File:** `src/__tests__/pdf-generator.test.ts`
+**Coverage target:** 100 % lines / 85 % branches
 
-| Test     | Scenario                                               | Expected                                                         |
-| -------- | ------------------------------------------------------ | ---------------------------------------------------------------- |
-| `AS-001` | Initial mount: no save triggered                       | `saveToLocalStorage` not called on mount                         |
-| `AS-002` | Resume changes: save triggered after debounce (1000ms) | `saveToLocalStorage` called after `vi.advanceTimersByTime(1000)` |
-| `AS-003` | Rapid changes within debounce window                   | Only one save call (debounce resets)                             |
-| `AS-004` | `lastSaved` set after successful save                  | `lastSaved` is a `Date` instance                                 |
-| `AS-005` | `isSaving` transitions: `false` → `true` → `false`     | State machine verified                                           |
-| `AS-006` | `saveToLocalStorage` throws                            | `toast` called with `variant: 'destructive'`                     |
-| `AS-007` | Component unmounts during debounce                     | Timer cleared, no save on unmount                                |
-| `AS-008` | `resume === null`                                      | No save attempted                                                |
+Mock setup in each test via `vi.stubGlobal` / `vi.spyOn`:
+- `window.print` → `vi.fn()` that synchronously dispatches `afterprint`
+- `document.getElementById` → real jsdom DOM (create element in test)
 
----
-
-### 2.6 `src/hooks/use-pdf-generator.ts`
-
-**Coverage target: 90%**
-
-Mock: `vi.mock('@/lib/pdf/generate-pdf')` + store seeded with controlled resume state.
-
-| Test     | Scenario                                                      | Expected                                                                                               |
-| -------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `PG-001` | `resume === null` — `downloadPDF()`                           | Toast: `'Add your details in the editor first'`, status stays `'idle'`                                 |
-| `PG-002` | `fullName` empty — `downloadPDF()`                            | Toast: `'Add your name in the Personal tab...'`                                                        |
-| `PG-003` | `email` empty — `downloadPDF()`                               | Toast: `'Add your email in the Personal tab...'`                                                       |
-| `PG-004` | Valid resume — `downloadPDF()`                                | `generatePDF` called with `{ elementId: 'resume-preview-container', filename: 'John_Doe_Resume.pdf' }` |
-| `PG-005` | Filename: `'John Doe'` → `'John_Doe_Resume.pdf'`              | Spaces replaced with underscores                                                                       |
-| `PG-006` | `status` transitions: `idle` → `generating` → `success`       | State machine verified                                                                                 |
-| `PG-007` | `generatePDF` throws → `status === 'error'`                   | Error toast shown                                                                                      |
-| `PG-008` | Status resets to `'idle'` after 2s (success)                  | Fake timer advances 2000ms                                                                             |
-| `PG-009` | `isGenerating` is `true` only while `status === 'generating'` | Derived boolean correct                                                                                |
+| Test | Mock Setup | Action | Expected | AC |
+|------|-----------|--------|----------|----|
+| throws when element not found | no DOM element with given ID | `generatePDF({ elementId: 'missing' })` | rejects with `"Element #missing not found"` | — |
+| sets document.title to filename before printing | spy on print | call generatePDF | `document.title === filename` when `print()` fires | AC-F004-5 |
+| restores document.title after printing | spy + fire afterprint | await generatePDF | `document.title === originalTitle` after resolve | — |
+| calls `window.print()` exactly once | spy | call generatePDF | `window.print` call count === 1 | — |
+| resolves only after afterprint event | manual afterprint dispatch | await | promise resolves after event | — |
+| default elementId is `resume-preview-container` | create DOM element with that ID | call `generatePDF()` (no options) | does not throw | — |
+| default filename is `Resume.pdf` | call `generatePDF()` (no options) | | `document.title === 'Resume.pdf'` during print | — |
+| spaces in name become underscores | `filename: "Jane Doe_Resume.pdf"` | | `document.title` set correctly | AC-F004-5 |
 
 ---
 
-### 2.7 `src/hooks/use-shareable-link.ts`
+### 2.4 `src/lib/cn.ts`
 
-**Coverage target: 90%**
+**File:** `src/__tests__/cn.test.ts` | **Coverage target:** 100 %
 
-Mock: `navigator.clipboard.writeText`, `encodeResumeForURL`, `window.location.origin`.
-
-| Test     | Scenario                                                 | Expected                                          |
-| -------- | -------------------------------------------------------- | ------------------------------------------------- |
-| `SL-001` | `generateLink()` with valid resume                       | Clipboard written with URL containing `/preview#` |
-| `SL-002` | `isCopied` is `true` after successful copy               | State reflects clipboard write                    |
-| `SL-003` | `isCopied` resets to `false` after 2 seconds             | Fake timers verify reset                          |
-| `SL-004` | `generateLink()` when `resume === null`                  | Toast: `'Nothing to share yet'`                   |
-| `SL-005` | Clipboard write fails                                    | Toast: `'Clipboard access denied'`                |
-| `SL-006` | URL fragment contains data (after `#`), not query string | `url.includes('#')` and `!url.includes('?')`      |
-| `SL-007` | URL uses `/preview` path                                 | `url.includes('/preview#')`                       |
-
----
-
-### 2.8 `src/hooks/use-keyboard-shortcuts.ts`
-
-**Coverage target: 90%**
-
-| Test     | Scenario                                         | Expected                     |
-| -------- | ------------------------------------------------ | ---------------------------- |
-| `KS-001` | `Ctrl+Z` when NOT in input, `canUndo() === true` | `undo()` called              |
-| `KS-002` | `Ctrl+Z` when focus is in `<input>`              | `undo()` NOT called          |
-| `KS-003` | `Ctrl+Z` when focus is in `<textarea>`           | `undo()` NOT called          |
-| `KS-004` | `Ctrl+Z` when `canUndo() === false`              | `undo()` NOT called          |
-| `KS-005` | `Ctrl+Shift+Z` when `canRedo() === true`         | `redo()` called              |
-| `KS-006` | `Ctrl+Y` when `canRedo() === true`               | `redo()` called              |
-| `KS-007` | Mac: `Cmd+Z` triggers undo (`metaKey: true`)     | `undo()` called              |
-| `KS-008` | `enabled: false`                                 | No event listener registered |
-| `KS-009` | Unmount cleans up event listener                 | `removeEventListener` called |
+| Test | Input | Expected |
+|------|-------|----------|
+| merges two class names | `cn('a', 'b')` | `"a b"` |
+| deduplicates conflicting Tailwind | `cn('p-4', 'p-8')` | `"p-8"` |
+| ignores `false` | `cn('a', false, 'b')` | `"a b"` |
+| ignores `undefined` | `cn('a', undefined)` | `"a"` |
+| ignores `null` | `cn('a', null)` | `"a"` |
+| conditional object (true) | `cn({ 'text-red': true })` | `"text-red"` |
+| conditional object (false) | `cn({ 'text-red': false })` | `""` |
+| empty call | `cn()` | `""` |
+| template literal | `cn(\`text-\${'red'}\`)` | `"text-red"` |
 
 ---
 
-### 2.9 `src/lib/constants.ts`
+### 2.5 `src/lib/constants.ts`
 
-**Coverage target: 100%** (static data — verify values are correct)
+**File:** `src/__tests__/constants.test.ts` | **Coverage target:** 100 %
 
-| Test     | Scenario                                               | Expected                                                    |
-| -------- | ------------------------------------------------------ | ----------------------------------------------------------- |
-| `CN-001` | `TEMPLATE_LIST` has exactly 5 entries                  | Length 5, IDs: modern/classic/minimal/creative/professional |
-| `CN-002` | `PRESET_ACCENT_COLORS` has exactly 12 entries          | Length 12                                                   |
-| `CN-003` | `DEFAULT_ACCENT_COLOR === '#2563eb'`                   | Exact match                                                 |
-| `CN-004` | `MAX_UNDO_HISTORY === 50`                              | Exact match                                                 |
-| `CN-005` | `SHARE_COMPRESSION_THRESHOLD === 8192`                 | Exact match                                                 |
-| `CN-006` | `AUTO_SAVE_DEBOUNCE_MS === 1000`                       | Exact match                                                 |
-| `CN-007` | `STORAGE_KEY === 'resume-builder-data'`                | Exact match                                                 |
-| `CN-008` | Every preset color matches hex regex `#[0-9a-fA-F]{6}` | All 12 pass                                                 |
-
----
-
-### 2.10 `src/lib/cn.ts`
-
-**Coverage target: 100%**
-
-| Test      | Scenario                           | Expected                                 |
-| --------- | ---------------------------------- | ---------------------------------------- |
-| `LIB-001` | Merge conflicting Tailwind classes | Later class wins (`'p-2 p-4'` → `'p-4'`) |
-| `LIB-002` | Conditional classes with `clsx`    | Falsy conditionals excluded              |
+| Test | Assertion | AC |
+|------|----------|----|
+| `TEMPLATE_LIST` has exactly 5 entries | `length === 5` | AC-F003-1 |
+| `TEMPLATE_LIST` IDs match schema enum | all IDs in `['modern','classic','minimal','creative','professional']` | — |
+| `TEMPLATE_LIST` all have `id`, `name`, `description` | each entry has all 3 keys | — |
+| `PRESET_ACCENT_COLORS` has exactly 12 entries | `length === 12` | AC-F012-1 |
+| all `PRESET_ACCENT_COLORS` are valid hex | each matches `^#[0-9a-fA-F]{6}$` | AC-F012-1 |
+| `DEFAULT_ACCENT_COLOR` is in `PRESET_ACCENT_COLORS` | `includes(DEFAULT_ACCENT_COLOR)` | — |
+| `STORAGE_KEY` is non-empty string | truthy | — |
+| `RESUMES_STORAGE_KEY` is non-empty and different from `STORAGE_KEY` | truthy, not equal | — |
+| `AUTO_SAVE_DEBOUNCE_MS === 1000` | strict equal | AC-F005-1 |
+| `MAX_UNDO_HISTORY === 50` | strict equal | AC-F013-3 |
+| `SHARE_COMPRESSION_THRESHOLD === 8192` | strict equal | AC-F007-3 |
+| `PREVIEW_RERENDER_TARGET_MS === 200` | strict equal | AC-F002-1 |
+| `FIELD_LIMITS.summary === 2000` | strict equal | — |
+| `FIELD_LIMITS.description === 5000` | strict equal | — |
+| `FIELD_LIMITS.fullName === 100` | strict equal | — |
 
 ---
 
-## 3. Component / Integration Tests (React Testing Library)
+### 2.6 Template Components (all 5)
 
-> Each test renders the component in a `jsdom` environment, interacts via `userEvent`, and asserts on the DOM. Store is reset before each test via `beforeEach`.
+**File:** `src/__tests__/templates.test.ts`
+**Coverage target:** 90 % lines
 
-### 3.1 `src/components/builder/sections/personal-info-form.tsx`
+Run the same suite for each of `ModernTemplate`, `ClassicTemplate`, `MinimalTemplate`, `CreativeTemplate`, `ProfessionalTemplate`:
 
-**Coverage target: 85%** | Maps to: F001, F004 (validation), F005 (data flow)
+| Test | Setup | Expected | AC |
+|------|-------|----------|----|
+| renders fullName | sample data | name text present in DOM | AC-F003-2 |
+| renders email | sample data | email text present in DOM | AC-F003-2 |
+| renders phone | sample data | phone text present in DOM | AC-F003-2 |
+| renders both experience entries | 2 experiences | both `jobTitle` values present | AC-F003-2 |
+| renders education entry | 1 education | `school` name present | AC-F003-2 |
+| renders all skills | 3 skills | all 3 `name` values present | AC-F003-2 |
+| renders project | 1 project | `title` present | AC-F003-2 |
+| renders certification | 1 certification | `name` present | AC-F003-2 |
+| `currentlyWorking: true` shows "Present" | experience with flag | "Present" in DOM | AC-F001-6 |
+| `currentlyWorking: false` shows endDate | experience with `endDate: "2024-06"` | endDate text in DOM | — |
+| empty all arrays renders without crash | all arrays `[]` | no error thrown | AC-F003-2 |
+| accentColor applied | `accentColor: "#db2777"` | element with that color in style | AC-F012-2 |
+| no `dangerouslySetInnerHTML` | static grep/render | attribute absent from rendered tree | — |
 
-| Test      | Scenario                                                 | Expected                                                                                            |
-| --------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `PIF-001` | Renders all fields with labels                           | `fullName`, `email`, `phone`, `location`, `website`, `linkedin`, `github`, `summary` inputs present |
-| `PIF-002` | All inputs have visible `<label>` (not placeholder-only) | Each `<input>` associated via `htmlFor` or `aria-label` — use `getByLabelText`                      |
-| `PIF-003` | Type in `fullName` field                                 | Store `personalInfo.fullName` updated                                                               |
-| `PIF-004` | Blur `email` with invalid value                          | Inline error message appears (F001 AC: inline error on blur)                                        |
-| `PIF-005` | Blur `email` with valid value                            | No error message                                                                                    |
-| `PIF-006` | `website` field accepts empty string                     | No validation error                                                                                 |
-| `PIF-007` | `website` field with invalid URL blurred                 | Error shown                                                                                         |
-| `PIF-008` | All inputs have `data-testid` attributes                 | Playwright can target them                                                                          |
+**`TemplateRenderer`:**
 
-### 3.2 `src/components/builder/sections/experience-form.tsx`
+| Test | Input | Expected | AC |
+|------|-------|----------|----|
+| renders Modern for `template: 'modern'` | props | ModernTemplate in VDOM | AC-F003-1 |
+| renders Classic for `template: 'classic'` | props | ClassicTemplate in VDOM | AC-F003-1 |
+| renders Minimal, Creative, Professional | each | correct component | AC-F003-1 |
+| unknown template falls back gracefully | `template: 'unknown' as any` | no crash, renders fallback | — |
 
-**Coverage target: 85%** | Maps to: F001
+---
 
-| Test      | Scenario                                             | Expected                                               |
-| --------- | ---------------------------------------------------- | ------------------------------------------------------ |
-| `EXF-001` | Renders "Add Experience" button when list is empty   | Button present                                         |
-| `EXF-002` | Click "Add Experience"                               | New entry appended, form fields visible                |
-| `EXF-003` | Click "Add Experience" twice                         | Two entries shown with distinct IDs                    |
-| `EXF-004` | Check "Currently Working" checkbox                   | `endDate` field hidden, store `currentlyWorking: true` |
-| `EXF-005` | Uncheck "Currently Working"                          | `endDate` field reappears                              |
-| `EXF-006` | Click remove/delete button on entry                  | Entry removed from store and DOM                       |
-| `EXF-007` | Drag handle is present (`data-testid="drag-handle"`) | Element in DOM for E2E targeting                       |
+### 2.7 `src/components/ui/color-picker.tsx`
 
-### 3.3 `src/components/builder/sections/education-form.tsx`
+**File:** `src/__tests__/color-picker.test.ts` | **Coverage target:** 85 %
 
-**Coverage target: 85%** | Maps to: F001
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| renders 12 preset color swatches | mount | 12 swatch buttons visible | AC-F012-1 |
+| clicking a preset swatch calls `onChange` with correct hex | click `#7c3aed` swatch | `onChange('#7c3aed')` called | AC-F012-2 |
+| hex input field is present | mount | input element present | AC-F012-1 |
+| typing valid 6-char hex calls `onChange` | type `#aabbcc` | `onChange('#aabbcc')` called | AC-F012-2 |
+| typing invalid hex does not call `onChange` | type `xyz` | `onChange` not called | — |
+| typing incomplete hex does not call `onChange` | type `#abc` | `onChange` not called | — |
+| low-contrast color shows warning | `currentColor: '#eeeeee'` (near white) | warning text visible | AC-F012-3 |
+| high-contrast color has no warning | `currentColor: '#000000'` | no warning text | AC-F012-3 |
+| selected preset swatch has active state indicator | `currentColor` matches a preset | that swatch has active class/aria | — |
 
-| Test      | Scenario                       | Expected             |
-| --------- | ------------------------------ | -------------------- |
-| `EDF-001` | "Add Education" button present | Renders              |
-| `EDF-002` | Click "Add Education"          | Entry added to store |
-| `EDF-003` | Remove education entry         | Removed from store   |
+---
 
-### 3.4 `src/components/builder/sections/skills-form.tsx`
+### 2.8 Landing Page Components
 
-**Coverage target: 85%** | Maps to: F001
+**File:** `src/__tests__/landing-page.test.ts` | **Coverage target:** 85 %
 
-| Test      | Scenario                                                         | Expected              |
-| --------- | ---------------------------------------------------------------- | --------------------- |
-| `SKF-001` | "Add Skill" button present                                       | Renders               |
-| `SKF-002` | Click "Add Skill" → enter name                                   | Store updated         |
-| `SKF-003` | Skill level dropdown shows beginner/intermediate/advanced/expert | All 4 options present |
-| `SKF-004` | Remove skill                                                     | Removed from store    |
+| Component | Test | Expected | AC |
+|-----------|------|----------|----|
+| `<Hero>` | renders exact headline text | "Free Resume Builder — No Paywall, No Tricks" in DOM | AC-F006-1 |
+| `<Hero>` | CTA button links to `/builder` | anchor `href="/builder"` | AC-F006-3 |
+| `<Hero>` | CTA text matches spec | text includes "Free" | AC-F006-3 |
+| `<FeatureGrid>` | renders ≥ 3 anti-paywall feature items | count of elements with paywall-related text ≥ 3 | AC-F006-2 |
+| `<TrustSignals>` | includes "Zety" comparison text | text node containing "Zety" present | AC-F006-2 |
+| `<TrustSignals>` | "Unlike Zety" messaging | specific counter-positioning text | AC-F006-2 |
+| `<FAQ>` | renders ≥ 3 FAQ entries | ≥ 3 `<details>` or question/answer elements | AC-F006-2 |
+| `<Footer>` | Kickresume affiliate link present | link to `kickresume.com` | — |
+| Root `layout.tsx` | `<title>` contains target keyword | "free resume builder" (case-insensitive) in title | AC-F006-5 |
+| Root `layout.tsx` | meta description present | `name="description"` content contains "no paywall" | AC-F006-5 |
+| Root `layout.tsx` | OG tags present | `og:title`, `og:description`, `og:image` all present | AC-F006-5 |
 
-### 3.5 `src/components/builder/sections/projects-form.tsx` & `certifications-form.tsx`
+---
 
-**Coverage target: 80%** | Maps to: F001
+### 2.9 Dark Mode
 
-| Test      | Scenario                                          | Expected      |
-| --------- | ------------------------------------------------- | ------------- |
-| `PRF-001` | Add project, fill title                           | Store updated |
-| `PRF-002` | Project `link` field with invalid URL blurred     | Error shown   |
-| `CRF-001` | Add certification, fill name + issuer + issueDate | Store updated |
-| `CRF-002` | Remove certification                              | Removed       |
+**File:** `src/__tests__/dark-mode.test.ts` | **Coverage target:** 80 %
 
-### 3.6 `src/components/builder/builder-toolbar.tsx`
+| Test | Setup | Expected | AC |
+|------|-------|----------|----|
+| `ThemeProvider` applies `dark` class when OS is dark | mock `window.matchMedia` → `matches: true` | `document.documentElement.classList.contains('dark')` | AC-F010-1 |
+| `ThemeProvider` does not apply `dark` in light mode | mock → `matches: false` | no `dark` class | — |
+| `ThemeToggle` button is present | render | button with accessible label | AC-F010-3 |
+| clicking `ThemeToggle` toggles `dark` class | click | class changes; no navigation occurs | AC-F010-3 |
+| resume preview container has white background class | render preview in dark mode context | `.resume-preview-container` or `#resume-preview-container` has `bg-white` | AC-F010-2 |
 
-**Coverage target: 85%** | Maps to: F003, F004, F007, F008, F012
+---
 
-| Test     | Scenario                                                 | Expected                                      |
-| -------- | -------------------------------------------------------- | --------------------------------------------- |
-| `TB-001` | Template selector renders 5 options                      | All template IDs present                      |
-| `TB-002` | Select "Classic" template                                | `store.updateTemplate('classic')` called      |
-| `TB-003` | "Download PDF" button present                            | Visible with `data-testid="download-pdf-btn"` |
-| `TB-004` | "Download PDF" with no resume → shows validation toast   | Error toast appears                           |
-| `TB-005` | "Share" button present                                   | Visible                                       |
-| `TB-006` | "Export JSON" triggers download                          | `store.exportAsJSON()` called                 |
-| `TB-007` | "Import JSON" file input triggers `store.importFromJSON` | Valid file → store updated                    |
-| `TB-008` | "Import JSON" with invalid file                          | Toast: invalid format                         |
-| `TB-009` | Color picker button (for supported templates)            | Opens color picker                            |
-| `TB-010` | Color picker shows 12 preset swatches                    | 12 buttons/swatches rendered                  |
+### 2.10 Print Styles
 
-### 3.7 `src/components/builder/preview-panel.tsx`
+**File:** `src/__tests__/print-styles.test.ts` | **Coverage target:** 70 %
 
-**Coverage target: 80%** | Maps to: F002, F003
+Print CSS cannot be fully simulated in jsdom. Test what can be inferred from component class names:
 
-| Test     | Scenario                                              | Expected                                 |
-| -------- | ----------------------------------------------------- | ---------------------------------------- |
-| `PP-001` | Renders `<div id="resume-preview-container">`         | Element present in DOM                   |
-| `PP-002` | Receives resume data → renders name in preview        | `fullName` appears in rendered output    |
-| `PP-003` | Template prop `'modern'` → renders `<ModernTemplate>` | Not `ClassicTemplate` etc.               |
-| `PP-004` | Template switches without losing data                 | Name still present after template change |
-| `PP-005` | Preview has `data-testid="preview-panel"`             | Present for E2E targeting                |
+| Test | Method | Expected | AC |
+|------|--------|----------|----|
+| builder header has `print:hidden` Tailwind class | inspect rendered class strings | `print:hidden` in className | AC-F009-1 |
+| form panel has `print:hidden` Tailwind class | inspect | `print:hidden` in className | AC-F009-1 |
+| `#resume-preview-container` does NOT have `print:hidden` | inspect | `print:hidden` absent | AC-F009-1 |
+| print-visible class present on resume container | inspect | `print:block` or no print-hidden | AC-F009-1 |
 
-### 3.8 `src/components/templates/template-renderer.tsx` + all 5 templates
+---
 
-**Coverage target: 90%** | Maps to: F003
+## 3. Integration Tests
 
-For each template (`modern`, `classic`, `minimal`, `creative`, `professional`):
+Integration tests use Vitest + React Testing Library (RTL). They render real components with the real Zustand store and stub only browser APIs that cannot run in jsdom. Store is reset between each test with `beforeEach(() => useResumeStore.getState().reset())`.
 
-| Test          | Scenario                                               | Expected                                            |
-| ------------- | ------------------------------------------------------ | --------------------------------------------------- |
-| `TR-001..005` | Renders with full sample data                          | No crashes, all sections visible                    |
-| `TR-006..010` | `personalInfo.fullName` appears in output              | Name rendered                                       |
-| `TR-011..015` | Experience section with 2 entries renders both         | Both job titles appear                              |
-| `TR-016..020` | Education, skills, projects, certifications all render | All section data present                            |
-| `TR-021..025` | Empty arrays → sections gracefully hidden or empty     | No "undefined" text, no crashes                     |
-| `TR-026..030` | `accentColor` prop applied to template                 | Color used in CSS style or class                    |
-| `TR-031`      | Unknown template name passed                           | `TemplateRenderer` falls back gracefully (no crash) |
+---
 
-### 3.9 `src/components/builder/builder-layout.tsx`
+### 3.1 Zustand Store — `src/store/resume-store.ts`
 
-**Coverage target: 80%** | Maps to: F002
+**File:** `src/__tests__/resume-store.test.ts`
+**Coverage target:** 100 % lines / 95 % branches
 
-| Test     | Scenario                                                  | Expected                                  |
-| -------- | --------------------------------------------------------- | ----------------------------------------- |
-| `BL-001` | Desktop viewport (≥1024px): form and preview side-by-side | Both panels visible                       |
-| `BL-002` | Mobile viewport (<768px): only form tab visible initially | Preview not visible without switching tab |
-| `BL-003` | Mobile: tap "Preview" tab                                 | Preview panel becomes visible             |
-| `BL-004` | Mobile preview sheet button present                       | `data-testid="mobile-preview-btn"`        |
+#### Core CRUD
 
-### 3.10 `src/components/landing/` (hero, feature-grid, trust-signals, faq, footer)
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| `createNewResume` initializes empty resume | call | `resume.personalInfo.fullName === ""`, all arrays empty | — |
+| `createNewResume` sets `template: 'modern'` | call | `resume.template === 'modern'` | — |
+| `createNewResume` sets `accentColor: '#2563eb'` | call | default color | — |
+| `createNewResume` generates a unique ID | call twice, compare | IDs differ | — |
+| `createNewResume` clears undo/redo history | call | `pastStates === []`, `futureStates === []` | — |
+| `setResume` replaces entire state | call with custom resume object | `resume` equals provided object (with updated `updatedAt`) | AC-F008-2 |
+| `setResume` pushes previous resume to `pastStates` | call when resume exists | `pastStates.length === 1` | AC-F013-1 |
+| `setResume` clears `futureStates` | call after an undo | `futureStates.length === 0` | AC-F013-2 |
+| `reset` sets `resume: null` | call | `resume === null` | AC-F005-4 |
+| `reset` clears history | call | `pastStates === []`, `futureStates === []` | — |
+| `reset` removes `STORAGE_KEY` from localStorage | call | `localStorage.getItem(STORAGE_KEY) === null` | AC-F005-4 |
 
-**Coverage target: 80%** | Maps to: F006
+#### Personal Info
 
-| Test     | Scenario                                                           | Expected                                              |
-| -------- | ------------------------------------------------------------------ | ----------------------------------------------------- |
-| `LP-001` | Hero renders "Free Resume Builder — No Paywall, No Tricks" heading | Text present                                          |
-| `LP-002` | "Build Your Resume — It's Free" CTA button links to `/builder`     | `href="/builder"`                                     |
-| `LP-003` | ≥3 distinct anti-paywall messages in page                          | Count of matching strings ≥ 3                         |
-| `LP-004` | Trust signals section mentions "Zety" or competitor                | Competitor name present                               |
-| `LP-005` | FAQ section renders at least 3 Q&A pairs                           | ≥3 expandable items                                   |
-| `LP-006` | Footer contains affiliate link(s)                                  | Link with external `href`                             |
-| `LP-007` | No email input or payment form anywhere on landing page            | No `<input type="email">` or `<input type="payment">` |
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| `updatePersonalInfo` merges one field | `{ fullName: "Alice" }` | `fullName === "Alice"`, email unchanged | AC-F001-1 |
+| `updatePersonalInfo` merges multiple fields | `{ fullName: "Alice", email: "alice@example.com" }` | both updated | — |
+| `updatePersonalInfo` pushes to `pastStates` | call | `pastStates.length++` | AC-F013-1 |
+| `updatePersonalInfo` clears `futureStates` | call | `futureStates === []` | — |
+| `updatePersonalInfo` updates `updatedAt` | call | `updatedAt` is newer than before | — |
+| `updatePersonalInfo` when `resume === null` | call without init | no crash; state unchanged | — |
 
-### 3.11 `src/components/shared/theme-toggle.tsx`
+#### Experience CRUD
 
-**Coverage target: 85%** | Maps to: F010
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| `addExperience` appends an empty entry | call | `experiences.length === 1` | AC-F001-2 |
+| new experience has all required fields | call | entry has `id`, `jobTitle`, `company`, `startDate` | AC-F001-2 |
+| `addExperience` new entry ID is unique | call twice | IDs differ | — |
+| `addExperience` pushes to `pastStates` | call | `pastStates.length++` | AC-F013-1 |
+| `updateExperience` modifies the correct entry by ID | add two, update first | first entry updated, second unchanged | — |
+| `updateExperience` with unknown ID is no-op | pass non-existent ID | array length and content unchanged | — |
+| `removeExperience` removes entry by ID | add two, remove first | length === 1, correct entry remains | — |
+| `removeExperience` with unknown ID is no-op | pass non-existent ID | array unchanged | — |
+| `reorderExperiences` reorders correctly | add A, B, C; reorder to [C, A, B] | array order matches new order | AC-F001-3 |
+| `reorderExperiences` drops unknown IDs | pass IDs with one unknown | unknown dropped; rest in order | — |
 
-| Test     | Scenario                                                  | Expected                                              |
-| -------- | --------------------------------------------------------- | ----------------------------------------------------- |
-| `TT-001` | Toggle button renders                                     | Present in DOM                                        |
-| `TT-002` | Click toggle → theme class changes                        | `data-theme` or class on `<html>` changes             |
-| `TT-003` | Dark mode: preview panel still has white background class | `bg-white` or equivalent present on preview container |
+*(Identical test matrix applies to Education, Skills, Projects, and Certifications — all must be covered in the actual test file.)*
 
-### 3.12 `src/components/ui/color-picker.tsx`
+#### Template & Styling
 
-**Coverage target: 85%** | Maps to: F012
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| `updateTemplate('classic')` changes template | call | `resume.template === 'classic'` | AC-F003-1 |
+| `updateTemplate` does NOT affect `personalInfo` | call | `personalInfo` unchanged | AC-F003-4 |
+| `updateTemplate` does NOT push to `pastStates` | call | `pastStates` length unchanged (template switching is not undo-able) | — |
+| `updateAccentColor('#aabbcc')` sets valid hex | call | `resume.accentColor === '#aabbcc'` | AC-F012-2 |
+| `updateAccentColor('red')` rejected — no hash | call | state unchanged | AC-F012-1 |
+| `updateAccentColor('#abc')` rejected — 3-char | call | state unchanged | — |
+| `updateAccentColor('aabbcc')` rejected — no hash | call | state unchanged | — |
+| `updateAccentColor('#AABBCC')` accepted — uppercase | call | state updated | — |
+| `updateAccentColor` when `resume === null` | call | no crash | — |
 
-| Test     | Scenario                                                                                   | Expected                              |
-| -------- | ------------------------------------------------------------------------------------------ | ------------------------------------- |
-| `CP-001` | Renders 12 preset color swatches                                                           | 12 buttons with distinct color values |
-| `CP-002` | Click preset → `onChange` called with hex                                                  | Callback receives `#7c3aed` etc.      |
-| `CP-003` | Custom hex input with valid color                                                          | `onChange` called                     |
-| `CP-004` | Low-contrast color (e.g., `#eeeeee` against white background, ratio < 3:1) → warning shown | Warning text present                  |
-| `CP-005` | Contrast ratio ≥ 3:1 → no warning                                                          | Warning absent                        |
+#### Persistence
 
-### 3.13 `src/components/preview/preview-viewer.tsx`
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| `saveToLocalStorage` writes to `STORAGE_KEY` | call after createNewResume | `localStorage.getItem(STORAGE_KEY)` is valid JSON | AC-F005-1 |
+| `saveToLocalStorage` serializes all fields | call | parsed JSON has all expected keys | AC-F008-4 |
+| `loadFromLocalStorage` hydrates store | save, reset to null, load | `resume` equals saved | AC-F005-2 |
+| `loadFromLocalStorage` when nothing stored creates new resume | empty `localStorage` | `resume` is empty resume (not null) | — |
+| `loadFromLocalStorage` with corrupted JSON creates new resume | `localStorage.setItem(key, '{bad}')` | creates empty resume, no crash | — |
+| `loadFromLocalStorage` uses lenient schema (empty required fields pass) | save resume with `fullName: ""` | loads successfully | — |
+| `loadFromLocalStorage` clears undo history | load | `pastStates === []`, `futureStates === []` | — |
+| `saveToLocalStorage` is no-op when `resume === null` | `reset()` then `saveToLocalStorage()` | no write to `localStorage` | — |
+| `saveToLocalStorage` re-throws on quota exceeded | mock `localStorage.setItem` to throw | method re-throws | AC-F005-3 |
 
-**Coverage target: 85%** | Maps to: F007
+#### JSON Import / Export
 
-| Test     | Scenario                                 | Expected                           |
-| -------- | ---------------------------------------- | ---------------------------------- |
-| `PV-001` | Valid hash in URL → renders resume       | Name visible                       |
-| `PV-002` | Invalid/corrupt hash → error state shown | Error message, resume not rendered |
-| `PV-003` | No edit controls present                 | No form inputs visible (read-only) |
-| `PV-004` | "Build Your Own — It's Free" CTA present | Link to `/builder`                 |
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| `exportAsJSON` returns valid JSON string | call | `JSON.parse(result)` does not throw | AC-F008-1 |
+| `exportAsJSON` includes all resume fields | call | parsed result has `id`, `template`, `personalInfo`, all sections | AC-F008-4 |
+| `exportAsJSON` returns `""` when `resume === null` | call without init | `""` | — |
+| `importFromJSON` with valid JSON returns `true` and loads resume | call | returns `true`; store has new resume | AC-F008-2 |
+| `importFromJSON` with `"not json"` returns `false` | call | returns `false`; previous resume untouched | AC-F008-3 |
+| `importFromJSON` with valid JSON but invalid schema returns `false` | `JSON.stringify({foo:'bar'})` | returns `false` | AC-F008-3 |
+| `importFromJSON` does not overwrite on failure | fill store, then import invalid JSON | store state unchanged after failed import | AC-F008-3 |
+| Export → import roundtrip | export then import | resume state equals original | AC-F008-1 |
+| `importFromJSON` with in-progress resume (empty required fields) succeeds | lenient schema | returns `true` | — |
+| `importFromJSON` clears undo/redo history | call | `pastStates === []`, `futureStates === []` | — |
 
-### 3.14 `src/components/builder/resume-list-panel.tsx`
+#### Sharing
 
-**Coverage target: 80%** | Maps to: F011
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| `generateShareableURL` returns URL starting with `origin/preview#` | call | `result.startsWith(origin + '/preview#')` | AC-F007-1 |
+| `generateShareableURL` contains encoded resume data | call | URL hash decodes back to resume | AC-F007-1 |
+| `generateShareableURL` returns `""` when `resume === null` | call without init | `""` | — |
+| `loadFromShareableURL` with valid hash returns `true` and loads resume | encode + decode | returns `true`; resume equals original | AC-F007-2 |
+| `loadFromShareableURL` with garbage hash returns `false` | `"garbage"` | returns `false`; state unchanged | — |
+| `loadFromShareableURL` with schema-invalid decoded data returns `false` | valid base64 of `{foo:'bar'}` | returns `false` | — |
+| Full round-trip: `generateShareableURL` → `loadFromShareableURL` | end-to-end | resume equals original | AC-F007-2 |
 
-| Test     | Scenario                                              | Expected                       |
-| -------- | ----------------------------------------------------- | ------------------------------ |
-| `RL-001` | Shows each resume: name, template, last-modified date | All three data points rendered |
-| `RL-002` | "New Resume" button present                           | Visible                        |
-| `RL-003` | Delete button → confirmation dialog appears           | Dialog visible before deletion |
-| `RL-004` | Confirm delete → resume removed                       | Store updated                  |
-| `RL-005` | Cancel delete → resume remains                        | Store unchanged                |
+#### Undo / Redo
+
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| `canUndo()` is `false` on fresh resume | fresh resume | `canUndo() === false` | — |
+| `canUndo()` is `true` after any update | `updatePersonalInfo(...)` | `canUndo() === true` | AC-F013-1 |
+| `undo()` reverts last change | update name to "Alice", undo | `fullName` equals previous value (empty) | AC-F013-1 |
+| `undo()` moves current to `futureStates` | undo | `futureStates.length === 1` | AC-F013-2 |
+| `canRedo()` is `true` after undo | undo | `canRedo() === true` | AC-F013-2 |
+| `redo()` re-applies undone change | undo then redo | `fullName === "Alice"` again | AC-F013-2 |
+| `redo()` moves current to `pastStates` | redo | `pastStates.length++` | — |
+| `redo()` clears `futureStates` (single item) | undo then redo | `futureStates.length === 0` | — |
+| New action after undo clears `futureStates` | undo, then `updatePersonalInfo` | `futureStates.length === 0` | — |
+| Undo stack capped at `MAX_UNDO_HISTORY` (50) | 51 `updatePersonalInfo` calls | `pastStates.length === 50` | AC-F013-3 |
+| `undo()` on empty stack is no-op | call when `canUndo() === false` | state unchanged; no crash | — |
+| `redo()` on empty `futureStates` is no-op | call when `canRedo() === false` | state unchanged; no crash | — |
+| Multiple undo steps | 3 updates, 3 undos | each step correctly reverts | AC-F013-1 |
+
+---
+
+### 3.2 `useAutoSave` Hook
+
+**File:** `src/__tests__/auto-save.test.ts`
+**Coverage target:** 90 % lines
+
+Use `renderHook`, `vi.useFakeTimers()`, and mock `saveToLocalStorage` in the Zustand store.
+
+| Test | Setup | Expected | AC |
+|------|-------|----------|----|
+| does not save on initial mount | render hook | `saveToLocalStorage` not called | — |
+| saves after debounce elapses | change resume, advance timer 1000 ms | `saveToLocalStorage` called exactly once | AC-F005-1 |
+| does not save before debounce elapses | change resume, advance timer 999 ms | `saveToLocalStorage` not called | AC-F005-1 |
+| rapid changes collapse to single save | 5 changes in 100 ms intervals, advance 1000 ms | `saveToLocalStorage` called exactly once | AC-F005-1 |
+| `isSaving` is `true` immediately after change | observe state before timer fires | `isSaving === true` | — |
+| `isSaving` is `false` after save completes | advance timer | `isSaving === false` | — |
+| `lastSaved` is updated after successful save | advance timer | `lastSaved instanceof Date` | — |
+| shows destructive toast when save throws | mock `saveToLocalStorage` to throw | toast called with `variant: 'destructive'` | AC-F005-3 |
+| `isSaving` is `false` after error | mock throw, advance timer | `isSaving === false` | — |
+| custom `debounceMs` is respected | render with `debounceMs=500`, advance 500 ms | `saveToLocalStorage` called | AC-F005-1 |
+| does not save when `resume === null` | `reset()`, change | `saveToLocalStorage` not called | — |
+| clears pending timer on unmount | unmount during debounce | no state update / no memory leak warning | — |
+
+---
+
+### 3.3 `usePdfGenerator` Hook
+
+**File:** `src/__tests__/use-pdf-generator.test.ts`
+**Coverage target:** 90 % lines
+
+Mock `generatePDF` from `@/lib/pdf/generate-pdf` via `vi.mock`.
+
+| Test | Setup | Expected | AC |
+|------|-------|----------|----|
+| initial `status` is `'idle'` | render | `status === 'idle'` | — |
+| `isGenerating` is `false` initially | render | `isGenerating === false` | — |
+| downloading with `resume === null` shows validation toast | resume null | toast with "Add your details" message | AC-F001-4 |
+| downloading with empty `fullName` shows toast | `fullName: ""` | toast mentioning name | AC-F001-4 |
+| downloading with empty `email` shows toast | `email: ""` | toast mentioning email | AC-F001-4 |
+| `status` becomes `'generating'` during download | mock pending `generatePDF` | `status === 'generating'` while pending | — |
+| `isGenerating` is `true` during download | same | `isGenerating === true` | — |
+| `status` becomes `'success'` on resolve | `generatePDF` resolves | `status === 'success'` | AC-F004-1 |
+| success toast shown | resolve | toast with PDF download confirmation | — |
+| `status` resets to `'idle'` after 2 s on success | advance fake timers 2000 ms | `status === 'idle'` | — |
+| `status` becomes `'error'` on rejection | `generatePDF` rejects | `status === 'error'` | — |
+| error toast shown | reject | toast with error message | — |
+| `status` resets to `'idle'` after 3 s on error | advance 3000 ms | `status === 'idle'` | — |
+| `generatePDF` called with `elementId: 'resume-preview-container'` | valid resume, call `downloadPDF` | `generatePDF` spy called with correct elementId | — |
+| filename is `{FirstName_LastName}_Resume.pdf` | `fullName: "Jane Doe"` | `generatePDF` called with `filename: "Jane_Doe_Resume.pdf"` | AC-F004-5 |
+| multi-word name uses underscores | `fullName: "Mary Jane Watson"` | `filename: "Mary_Jane_Watson_Resume.pdf"` | AC-F004-5 |
+| cleanup on unmount cancels pending timer | unmount during 2-second reset timer | no "Can't perform state update on unmounted" warning | — |
+
+---
+
+### 3.4 `useShareableLink` Hook
+
+**File:** `src/__tests__/shareable-link.test.ts`
+**Coverage target:** 85 % lines
+
+Mock `navigator.clipboard.writeText`.
+
+| Test | Setup | Expected | AC |
+|------|-------|----------|----|
+| returns a URL containing `/preview#` | valid resume | result includes `/preview#` | AC-F007-1 |
+| copies URL to clipboard | call | `navigator.clipboard.writeText` called with URL | AC-F007-1 |
+| shows success toast after copy | clipboard resolves | toast shown | — |
+| shows error toast when clipboard fails | clipboard rejects | error toast shown | — |
+| different resumes produce different URLs | two distinct resumes | URLs differ | — |
+| large resume produces compressed URL | resume > 8 KB | URL contains `z:` prefix | AC-F007-3 |
+
+---
+
+### 3.5 `useKeyboardShortcuts` Hook
+
+**File:** `src/__tests__/use-keyboard-shortcuts.test.ts`
+**Coverage target:** 85 % lines
+
+| Test | Event | Expected | AC |
+|------|-------|----------|----|
+| `Ctrl+Z` calls `undo()` | `keydown` with `ctrlKey + key:'z'` | `undo` called | AC-F013-1 |
+| `Ctrl+Shift+Z` calls `redo()` | `keydown` with `ctrlKey + shiftKey + key:'z'` | `redo` called | AC-F013-2 |
+| `Cmd+Z` calls `undo()` on Mac | `keydown` with `metaKey + key:'z'` | `undo` called | AC-F013-1 |
+| `Ctrl+S` calls `event.preventDefault()` | `keydown` with `ctrlKey + key:'s'` | `preventDefault` called | — |
+| shortcuts suppressed when `target` is `<input>` | `keydown` with `target = <input>` | `undo` not called | — |
+| shortcuts suppressed when `target` is `<textarea>` | `keydown` with `target = <textarea>` | `undo` not called | — |
+| listener is removed on unmount | unmount | no listener leak (verify via `removeEventListener` spy) | — |
+
+---
+
+### 3.6 `useMediaQuery` Hook
+
+**File:** `src/__tests__/use-media-query.test.ts`
+**Coverage target:** 100 % lines
+
+| Test | Mock | Expected |
+|------|------|----------|
+| returns `true` when media query matches | mock `window.matchMedia` with `matches: true` | hook returns `true` |
+| returns `false` when media query doesn't match | mock with `matches: false` | hook returns `false` |
+| updates when change event fires | fire `MediaQueryList` change event | hook value updates |
+
+---
+
+### 3.7 Form Component Integration
+
+**File:** `src/__tests__/form-editor.test.ts`
+**Coverage target:** 80 % lines
+
+| Component | Test | Expected | AC |
+|-----------|------|----------|----|
+| `<PersonalInfoForm>` | Full Name input has a visible `<label>` | `getByLabelText(/full name/i)` exists | NFR-A11Y-1 |
+| `<PersonalInfoForm>` | Email input has a visible `<label>` | `getByLabelText(/email/i)` exists | NFR-A11Y-1 |
+| `<PersonalInfoForm>` | typing in Full Name updates store | `userEvent.type(...)` → store `fullName` updated | AC-F001-1 |
+| `<PersonalInfoForm>` | typing in Email updates store | `userEvent.type(...)` → store `email` updated | AC-F001-1 |
+| `<ExperienceForm>` | "Add Experience" button renders new form | click → job title input appears | AC-F001-2 |
+| `<ExperienceForm>` | new entry has Job Title, Company, Start Date fields | after add → all 3 labeled inputs present | AC-F001-2 |
+| `<ExperienceForm>` | "Currently Working" checkbox hides end date field | check → end date hidden | AC-F001-6 |
+| `<ExperienceForm>` | unchecking "Currently Working" shows end date | uncheck → end date visible | AC-F001-6 |
+| `<ExperienceForm>` | remove button deletes the entry | click remove → entry gone | — |
+| `<SkillsForm>` | "Add Skill" adds a labeled skill name input | click → `getByLabelText(/skill name/i)` visible | — |
+| `<EducationForm>` | "Add Education" adds school input | click → `getByLabelText(/school/i)` visible | — |
+| `<ProjectsForm>` | "Add Project" adds title input | click → `getByLabelText(/title/i)` visible | — |
+| `<CertificationsForm>` | "Add Certification" adds name input | click → `getByLabelText(/certification name/i)` visible | — |
+
+---
+
+### 3.8 Preview Panel
+
+**File:** `src/__tests__/preview-panel.test.ts`
+**Coverage target:** 80 % lines
+
+| Test | Setup | Expected | AC |
+|------|-------|----------|----|
+| reflects `fullName` change from store | update store → check panel | new name text present in preview panel DOM | AC-F002-1 |
+| reflects template switch | `updateTemplate('classic')` | template-specific class/element present | AC-F002-1 |
+| has `id="resume-preview-container"` | render | element with that ID exists | — |
+| preview container has white background | render | `bg-white` class on container | AC-F010-2 |
+| no edit inputs in preview panel | render | no `<input>` elements inside preview container | AC-F007-4 |
+
+---
+
+### 3.9 Multiple Resumes (`useResumeList`)
+
+**File:** `src/__tests__/use-resume-list.test.ts`
+**Coverage target:** 85 % lines
+
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| initial list has one item (current resume) | load | list length ≥ 1 | — |
+| creating a second resume persists both | create second | list length === 2 | AC-F011-1 |
+| first resume still accessible after creating second | switch back | original data intact | AC-F011-1 |
+| list items include name, template, `updatedAt` | inspect entries | all 3 fields present | AC-F011-2 |
+| deleting a resume from list removes it | delete | list length decreases | AC-F011-3 |
+| switching to a different resume loads it into store | switch | store reflects switched resume | — |
+
+---
+
+### 3.10 Monetization
+
+**File:** `src/__tests__/monetization.test.ts`
+**Coverage target:** 70 % lines
+
+| Test | Expected | AC |
+|------|----------|---|
+| affiliate banner contains link to Kickresume | `href` includes `kickresume.com` | — |
+| affiliate link has `rel="noopener noreferrer"` | `rel` attribute present | — |
+| no affiliate elements inside `#resume-preview-container` | query returns empty | — |
+| no modal or overlay rendered before PDF download | no `role="dialog"` covering PDF button | — |
+
+---
+
+### 3.11 Store Persistence (Full Round-Trips)
+
+**File:** `src/__tests__/store-persistence.test.ts`
+**Coverage target:** 90 % lines
+
+| Test | Action | Expected | AC |
+|------|--------|----------|----|
+| full resume data survives a save + load cycle | fill all fields, save, reset, load | all fields equal original | AC-F005-2 |
+| `RESUMES_STORAGE_KEY` used for multi-resume list | save two resumes | both keys in localStorage | AC-F011-1 |
+| corrupted single-resume key falls back to new resume | write bad JSON to `STORAGE_KEY`, load | empty resume created | — |
+| corrupted multi-resume key falls back gracefully | write bad JSON to `RESUMES_STORAGE_KEY` | no crash; empty list or single empty resume | — |
 
 ---
 
 ## 4. E2E Tests (Playwright)
 
-> Run against `localhost:3000` (or preview deploy). Each spec corresponds to a SPEC.md user story.
-> Playwright config: `chromium`, `firefox`, `webkit`, `Pixel 5` (mobile Chrome), `iPhone 14` (mobile Safari).
+Run against a locally-built Next.js production server (`npm run build && npm run start`). Use `data-testid` attributes for stable selectors. Primary CI browser: **Chromium**. Nightly matrix: **Firefox + WebKit + Mobile Chrome + Mobile Safari**.
 
-### Required `data-testid` Attributes
+### 4.1 Required `data-testid` Attributes
 
-| Selector                                     | Component                | Purpose                                 |
-| -------------------------------------------- | ------------------------ | --------------------------------------- |
-| `[data-testid="hero-heading"]`               | `hero.tsx`               | Assert landing page copy                |
-| `[data-testid="hero-cta-btn"]`               | `hero.tsx`               | Click to go to builder                  |
-| `[data-testid="download-pdf-btn"]`           | `builder-toolbar.tsx`    | Trigger PDF download                    |
-| `[data-testid="share-btn"]`                  | `builder-toolbar.tsx`    | Trigger share link                      |
-| `[data-testid="template-selector"]`          | `builder-toolbar.tsx`    | Template dropdown                       |
-| `[data-testid="template-option-{id}"]`       | `builder-toolbar.tsx`    | Individual template options             |
-| `[data-testid="form-panel"]`                 | `form-panel.tsx`         | Left panel container                    |
-| `[data-testid="preview-panel"]`              | `preview-panel.tsx`      | Right panel                             |
-| `[data-testid="preview-container"]`          | `preview-panel.tsx`      | `id="resume-preview-container"` element |
-| `[data-testid="field-fullName"]`             | `personal-info-form.tsx` | Name input                              |
-| `[data-testid="field-email"]`                | `personal-info-form.tsx` | Email input                             |
-| `[data-testid="add-experience-btn"]`         | `experience-form.tsx`    | Add experience                          |
-| `[data-testid="experience-entry-{index}"]`   | `section-entry.tsx`      | Individual entry wrapper                |
-| `[data-testid="currently-working-checkbox"]` | `experience-form.tsx`    | Currently working toggle                |
-| `[data-testid="drag-handle-{id}"]`           | `section-entry.tsx`      | Drag reorder handle                     |
-| `[data-testid="remove-entry-{id}"]`          | `section-entry.tsx`      | Delete entry button                     |
-| `[data-testid="new-resume-btn"]`             | `builder-toolbar.tsx`    | Create new resume                       |
-| `[data-testid="confirm-dialog"]`             | `dialog.tsx`             | Confirmation modal                      |
-| `[data-testid="theme-toggle"]`               | `theme-toggle.tsx`       | Dark/light toggle                       |
-| `[data-testid="export-json-btn"]`            | `builder-toolbar.tsx`    | Export JSON                             |
-| `[data-testid="import-json-input"]`          | `builder-toolbar.tsx`    | File input for import                   |
-| `[data-testid="preview-cta-link"]`           | `preview-cta.tsx`        | Build own resume CTA                    |
+Ensure these exist in source before running E2E tests:
 
----
+| Component | Attribute |
+|-----------|-----------|
+| Hero headline `<h1>` | `data-testid="hero-headline"` |
+| Hero CTA button | `data-testid="hero-cta"` |
+| Builder form panel container | `data-testid="form-panel"` |
+| Builder preview panel container | `data-testid="preview-panel"` |
+| Download PDF button | `data-testid="download-pdf-btn"` |
+| Share button | `data-testid="share-btn"` |
+| Template selector | `data-testid="template-selector"` |
+| Accent color picker trigger | `data-testid="accent-color-picker"` |
+| Undo button | `data-testid="undo-btn"` |
+| Redo button | `data-testid="redo-btn"` |
+| New Resume button | `data-testid="new-resume-btn"` |
+| Confirmation dialog | `data-testid="confirm-dialog"` |
+| Resume preview container | `id="resume-preview-container"` |
+| Mobile preview sheet trigger | `data-testid="mobile-preview-btn"` |
+| Export JSON button | `data-testid="export-json-btn"` |
+| Import JSON button | `data-testid="import-json-btn"` |
+| Shared preview CTA banner | `data-testid="preview-cta"` |
+| Toast notification | `data-testid="toast"` |
 
-### E2E-001: Landing Page → Builder Navigation (F006)
+### 4.2 Page Object Models
 
-**Maps to:** F006-AC1, F006-AC3, F006-AC5
+```typescript
+// e2e/pages/builder.page.ts
+export class BuilderPage {
+  constructor(private page: Page) {}
+  goto()                { return this.page.goto('/builder') }
+  formPanel()           { return this.page.getByTestId('form-panel') }
+  previewPanel()        { return this.page.getByTestId('preview-panel') }
+  previewContainer()    { return this.page.locator('#resume-preview-container') }
+  fullNameInput()       { return this.page.getByLabel(/full name/i) }
+  emailInput()          { return this.page.getByLabel(/email/i) }
+  downloadBtn()         { return this.page.getByTestId('download-pdf-btn') }
+  shareBtn()            { return this.page.getByTestId('share-btn') }
+  templateSelector()    { return this.page.getByTestId('template-selector') }
+  undoBtn()             { return this.page.getByTestId('undo-btn') }
+  redoBtn()             { return this.page.getByTestId('redo-btn') }
+  newResumeBtn()        { return this.page.getByTestId('new-resume-btn') }
+  mobilePreviewBtn()    { return this.page.getByTestId('mobile-preview-btn') }
+  exportJsonBtn()       { return this.page.getByTestId('export-json-btn') }
+  importJsonBtn()       { return this.page.getByTestId('import-json-btn') }
+  confirmDialog()       { return this.page.getByTestId('confirm-dialog') }
+}
 
-```
-Step 1:  Navigate to /
-Step 2:  Assert <title> contains "free resume builder" (case-insensitive)
-Step 3:  Assert [data-testid="hero-heading"] text === "Free Resume Builder — No Paywall, No Tricks"
-Step 4:  Assert meta[name="description"] content contains "no paywall"
-Step 5:  Assert meta[property="og:title"] is present and non-empty
-Step 6:  Count elements with text matching /paywall|No Paywall|Unlike Zety|subscription/i → assert count ≥ 3
-Step 7:  Assert [data-testid="hero-cta-btn"] bounding box top < viewport height (above fold)
-Step 8:  Click [data-testid="hero-cta-btn"]
-Step 9:  Assert URL === /builder
-Step 10: Assert [data-testid="form-panel"] is visible
-```
+// e2e/pages/landing.page.ts
+export class LandingPage {
+  constructor(private page: Page) {}
+  goto()       { return this.page.goto('/') }
+  headline()   { return this.page.getByTestId('hero-headline') }
+  ctaButton()  { return this.page.getByTestId('hero-cta') }
+}
 
----
-
-### E2E-002: Complete Resume Build & PDF Download (F001, F002, F004)
-
-**Maps to:** F001-AC1, F001-AC2, F002-AC1, F004-AC1, F004-AC3, F004-AC5
-
-```
-Step 1:  Navigate to /builder (clear localStorage first via storageState: {})
-Step 2:  Fill [data-testid="field-fullName"] with "Jane Smith"
-Step 3:  Assert [data-testid="preview-container"] contains text "Jane Smith" within 500ms
-Step 4:  Fill [data-testid="field-email"] with "jane@example.com"
-Step 5:  Click [data-testid="add-experience-btn"]
-Step 6:  Fill experience jobTitle input with "Software Engineer"
-Step 7:  Fill experience company input with "Acme Corp"
-Step 8:  Fill experience startDate with "2022-01"
-Step 9:  Assert preview contains "Software Engineer" and "Acme Corp"
-Step 10: Set up network request interception (capture all outgoing requests)
-Step 11: Click [data-testid="download-pdf-btn"]
-Step 12: Assert download event fired — filename matches "Jane_Smith_Resume.pdf"
-Step 13: Assert no requests made to any domain other than localhost
+// e2e/pages/preview.page.ts
+export class SharedPreviewPage {
+  constructor(private page: Page) {}
+  gotoWithHash(hash: string) { return this.page.goto(`/preview#${hash}`) }
+  previewContainer()         { return this.page.locator('#resume-preview-container') }
+  ctaBanner()                { return this.page.getByTestId('preview-cta') }
+  formPanel()                { return this.page.getByTestId('form-panel') }
+}
 ```
 
----
+### 4.3 E2E Helpers
 
-### E2E-003: Validation Gate — Download Without Required Fields (F001, F004)
+```typescript
+// e2e/helpers/storage.ts
+export async function seedLocalStorage(page: Page, data: object) {
+  await page.evaluate((d) => {
+    localStorage.setItem('resume-builder-data', JSON.stringify(d))
+  }, data)
+}
 
-**Maps to:** F001-AC4, F004-AC1
+export async function clearLocalStorage(page: Page) {
+  await page.evaluate(() => localStorage.clear())
+}
 
-```
-Step 1:  Navigate to /builder (empty state)
-Step 2:  Click [data-testid="download-pdf-btn"] immediately
-Step 3:  Assert toast appears containing text "Add your"
-Step 4:  Assert no download event fired
-Step 5:  Fill [data-testid="field-fullName"] with "Test User" only
-Step 6:  Click [data-testid="download-pdf-btn"]
-Step 7:  Assert toast contains "email"
-Step 8:  Fill [data-testid="field-email"] with "test@test.com"
-Step 9:  Click [data-testid="download-pdf-btn"]
-Step 10: Assert download triggered (success toast appears)
+// Use in beforeEach:
+test.beforeEach(async ({ page }) => clearLocalStorage(page))
 ```
 
 ---
 
-### E2E-004: Template Switching — All 5 Templates (F003)
+### 4.4 E2E Flow: Landing Page
 
-**Maps to:** F003-AC1, F003-AC2, F003-AC4
+**File:** `e2e/home.spec.ts` | AC coverage: AC-F006-1 through AC-F006-5
 
-```
-Step 1:  Navigate to /builder
-Step 2:  Fill fullName = "Template Tester", email = "t@test.com"
-Step 3:  Add one experience entry with jobTitle = "Designer"
-Step 4:  For each template in [modern, classic, minimal, creative, professional]:
-   a.   Select template via [data-testid="template-selector"]
-   b.   Assert preview updates and contains "Template Tester"
-   c.   Assert form [data-testid="field-fullName"] still shows "Template Tester" (data not lost)
-   d.   Assert no page reload occurred (track navigation events)
-Step 5:  Assert 5 template switches complete without error
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-HOME-01 | `goto('/')` | `hero-headline` text is "Free Resume Builder — No Paywall, No Tricks" | AC-F006-1 |
+| E2E-HOME-02 | `goto('/')` — count anti-paywall elements | ≥ 3 elements containing "paywall", "free", or "no tricks" text | AC-F006-2 |
+| E2E-HOME-03 | `goto('/')` — check CTA | `hero-cta` button is visible within viewport | AC-F006-3 |
+| E2E-HOME-04 | `goto('/')` → click CTA | URL becomes `/builder` | AC-F006-3 |
+| E2E-HOME-05 | `goto('/')` → `page.title()` | title contains "free resume builder" (case-insensitive) | AC-F006-5 |
+| E2E-HOME-06 | `goto('/')` → inspect `<meta name="description">` | content contains "no paywall" | AC-F006-5 |
+| E2E-HOME-07 | `goto('/')` → inspect OG meta tags | `og:title`, `og:description`, `og:image` all present and non-empty | AC-F006-5 |
+| E2E-HOME-08 | Lighthouse CI run on `/` | LCP < 2500 ms, performance score ≥ 90 | AC-F006-4 |
+
+---
+
+### 4.5 E2E Flow: Builder Load & Layout
+
+**File:** `e2e/builder.spec.ts` | AC: AC-F002-2, AC-F002-3
+
+| ID | Viewport | Steps | Assertion | AC |
+|----|----------|-------|----------|----|
+| E2E-BUILDER-01 | 1280 × 900 | `goto('/builder')` | both `form-panel` and `preview-panel` visible | AC-F002-2 |
+| E2E-BUILDER-02 | 375 × 812 | `goto('/builder')` | `preview-panel` not visible; `mobile-preview-btn` visible | AC-F002-3 |
+| E2E-BUILDER-03 | 375 × 812 | tap `mobile-preview-btn` | bottom sheet / full-screen preview opens | AC-F002-3 |
+| E2E-BUILDER-04 | 1280 × 900 | `goto('/builder')` | page title contains "Free Resume Builder" | — |
+
+---
+
+### 4.6 E2E Flow: Real-Time Preview
+
+**File:** `e2e/builder.spec.ts` | AC: AC-F001-1, AC-F002-1
+
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-PREVIEW-01 | goto → fill Full Name "Alex Preview" | text "Alex Preview" appears in `preview-panel` | AC-F001-1, AC-F002-1 |
+| E2E-PREVIEW-02 | goto → fill name → measure time | preview update occurs within 200 ms of last keystroke | AC-F002-1 |
+| E2E-PREVIEW-03 | goto → add experience → fill Job Title "Staff Engineer" | "Staff Engineer" appears in preview | AC-F001-1 |
+| E2E-PREVIEW-04 | goto → switch template via selector | preview DOM changes reflect new template | AC-F003-1 |
+
+```typescript
+// Measuring preview re-render timing (E2E-PREVIEW-02)
+const start = performance.now()
+await builderPage.fullNameInput().fill('Timing Test')
+await expect(builderPage.previewPanel().getByText('Timing Test')).toBeVisible()
+expect(performance.now() - start).toBeLessThan(200)
 ```
 
 ---
 
-### E2E-005: LocalStorage Persistence — Auto-Save & Restore (F005)
+### 4.7 E2E Flow: Form Editing
 
-**Maps to:** F005-AC1, F005-AC2, F005-AC3, F005-AC4
+**File:** `e2e/builder.spec.ts` | AC: AC-F001-*
 
-```
-Step 1:  Navigate to /builder (fresh session)
-Step 2:  Fill fullName = "Persisted User", email = "p@persist.com"
-Step 3:  Wait 1500ms (debounce 1000ms + write time)
-Step 4:  Open a new page to /builder (same browser context, same localStorage)
-Step 5:  Assert [data-testid="field-fullName"] value === "Persisted User"
-Step 6:  Assert [data-testid="field-email"] value === "p@persist.com"
-Step 7:  Click [data-testid="new-resume-btn"]
-Step 8:  Assert [data-testid="confirm-dialog"] is visible
-Step 9:  Click cancel/dismiss button on dialog
-Step 10: Assert [data-testid="field-fullName"] still shows "Persisted User"
-Step 11: Click [data-testid="new-resume-btn"] again → confirm
-Step 12: Assert form fields are cleared / empty
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-FORM-01 | goto → click "Add Experience" | Job Title, Company, Start Date inputs visible | AC-F001-2 |
+| E2E-FORM-02 | goto → add experience → fill Job Title → check preview | job title appears in preview | AC-F001-1 |
+| E2E-FORM-03 | goto → add 2 experiences → drag first below second | order in preview reverses | AC-F001-3 |
+| E2E-FORM-04 | goto → add experience → check "Currently Working" | End Date field hidden | AC-F001-6 |
+| E2E-FORM-05 | goto → add experience → check "Currently Working" → inspect preview | "Present" text in preview | AC-F001-6 |
+| E2E-FORM-06 | goto → type invalid email → blur field | inline error message visible | AC-F001-5 |
+| E2E-FORM-07 | goto → fill name + email only → click Download | download proceeds (no validation error) | AC-F001-4 |
+| E2E-FORM-08 | goto → leave empty → click Download | validation error toast visible | AC-F001-4 |
+| E2E-FORM-09 | goto → add skill "TypeScript" | "TypeScript" in preview | — |
+| E2E-FORM-10 | goto → add education school "MIT" | "MIT" in preview | — |
+| E2E-FORM-11 | goto → add project "MyApp" | "MyApp" in preview | — |
+| E2E-FORM-12 | goto → add certification "AWS SAA" | "AWS SAA" in preview | — |
+
+---
+
+### 4.8 E2E Flow: PDF Download
+
+**File:** `e2e/builder.spec.ts` | AC: AC-F004-*
+
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-PDF-01 | goto → fill name + email → click Download | browser print dialog triggers (or download event) | AC-F004-1 |
+| E2E-PDF-02 | goto → fill name "Jane Doe" → click Download | document title set to `Jane_Doe_Resume.pdf` during print | AC-F004-5 |
+| E2E-PDF-03 | goto → click Download → intercept network | zero XHR/fetch requests to external URLs | AC-F004-3 |
+| E2E-PDF-04 | verify `window.print` used (not canvas) | `#resume-preview-container` contains text nodes, not `<canvas>` | AC-F004-4, AC-F003-3 |
+
+```typescript
+// E2E-PDF-03: Network interception
+const externalRequests: string[] = []
+await page.route('**/*', (route) => {
+  const url = route.request().url()
+  if (!url.startsWith(process.env.BASE_URL!)) externalRequests.push(url)
+  route.continue()
+})
+await builderPage.downloadBtn().click()
+// Wait for afterprint or page settle
+expect(externalRequests).toHaveLength(0)
 ```
 
 ---
 
-### E2E-006: Shareable Link — Generate, Open, Read-Only (F007)
+### 4.9 E2E Flow: LocalStorage Persistence
 
-**Maps to:** F007-AC1, F007-AC2, F007-AC4, F007-AC5
+**File:** `e2e/builder.spec.ts` | AC: AC-F005-*
 
-```
-Step 1:  Navigate to /builder
-Step 2:  Fill fullName = "Share Test User", email = "share@test.com"
-Step 3:  Set up network request interceptor
-Step 4:  Click [data-testid="share-btn"]
-Step 5:  Assert toast "Link copied!" appears
-Step 6:  Read clipboard content (or capture URL from toast detail)
-Step 7:  Assert URL contains "/preview#"
-Step 8:  Assert URL fragment (text after #) is non-empty
-Step 9:  Assert URL does not contain "?" (data is NOT in query string)
-Step 10: Open captured URL in a new browser context
-Step 11: Assert "Share Test User" is visible in preview
-Step 12: Assert no form inputs are present (read-only mode)
-Step 13: Assert [data-testid="preview-cta-link"] is visible with href="/builder"
-Step 14: Assert zero requests made to any external domain
-```
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-PERSIST-01 | goto → fill name "AutoSaveUser" → wait 1.5 s → reload | name "AutoSaveUser" still in form | AC-F005-2 |
+| E2E-PERSIST-02 | goto → fill name → wait only 0.5 s → reload immediately | form may be empty (debounce not complete) — tests that save is NOT instant | AC-F005-1 |
+| E2E-PERSIST-03 | goto → click "New Resume" | confirmation dialog appears | AC-F005-4 |
+| E2E-PERSIST-04 | goto → click "New Resume" → cancel confirmation | form data unchanged | AC-F005-4 |
+| E2E-PERSIST-05 | goto → click "New Resume" → confirm | form cleared | AC-F005-4 |
+| E2E-PERSIST-06 | seed localStorage with full resume → goto | all data pre-populated in form | AC-F005-2 |
 
 ---
 
-### E2E-007: JSON Import / Export Round-Trip (F008)
+### 4.10 E2E Flow: Templates
 
-**Maps to:** F008-AC1, F008-AC2, F008-AC3, F008-AC4
+**File:** `e2e/templates.spec.ts` | AC: AC-F003-*
 
-```
-Step 1:  Navigate to /builder, fill fullName = "Export User", email = "e@export.com"
-Step 2:  Click [data-testid="export-json-btn"]
-Step 3:  Capture the downloaded file content
-Step 4:  Parse the file as JSON — assert it is valid JSON
-Step 5:  Assert parsed JSON contains fullName === "Export User"
-Step 6:  Assert parsed JSON passes resumeSchema validation
-Step 7:  Navigate to fresh /builder session
-Step 8:  Upload exported file via [data-testid="import-json-input"]
-Step 9:  Assert [data-testid="field-fullName"] value === "Export User"
-Step 10: Upload a file containing "{ not valid json }"
-Step 11: Assert error toast appears
-Step 12: Assert [data-testid="field-fullName"] still shows "Export User" (not overwritten)
-```
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-TPL-01 | `goto('/templates')` | all 5 template names (Modern, Classic, Minimal, Creative, Professional) visible | — |
+| E2E-TPL-02 | `/templates` → click "Use This Template" for Classic | navigates to `/builder?template=classic` | — |
+| E2E-TPL-03 | builder → select each template via selector | preview content changes for each; no error | AC-F003-1 |
+| E2E-TPL-04 | builder → fill all 6 sections → switch to each template | all sections render in each template; no overflow/truncation | AC-F003-2 |
+| E2E-TPL-05 | builder → fill personalInfo → switch template → inspect store | `personalInfo` values unchanged | AC-F003-4 |
+| E2E-TPL-06 | builder → add very long description → check Modern template | content flows; no `overflow: hidden` clips text | AC-F003-5 |
+| E2E-TPL-07 | builder → download PDF (print-based) → verify text nodes | `#resume-preview-container` has text nodes not `<canvas>` | AC-F003-3, AC-F004-4 |
 
 ---
 
-### E2E-008: Undo / Redo Keyboard Shortcuts (F013)
+### 4.11 E2E Flow: Shareable Link
 
-**Maps to:** F013-AC1, F013-AC2
+**File:** `e2e/sharing.spec.ts` | AC: AC-F007-*
 
-```
-Step 1:  Navigate to /builder
-Step 2:  Fill fullName = "First Version"
-Step 3:  Tab away to blur the field
-Step 4:  Clear fullName field, type "Second Version", tab away
-Step 5:  Click outside all inputs (body element) to ensure focus is not in input
-Step 6:  Press Ctrl+Z (or Cmd+Z on Mac)
-Step 7:  Assert [data-testid="field-fullName"] value === "First Version"
-Step 8:  Assert preview contains "First Version"
-Step 9:  Press Ctrl+Shift+Z (or Cmd+Shift+Z on Mac)
-Step 10: Assert [data-testid="field-fullName"] value === "Second Version"
-```
-
----
-
-### E2E-009: Dark Mode — OS Preference & Toggle (F010)
-
-**Maps to:** F010-AC1, F010-AC2, F010-AC3
-
-```
-Step 1:  Launch browser with colorScheme: 'dark' (Playwright media emulation)
-Step 2:  Navigate to /builder
-Step 3:  Assert <html> element has dark mode class or attribute (e.g., class contains "dark")
-Step 4:  Assert [data-testid="preview-container"] computed background-color is white (rgb(255,255,255))
-Step 5:  Click [data-testid="theme-toggle"]
-Step 6:  Assert <html> dark class is removed (light mode active)
-Step 7:  Assert URL has not changed (no page reload)
-Step 8:  Click [data-testid="theme-toggle"] again
-Step 9:  Assert dark class is restored
-```
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-SHARE-01 | builder → fill form → click Share | toast "Link copied" visible | AC-F007-1 |
+| E2E-SHARE-02 | builder → fill form → click Share → read clipboard | clipboard contains `http://…/preview#` | AC-F007-1 |
+| E2E-SHARE-03 | builder → fill large resume (> 8 KB) → click Share | clipboard URL contains `z:` prefix | AC-F007-3 |
+| E2E-SHARE-04 | open `/preview#<valid-encoded-small>` | resume name/email rendered correctly | AC-F007-2 |
+| E2E-SHARE-05 | open `/preview#<valid-encoded-large>` | full resume data rendered correctly | AC-F007-2 |
+| E2E-SHARE-06 | `/preview` page with valid hash | form panel absent from DOM | AC-F007-4 |
+| E2E-SHARE-07 | `/preview` page with valid hash | `preview-cta` testid visible | AC-F007-4 |
+| E2E-SHARE-08 | `/preview#<garbage>` | error state or empty state shown; CTA still visible | — |
+| E2E-SHARE-09 | open preview URL → intercept all network | zero XHR/fetch requests made | AC-F007-5, AC-F004-3 |
+| E2E-SHARE-10 | full round-trip: fill builder → share → open URL | all data identical in read-only preview | AC-F007-2 |
 
 ---
 
-### E2E-010: Mobile Layout — Preview in Bottom Sheet (F002)
+### 4.12 E2E Flow: JSON Import / Export
 
-**Maps to:** F002-AC3
+**File:** `e2e/builder.spec.ts` (or `e2e/import-export.spec.ts`) | AC: AC-F008-*
 
-```
-Step 1:  Set viewport to 375x812 (iPhone 14)
-Step 2:  Navigate to /builder
-Step 3:  Assert [data-testid="form-panel"] is visible
-Step 4:  Assert [data-testid="preview-panel"] is NOT visible or is off-screen
-Step 5:  Tap the mobile preview button or "Preview" tab
-Step 6:  Assert preview content is visible
-Step 7:  Assert resume data (or placeholder) appears in preview
-```
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-JSON-01 | goto → fill form → click Export JSON | file download with `.json` extension triggered | AC-F008-1 |
+| E2E-JSON-02 | Export JSON → inspect download content | valid JSON with `personalInfo`, `experiences`, etc. | AC-F008-4 |
+| E2E-JSON-03 | Export JSON → Import JSON (same file) | form fields repopulated with original data | AC-F008-2 |
+| E2E-JSON-04 | Import JSON with `{ invalid: true }` file | error toast visible; previous data intact | AC-F008-3 |
+| E2E-JSON-05 | Import JSON with non-JSON text file | error toast visible; previous data intact | AC-F008-3 |
 
 ---
 
-### E2E-011: Currently Working Toggle Hides End Date / Shows "Present" (F001)
+### 4.13 E2E Flow: Dark Mode
 
-**Maps to:** F001-AC6
+**File:** `e2e/builder.spec.ts` | AC: AC-F010-*
 
-```
-Step 1:  Navigate to /builder
-Step 2:  Click [data-testid="add-experience-btn"]
-Step 3:  Assert endDate input is visible
-Step 4:  Check [data-testid="currently-working-checkbox"]
-Step 5:  Assert endDate input is no longer visible (display:none or removed from DOM)
-Step 6:  Fill jobTitle = "Engineer", company = "Corp", startDate = "2022-01"
-Step 7:  Assert preview contains "Present" text
-Step 8:  Uncheck [data-testid="currently-working-checkbox"]
-Step 9:  Assert endDate input is visible again
-```
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-DARK-01 | `page.emulateMedia({ colorScheme: 'dark' })` → goto builder | `<html>` has `dark` class | AC-F010-1 |
+| E2E-DARK-02 | dark mode → inspect `#resume-preview-container` computed style | background-color is white (`rgb(255, 255, 255)`) | AC-F010-2 |
+| E2E-DARK-03 | goto builder → click theme toggle button | `<html class>` changes; no navigation / full reload | AC-F010-3 |
 
 ---
 
-### E2E-012: Experience Drag-and-Drop Reorder (F001)
+### 4.14 E2E Flow: Undo / Redo
 
-**Maps to:** F001-AC3
+**File:** `e2e/builder.spec.ts` | AC: AC-F013-*
 
-```
-Step 1:  Navigate to /builder
-Step 2:  Add experience A: jobTitle = "Job A", company = "Company A", startDate = "2020-01"
-Step 3:  Add experience B: jobTitle = "Job B", company = "Company B", startDate = "2018-01"
-Step 4:  Assert preview shows "Job A" before "Job B" (initial order)
-Step 5:  Drag [data-testid="drag-handle-{id_A}"] below entry B
-Step 6:  Assert preview now shows "Job B" before "Job A"
-Step 7:  Assert form also reflects the new order
-```
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-UNDO-01 | fill name "Alice" → press Ctrl+Z | name field empty (or previous value) | AC-F013-1 |
+| E2E-UNDO-02 | fill name "Alice" → Ctrl+Z → Ctrl+Shift+Z | name "Alice" reappears | AC-F013-2 |
+| E2E-UNDO-03 | fresh builder page | `undo-btn` is disabled | — |
+| E2E-UNDO-04 | fresh builder page | `redo-btn` is disabled | — |
+| E2E-UNDO-05 | click undo button (toolbar) | same effect as Ctrl+Z | AC-F013-1 |
 
 ---
 
-### E2E-013: Template Gallery Page (F003)
+### 4.15 E2E Flow: Multiple Resumes
 
-**Maps to:** F003-AC1, and landing F006
+**File:** `e2e/builder.spec.ts` | AC: AC-F011-*
 
-```
-Step 1:  Navigate to /templates
-Step 2:  Assert all 5 template names visible: Modern, Classic, Minimal, Creative, Professional
-Step 3:  Assert each has a "Use This Template" button or link
-Step 4:  Click "Use This Template" for "Classic"
-Step 5:  Assert URL navigates to /builder (with or without ?template=classic param)
-Step 6:  Assert template is set to "classic" in the builder
-```
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-MULTI-01 | fill resume "Alice" → New Resume → confirm → fill "Bob" | both in resume list | AC-F011-1 |
+| E2E-MULTI-02 | create two resumes → open resume list panel | each entry shows name, template, date | AC-F011-2 |
+| E2E-MULTI-03 | create two → delete one → confirm | list shows 1 entry | AC-F011-3 |
+| E2E-MULTI-04 | create two → delete one → cancel | list unchanged at 2 entries | AC-F011-3 |
 
 ---
 
-### E2E-014: Invalid Email Inline Validation (F001)
+### 4.16 E2E Flow: Accent Color Picker
 
-**Maps to:** F001-AC5
+**File:** `e2e/builder.spec.ts` | AC: AC-F012-*
 
-```
-Step 1:  Navigate to /builder
-Step 2:  Click [data-testid="field-email"]
-Step 3:  Type "not-an-email"
-Step 4:  Press Tab (blur the field)
-Step 5:  Assert inline error message is visible near the email field
-Step 6:  Clear field, type "valid@email.com", press Tab
-Step 7:  Assert error message is no longer visible
-```
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-COLOR-01 | open color picker | 12 swatch buttons visible | AC-F012-1 |
+| E2E-COLOR-02 | click pink swatch (`#db2777`) | preview accent elements change color | AC-F012-2 |
+| E2E-COLOR-03 | type `#ff0000` in hex input and confirm | preview accent changes to red | AC-F012-2 |
+| E2E-COLOR-04 | type very light hex `#eeeeee` | low-contrast warning message visible | AC-F012-3 |
 
 ---
 
-### E2E-015: No Paywall / No Account / No Email Gate (MON-1)
+### 4.17 E2E Flow: Accessibility
 
-**Maps to:** SPEC §5 Monetization "What We Will Never Do"
+**File:** `e2e/builder.spec.ts` (or `e2e/a11y.spec.ts`) | NFR-A11Y-*
 
+```typescript
+import AxeBuilder from '@axe-core/playwright'
+
+test('landing page has no critical accessibility violations', async ({ page }) => {
+  await page.goto('/')
+  const results = await new AxeBuilder({ page }).analyze()
+  expect(results.violations.filter(v => v.impact === 'critical')).toHaveLength(0)
+})
 ```
-Step 1:  Navigate to /
-Step 2:  Assert no <input type="email"> present (no email collection)
-Step 3:  Assert no payment-related text ("credit card", "billing", "subscribe", "trial")
-Step 4:  Navigate to /builder
-Step 5:  Click [data-testid="download-pdf-btn"] after filling required fields
-Step 6:  Assert download happens without any modal, paywall, or login prompt
-Step 7:  Assert no interstitial or overlay appears before or after download
-```
+
+| ID | Page | Assertion | AC |
+|----|------|----------|----|
+| E2E-A11Y-01 | `/` | zero critical axe violations | NFR-A11Y-* |
+| E2E-A11Y-02 | `/builder` | zero critical axe violations | NFR-A11Y-* |
+| E2E-A11Y-03 | `/templates` | zero critical axe violations | NFR-A11Y-* |
+| E2E-A11Y-04 | `/preview` with valid hash | zero critical axe violations | NFR-A11Y-* |
+| E2E-A11Y-05 | `/builder` | Tab through all form fields — all reachable | NFR-A11Y-3 |
+| E2E-A11Y-06 | `/builder` | all interactive elements have visible focus indicator | NFR-A11Y-5 |
+| E2E-A11Y-07 | `/builder` | color contrast of text ≥ 4.5:1 (axe rule) | NFR-A11Y-2 |
 
 ---
 
-## 5. Property-Based Test Candidates
+### 4.18 E2E Flow: Print Styles
 
-> Use [`fast-check`](https://github.com/dubzzz/fast-check) with Vitest.
+**File:** `e2e/builder.spec.ts` | AC: AC-F009-*
 
-### 5.1 Schema Validation
+```typescript
+// E2E-PRINT-01
+await page.emulateMedia({ media: 'print' })
+await expect(page.getByTestId('form-panel')).toBeHidden()
+await expect(page.locator('nav')).toBeHidden()
+await expect(page.locator('#resume-preview-container')).toBeVisible()
+```
 
-| ID       | Invariant                                                             | Generator                                                         |
-| -------- | --------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `PB-001` | Any object produced by the resumeSchema defaults passes re-validation | `fc.record()` of valid fields                                     |
-| `PB-007` | Schema rejects `fullName` with length > 100                           | `fc.string({ minLength: 101, maxLength: 200 })`                   |
-| `PB-008` | Schema accepts any valid hex color `#[0-9a-fA-F]{6}`                  | `fc.hexaString({ minLength: 6, maxLength: 6 }).map(h => '#' + h)` |
+| ID | Steps | Assertion | AC |
+|----|-------|----------|----|
+| E2E-PRINT-01 | `emulateMedia({ media: 'print' })` on `/builder` | form panel and nav hidden; resume container visible | AC-F009-1 |
 
-### 5.2 Serialization Round-Trips
+---
 
-| ID       | Invariant                                                          | Generator                                        |
-| -------- | ------------------------------------------------------------------ | ------------------------------------------------ |
-| `PB-002` | `exportAsJSON` → `importFromJSON` is identity for any valid resume | Arbitrary valid resume in store                  |
-| `PB-003` | `encodeResumeData` → `decodeResumeData` is identity                | Arbitrary JSON-serializable object               |
-| `PB-004` | `encodeResumeForURL` → `decodeResumeFromURL` is identity           | Arbitrary object both below and above 8192 bytes |
-| `PB-005` | `encodeResumeForURL` output never contains `+`, `/`, or `=`        | Arbitrary object                                 |
-| `PB-006` | `generateShareableURL` → `loadFromShareableURL` restores data      | Arbitrary valid resume                           |
+### 4.19 E2E Flow: Security Headers
 
-### 5.3 Store Invariants
+**File:** `e2e/security.spec.ts` | NFR-SEC-*
 
-| ID       | Invariant                                                             | Generator                                                  |
-| -------- | --------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `PB-009` | `pushHistory` never results in `pastStates.length > MAX_UNDO_HISTORY` | `fc.array(validResume, { minLength: 51, maxLength: 200 })` |
-| `PB-010` | `reorderExperiences(ids)` preserves all valid entries, drops none     | Any permutation of existing IDs                            |
-| `PB-011` | After N undos followed by N redos, resume equals original             | N random mutations then N undos/redos                      |
+```typescript
+test('security headers are set', async ({ page }) => {
+  const response = await page.goto('/')
+  expect(response!.headers()['x-frame-options']).toBe('DENY')
+  expect(response!.headers()['x-content-type-options']).toBe('nosniff')
+  expect(response!.headers()['referrer-policy']).toBeTruthy()
+  expect(response!.headers()['permissions-policy']).toBeTruthy()
+})
+```
 
-### 5.4 URL Codec Safety
+| ID | Assertion | AC |
+|----|----------|----|
+| E2E-SEC-01 | `X-Frame-Options: DENY` | NFR-SEC |
+| E2E-SEC-02 | `X-Content-Type-Options: nosniff` | NFR-SEC |
+| E2E-SEC-03 | `Referrer-Policy` header present | NFR-SEC |
+| E2E-SEC-04 | `Permissions-Policy` header present | NFR-SEC |
+| E2E-SEC-05 | No cookies set on any page | `page.context().cookies()` empty | NFR-SEC |
 
-| ID       | Invariant                                                 | Generator                         |
-| -------- | --------------------------------------------------------- | --------------------------------- |
-| `PB-012` | Any valid resume data encodes to a non-empty string       | Valid resume objects              |
-| `PB-013` | Corrupt encoded strings always return `null`, never throw | `fc.string()` (arbitrary garbage) |
+---
+
+## 5. Property-Based Tests
+
+**File:** `src/__tests__/property-based.test.ts`
+**Tool:** `fast-check` (add to devDependencies: `npm install -D fast-check`)
+
+### 5.1 URL Codec Roundtrip
+
+```typescript
+import * as fc from 'fast-check'
+import { encodeResumeData, decodeResumeData } from '@/lib/sharing/url-codec'
+import { encodeResumeForURL, decodeResumeFromURL } from '@/lib/sharing/url-codec'
+
+it('encodeResumeData ↔ decodeResumeData: roundtrip for any JSON-serializable object', () => {
+  fc.assert(fc.property(
+    fc.record({
+      id: fc.string({ minLength: 1, maxLength: 50 }),
+      name: fc.unicodeString({ minLength: 0, maxLength: 200 }),
+      summary: fc.unicodeString({ minLength: 0, maxLength: 5000 }),
+    }),
+    (obj) => {
+      const encoded = encodeResumeData(obj)
+      const decoded = decodeResumeData(encoded)
+      expect(decoded).toEqual(obj)
+    }
+  ))
+})
+
+it('encodeResumeForURL ↔ decodeResumeFromURL: roundtrip for any JSON-serializable object', () => {
+  fc.assert(fc.property(
+    fc.record({
+      n: fc.unicodeString({ maxLength: 1000 }),
+      xs: fc.array(fc.string(), { maxLength: 20 }),
+    }),
+    (obj) => {
+      const encoded = encodeResumeForURL(obj)
+      const decoded = decodeResumeFromURL(encoded)
+      expect(decoded).toEqual(obj)
+    }
+  ))
+})
+
+it('all encoded strings contain only URL-safe characters', () => {
+  fc.assert(fc.property(
+    fc.dictionary(fc.string(), fc.string({ maxLength: 100 })),
+    (obj) => {
+      const encoded = encodeResumeForURL(obj)
+      // base64url alphabet + codec prefixes only
+      expect(encoded).toMatch(/^[A-Za-z0-9\-_.:]*$/)
+    }
+  ))
+})
+
+it('decoding garbage inputs never throws — always returns null', () => {
+  fc.assert(fc.property(
+    fc.oneof(fc.string(), fc.constant(''), fc.constant('z:!!!'), fc.constant('c:@@@')),
+    (garbage) => {
+      expect(() => decodeResumeData(garbage)).not.toThrow()
+      expect(() => decodeResumeFromURL(garbage)).not.toThrow()
+    }
+  ))
+})
+```
+
+### 5.2 JSON Import / Export Roundtrip
+
+```typescript
+it('exportAsJSON → importFromJSON: roundtrip preserves personalInfo', () => {
+  fc.assert(fc.property(
+    fc.record({
+      fullName: fc.string({ minLength: 1, maxLength: 100 }),
+      email: fc.emailAddress(),
+      phone: fc.string({ maxLength: 20 }),
+      location: fc.string({ maxLength: 100 }),
+    }),
+    (personalInfo) => {
+      const store = useResumeStore.getState()
+      store.createNewResume()
+      store.updatePersonalInfo(personalInfo)
+      const json = store.exportAsJSON()
+      store.createNewResume()
+      const success = store.importFromJSON(json)
+      expect(success).toBe(true)
+      const restored = useResumeStore.getState().resume
+      expect(restored?.personalInfo.fullName).toBe(personalInfo.fullName)
+      expect(restored?.personalInfo.email).toBe(personalInfo.email)
+    }
+  ))
+})
+```
+
+### 5.3 Zod Schema: Valid Data Always Passes
+
+```typescript
+import { PRESET_ACCENT_COLORS } from '@/lib/constants'
+
+const validResumeArb = fc.record({
+  id: fc.uuidV4(),
+  template: fc.constantFrom('modern', 'classic', 'minimal', 'creative', 'professional' as const),
+  personalInfo: fc.record({
+    fullName: fc.string({ minLength: 1, maxLength: 100 }),
+    email: fc.emailAddress(),
+    phone: fc.string({ maxLength: 20 }),
+    location: fc.string({ maxLength: 100 }),
+    website: fc.constant(''),
+    linkedin: fc.constant(''),
+    github: fc.constant(''),
+    summary: fc.string({ maxLength: 2000 }),
+  }),
+  experiences:     fc.constant([]),
+  education:       fc.constant([]),
+  skills:          fc.constant([]),
+  projects:        fc.constant([]),
+  certifications:  fc.constant([]),
+  accentColor:     fc.constantFrom(...PRESET_ACCENT_COLORS),
+  createdAt:       fc.date({ min: new Date('2000-01-01') }).map(d => d.toISOString()),
+  updatedAt:       fc.date({ min: new Date('2000-01-01') }).map(d => d.toISOString()),
+})
+
+it('resumeSchema: any structurally valid resume passes', () => {
+  fc.assert(fc.property(validResumeArb, (data) => {
+    expect(resumeSchema.safeParse(data).success).toBe(true)
+  }))
+})
+```
+
+### 5.4 Zod Schema: Specific Invalids Always Fail
+
+```typescript
+it('personalInfoSchema: any non-email string fails email validation', () => {
+  fc.assert(fc.property(
+    fc.string().filter(s => !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)),
+    (nonEmail) => {
+      const result = personalInfoSchema.safeParse({ fullName: 'A', email: nonEmail })
+      expect(result.success).toBe(false)
+    }
+  ))
+})
+
+it('resumeSchema: any hex color not matching ^#[0-9a-fA-F]{6}$ fails', () => {
+  fc.assert(fc.property(
+    fc.string().filter(s => !/^#[0-9a-fA-F]{6}$/.test(s)),
+    (badColor) => {
+      const result = resumeSchema.safeParse({ ...validMinimalResume, accentColor: badColor })
+      expect(result.success).toBe(false)
+    }
+  ))
+})
+```
+
+### 5.5 Undo Stack Invariants
+
+```typescript
+it('pastStates.length never exceeds MAX_UNDO_HISTORY regardless of update count', () => {
+  fc.assert(fc.property(
+    fc.integer({ min: 1, max: 200 }),
+    (numChanges) => {
+      const store = useResumeStore.getState()
+      store.createNewResume()
+      for (let i = 0; i < numChanges; i++) {
+        store.updatePersonalInfo({ fullName: `Name ${i}` })
+      }
+      expect(store.pastStates.length).toBeLessThanOrEqual(MAX_UNDO_HISTORY)
+    }
+  ))
+})
+
+it('after N undos, futureStates.length === N (bounded by available history)', () => {
+  fc.assert(fc.property(
+    fc.integer({ min: 1, max: 20 }),
+    fc.integer({ min: 0, max: 20 }),
+    (numChanges, numUndos) => {
+      const store = useResumeStore.getState()
+      store.createNewResume()
+      for (let i = 0; i < numChanges; i++) {
+        store.updatePersonalInfo({ fullName: `Name ${i}` })
+      }
+      const effectiveUndos = Math.min(numUndos, store.pastStates.length)
+      for (let i = 0; i < numUndos; i++) store.undo()
+      expect(store.futureStates.length).toBe(effectiveUndos)
+    }
+  ))
+})
+```
 
 ---
 
 ## 6. Per-Module Coverage Targets
 
-| Module                                         | Unit Target | Component Target | Notes                                        |
-| ---------------------------------------------- | ----------- | ---------------- | -------------------------------------------- |
-| `src/lib/schemas/resume-schema.ts`             | **100%**    | N/A              | Pure Zod — every branch testable             |
-| `src/lib/sharing/url-codec.ts`                 | **100%**    | N/A              | Pure codec — both prefixes, both error paths |
-| `src/lib/constants.ts`                         | **100%**    | N/A              | Static — verify exact values                 |
-| `src/lib/cn.ts`                                | **100%**    | N/A              | Trivial utility                              |
-| `src/store/resume-store.ts`                    | **95%**     | N/A              | All store methods; SSR guard branches        |
-| `src/hooks/use-auto-save.ts`                   | **90%**     | N/A              | Debounce + error path                        |
-| `src/hooks/use-pdf-generator.ts`               | **90%**     | N/A              | Validation paths; PDF mocked                 |
-| `src/hooks/use-shareable-link.ts`              | **90%**     | N/A              | Clipboard success/fail                       |
-| `src/hooks/use-keyboard-shortcuts.ts`          | **90%**     | N/A              | Input-focus guard branches                   |
-| `src/hooks/use-resume-list.ts`                 | **85%**     | N/A              | CRUD for multiple resumes                    |
-| `src/hooks/use-media-query.ts`                 | **80%**     | N/A              | matchMedia mock                              |
-| `src/lib/pdf/generate-pdf.ts`                  | **80%**     | N/A              | Canvas mocked; filename/multi-page logic     |
-| `src/components/builder/sections/*`            | N/A         | **85%**          | All 6 form sections                          |
-| `src/components/builder/builder-toolbar.tsx`   | N/A         | **85%**          | Template select, download, share, import     |
-| `src/components/builder/preview-panel.tsx`     | N/A         | **80%**          | Preview container present                    |
-| `src/components/builder/builder-layout.tsx`    | N/A         | **80%**          | Desktop/mobile layout                        |
-| `src/components/templates/*`                   | N/A         | **90%**          | All 5 templates × full + empty data          |
-| `src/components/landing/*`                     | N/A         | **80%**          | Hero copy, CTA, trust signals                |
-| `src/components/shared/theme-toggle.tsx`       | N/A         | **85%**          | Toggle changes theme                         |
-| `src/components/ui/color-picker.tsx`           | N/A         | **85%**          | 12 presets, hex input, contrast warning      |
-| `src/components/preview/preview-viewer.tsx`    | N/A         | **85%**          | Valid/invalid hash, read-only                |
-| `src/components/builder/resume-list-panel.tsx` | N/A         | **80%**          | List display, delete confirmation            |
-| `src/app/page.tsx`                             | N/A         | **75%**          | Landing page (RSC)                           |
-| `src/app/builder/page.tsx`                     | N/A         | **75%**          | Builder mount, localStorage init             |
-| `src/app/preview/page.tsx`                     | N/A         | **75%**          | Hash decoding on mount                       |
-| `src/app/templates/page.tsx`                   | N/A         | **75%**          | Gallery renders all 5                        |
-| **Overall project**                            |             | **≥ 85%**        | Combined line/branch coverage                |
-
----
-
-## 7. Acceptance Criteria Coverage Matrix
-
-Every acceptance criterion from SPEC.md §3 is mapped here.
-
-| Spec AC                   | Acceptance Criterion                                       | Covering Tests                                                                          |
-| ------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| **F001-AC1**              | Preview updates within 200ms on any field input            | `PIF-003`, `E2E-002` Step 3                                                             |
-| **F001-AC2**              | "Add Experience" appends new empty form                    | `EXF-002`, `ST-020`, `E2E-002` Steps 5–6                                                |
-| **F001-AC3**              | Drag reorder updates form and preview                      | `EXF-007`, `E2E-012`                                                                    |
-| **F001-AC4**              | Download gated on `fullName` + `email`                     | `PG-002`, `PG-003`, `E2E-003`                                                           |
-| **F001-AC5**              | Invalid email format → inline error on blur                | `PIF-004`, `E2E-014`                                                                    |
-| **F001-AC6**              | "Currently Working" hides endDate / shows "Present"        | `EXF-004`, `E2E-011`                                                                    |
-| **F002-AC1**              | Preview re-renders within 200ms                            | `PP-002`, `E2E-002` Step 3                                                              |
-| **F002-AC2**              | Desktop (≥1024px): side-by-side layout                     | `BL-001`                                                                                |
-| **F002-AC3**              | Mobile (<768px): bottom sheet / full-screen preview        | `BL-002`, `BL-003`, `E2E-010`                                                           |
-| **F002-AC4**              | Preview identical to downloaded PDF layout                 | `E2E-002` (visual assertion)                                                            |
-| **F003-AC1**              | Clicking template thumbnail switches preview immediately   | `TB-002`, `E2E-004`                                                                     |
-| **F003-AC2**              | All sections render correctly in each template             | `TR-001..025`                                                                           |
-| **F003-AC3**              | ATS text extractable                                       | _Known gap — see §10_                                                                   |
-| **F003-AC4**              | Template switch preserves resume data                      | `PP-004`, `E2E-004` Step c                                                              |
-| **F003-AC5**              | Multi-page content flows to second page                    | `PDF-003`                                                                               |
-| **F004-AC1**              | PDF downloads within 2 seconds                             | `E2E-002` (timing), `PG-006`                                                            |
-| **F004-AC2**              | PDF layout matches preview                                 | `E2E-002` (layout diff)                                                                 |
-| **F004-AC3**              | Zero HTTP requests during PDF generation                   | `E2E-002` Steps 10–13                                                                   |
-| **F004-AC4**              | Text selectable in PDF                                     | _Known gap — see §10_                                                                   |
-| **F004-AC5**              | Filename: `{FullName}_Resume.pdf`                          | `PG-005`, `PDF-005`, `E2E-002` Step 12                                                  |
-| **F005-AC1**              | Auto-save triggers after 1s debounce                       | `AS-002`, `AS-003`                                                                      |
-| **F005-AC2**              | Data restored on return visit                              | `ST-051`, `E2E-005` Steps 4–6                                                           |
-| **F005-AC3**              | Toast on localStorage failure                              | `AS-006`, `ST-055`                                                                      |
-| **F005-AC4**              | Confirmation before clearing data                          | `E2E-005` Steps 7–11, `RL-003..005`                                                     |
-| **F006-AC1**              | Hero heading "Free Resume Builder — No Paywall, No Tricks" | `LP-001`, `E2E-001` Step 3                                                              |
-| **F006-AC2**              | ≥ 3 anti-paywall messages                                  | `LP-003`, `E2E-001` Step 6                                                              |
-| **F006-AC3**              | "Build Your Resume — It's Free" CTA above fold             | `LP-002`, `E2E-001` Steps 7–8                                                           |
-| **F006-AC4**              | LCP < 2.5s                                                 | Lighthouse CI (pipeline step)                                                           |
-| **F006-AC5**              | Meta tags target relevant keywords                         | `E2E-001` Steps 4–5                                                                     |
-| **F007-AC1**              | "Share" generates URL-safe encoded URL                     | `SL-001`, `E2E-006` Steps 5–9                                                           |
-| **F007-AC2**              | URL opens read-only preview with all data                  | `PV-001`, `E2E-006` Steps 10–11                                                         |
-| **F007-AC3**              | Data > 8KB uses pako compression                           | `UC-002`, `UC-008`, `PB-004`                                                            |
-| **F007-AC4**              | Preview shows "Build Your Own" CTA                         | `PV-004`, `E2E-006` Step 13                                                             |
-| **F007-AC5**              | No data sent to server (fragment encoding)                 | `SL-006`, `E2E-006` Step 14                                                             |
-| **F008-AC1**              | Export JSON is valid                                       | `ST-060`, `ST-061`, `E2E-007` Steps 3–6                                                 |
-| **F008-AC2**              | Import valid JSON restores data                            | `ST-063`, `E2E-007` Steps 8–9                                                           |
-| **F008-AC3**              | Invalid JSON → error toast, no overwrite                   | `ST-064`, `ST-065`, `E2E-007` Steps 10–12                                               |
-| **F008-AC4**              | Exported JSON conforms to resume schema                    | `ST-061`, `PB-002`                                                                      |
-| **F009-AC1**              | Print hides UI chrome                                      | `E2E-011` (Playwright print simulation)                                                 |
-| **F009-AC2**              | Print margins match PDF                                    | `E2E-011`                                                                               |
-| **F010-AC1**              | OS dark mode preference applied on load                    | `E2E-009` Steps 1–3                                                                     |
-| **F010-AC2**              | Preview always white background in dark mode               | `TT-003`, `E2E-009` Step 4                                                              |
-| **F010-AC3**              | Toggle changes theme without page reload                   | `TT-002`, `E2E-009` Steps 5–7                                                           |
-| **F011-AC1**              | "New Resume" creates second without losing first           | `RL-002`, `E2E-005` Steps 7–11                                                          |
-| **F011-AC2**              | Resume list shows name, template, last-modified            | `RL-001`                                                                                |
-| **F011-AC3**              | Delete shows confirmation dialog                           | `RL-003`, `RL-004`, `RL-005`                                                            |
-| **F012-AC1**              | Color picker shows 12 presets + hex input                  | `CP-001`, `CP-003`, `TB-010`                                                            |
-| **F012-AC2**              | Color updates all accent elements in preview               | `CP-002`, `TR-026..030`                                                                 |
-| **F012-AC3**              | Low-contrast color warning (< 3:1 against white)           | `CP-004`, `CP-005`                                                                      |
-| **F013-AC1**              | Ctrl+Z reverts last change                                 | `KS-001`, `E2E-008` Steps 6–8                                                           |
-| **F013-AC2**              | Ctrl+Shift+Z re-applies undone change                      | `KS-005`, `E2E-008` Steps 9–10                                                          |
-| **F013-AC3**              | Undo stack capped at 50 entries                            | `ST-087`, `PB-009`                                                                      |
-| **NFR-PERF-LCP**          | LCP < 2.5s on 4G                                           | Lighthouse CI                                                                           |
-| **NFR-PERF-INP**          | INP < 200ms for all interactions                           | Lighthouse CI                                                                           |
-| **NFR-PERF-CLS**          | CLS < 0.1                                                  | Lighthouse CI                                                                           |
-| **NFR-PERF-BUNDLE**       | Bundle < 250KB initial JS                                  | `next build` bundle analysis in CI                                                      |
-| **NFR-A11Y-LABELS**       | All inputs have visible labels (not just placeholders)     | `PIF-002` (RTL `getByLabelText`)                                                        |
-| **NFR-A11Y-CONTRAST**     | WCAG 2.2 AA contrast ratios                                | `CP-004`, Lighthouse Accessibility ≥ 90                                                 |
-| **NFR-A11Y-KEYBOARD**     | Full keyboard navigation                                   | `KS-001..009`, Playwright keyboard-only run                                             |
-| **NFR-SEC-NO-DANGERHTML** | No `dangerouslySetInnerHTML`                               | Static code audit in CI: `grep -r dangerouslySetInnerHTML src/` exits non-zero if found |
-| **NFR-SEC-CSP**           | CSP headers configured                                     | Playwright response header assertion                                                    |
-| **NFR-SEC-XFRAME**        | X-Frame-Options: DENY                                      | Response header assertion                                                               |
-| **NFR-SEC-NOSERVER**      | Resume data never sent to server                           | Network intercept in all E2E specs                                                      |
-| **NFR-SEO-SSR**           | Server-rendered landing + templates pages                  | Playwright: page HTML before JS contains content                                        |
-| **MON-NOPAYWALL**         | No paywall, email gate, or payment form                    | `LP-007`, `E2E-015`                                                                     |
-| **MON-AFFILIATE**         | Affiliate links present in footer                          | `LP-006`                                                                                |
-| **MON-NOINTERSTITIAL**    | No interstitials/pop-ups before PDF download               | `E2E-002`, `E2E-015`                                                                    |
-
----
-
-## 8. Test Configuration
-
-### Vitest Config (`vitest.config.ts`)
+Configured in `vitest.config.mts`:
 
 ```typescript
-export default defineConfig({
-  test: {
-    environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'lcov', 'html'],
-      thresholds: {
-        lines: 85,
-        functions: 85,
-        branches: 80,
-        statements: 85,
-      },
-      exclude: [
-        'src/components/ui/**', // Radix UI wrappers (library code, not our logic)
-        'src/test/**',
-        '**/*.d.ts',
-        '**/node_modules/**',
-      ],
-    },
+coverage: {
+  provider: 'v8',
+  thresholds: {
+    lines:      80,
+    branches:   75,
+    functions:  80,
+    statements: 80,
   },
-})
-```
-
-### Playwright Config (`playwright.config.ts`)
-
-```typescript
-export default defineConfig({
-  testDir: './tests/specs',
-  use: {
-    baseURL: 'http://localhost:3000',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    trace: 'on-first-retry',
-  },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-    { name: 'mobile-chrome', use: { ...devices['Pixel 5'] } },
-    { name: 'mobile-safari', use: { ...devices['iPhone 14'] } },
+  include: ['src/**/*.{ts,tsx}'],
+  exclude: [
+    'src/test/**',
+    'src/**/*.test.*',
+    'src/**/*.spec.*',
+    'src/types/**',
+    'src/app/**/layout.tsx',  // Metadata-only files
   ],
-  webServer: {
-    command: 'npm run build && npm run start',
-    port: 3000,
-    reuseExistingServer: !process.env.CI,
+}
+```
+
+**Per-module targets:**
+
+| Module / File | Lines % | Branches % | Notes |
+|---------------|---------|------------|-------|
+| `src/lib/schemas/resume-schema.ts` | 100 | 100 | Pure Zod; all paths enumerable |
+| `src/lib/sharing/url-codec.ts` | 100 | 100 | All code paths (`c:`, `j:`, `z:`, plain, null) covered |
+| `src/lib/pdf/generate-pdf.ts` | 100 | 85 | `afterprint` resolution hard in jsdom; branch gap is acceptable |
+| `src/lib/cn.ts` | 100 | 100 | Trivial utility |
+| `src/lib/constants.ts` | 100 | 100 | Data-only; all exported values verified |
+| `src/store/resume-store.ts` | 95 | 90 | All CRUD + undo/redo; SSR guard `typeof window` branches count against 100 % |
+| `src/hooks/use-auto-save.ts` | 90 | 85 | Timer/debounce branches via fake timers |
+| `src/hooks/use-pdf-generator.ts` | 90 | 85 | Full status state machine |
+| `src/hooks/use-shareable-link.ts` | 85 | 80 | Clipboard error path |
+| `src/hooks/use-keyboard-shortcuts.ts` | 85 | 80 | Input-target guard branch |
+| `src/hooks/use-media-query.ts` | 100 | 90 | Simple reactive hook |
+| `src/hooks/use-resume-list.ts` | 85 | 80 | Multiple-resume list management |
+| `src/hooks/use-toast.ts` | 70 | 65 | Mostly Radix plumbing; toast display covered by integration |
+| `src/components/templates/template-renderer.tsx` | 100 | 100 | Dispatcher; fully enumerable (5 cases) |
+| `src/components/templates/modern-template.tsx` | 90 | 85 | All section/field rendering paths |
+| `src/components/templates/classic-template.tsx` | 90 | 85 | Same |
+| `src/components/templates/minimal-template.tsx` | 90 | 85 | Same |
+| `src/components/templates/creative-template.tsx` | 90 | 85 | Same |
+| `src/components/templates/professional-template.tsx` | 90 | 85 | Same |
+| `src/components/builder/sections/personal-info-form.tsx` | 80 | 75 | Form interaction; some paths E2E only |
+| `src/components/builder/sections/experience-form.tsx` | 80 | 75 | Same |
+| `src/components/builder/sections/education-form.tsx` | 80 | 75 | Same |
+| `src/components/builder/sections/skills-form.tsx` | 80 | 75 | Same |
+| `src/components/builder/sections/projects-form.tsx` | 80 | 75 | Same |
+| `src/components/builder/sections/certifications-form.tsx` | 80 | 75 | Same |
+| `src/components/builder/builder-layout.tsx` | 80 | 75 | Responsive layout branches |
+| `src/components/builder/builder-toolbar.tsx` | 80 | 75 | Toolbar actions |
+| `src/components/builder/preview-panel.tsx` | 80 | 75 | Store subscription |
+| `src/components/builder/section-entry.tsx` | 80 | 75 | Reusable drag + delete |
+| `src/components/ui/color-picker.tsx` | 85 | 80 | Contrast warning branch |
+| `src/components/landing/hero.tsx` | 75 | 70 | Mostly static rendering |
+| `src/components/landing/feature-grid.tsx` | 75 | 70 | Same |
+| `src/components/landing/trust-signals.tsx` | 75 | 70 | Same |
+| `src/components/landing/faq.tsx` | 75 | 70 | Same |
+| `src/components/landing/footer.tsx` | 75 | 70 | Same |
+| `src/components/preview/preview-viewer.tsx` | 80 | 75 | URL hash decode flow |
+| `src/components/preview/preview-cta.tsx` | 80 | 70 | CTA rendering |
+| `src/components/shared/header.tsx` | 75 | 70 | Navigation |
+| `src/components/shared/theme-toggle.tsx` | 80 | 75 | Toggle behavior |
+| `src/components/shared/affiliate-banner.tsx` | 75 | 70 | Static link rendering |
+| **Overall project** | **≥ 80** | **≥ 75** | Enforced by Vitest `thresholds` |
+
+---
+
+## 7. Non-Functional Test Coverage
+
+### 7.1 Performance
+
+| Metric | Target | Automated Via |
+|--------|--------|---------------|
+| LCP | < 2500 ms | Lighthouse CI on `/` | AC-F006-4 |
+| INP | < 200 ms | Lighthouse CI `interactiveTime` | NFR-PERF-2 |
+| CLS | < 0.1 | Lighthouse CI `cumulativeLayoutShift` | NFR-PERF-3 |
+| Lighthouse Performance | ≥ 90 | Lighthouse CI | NFR-PERF-7 |
+| Lighthouse Accessibility | ≥ 90 | Lighthouse CI | NFR-A11Y-* |
+| Initial JS bundle | < 250 KB gzipped | `size-limit` in CI | NFR-PERF-6 |
+| Preview re-render | < 200 ms | E2E timing in E2E-PREVIEW-02 | AC-F002-1 |
+| PDF generation | < 2000 ms | E2E timing from click to afterprint | AC-F004-1 |
+
+**`size-limit` config (`.size-limit.json`):**
+```json
+[
+  { "path": ".next/static/chunks/pages/_app*.js", "limit": "250 kB", "gzip": true },
+  { "path": ".next/static/chunks/main*.js",       "limit": "250 kB", "gzip": true }
+]
+```
+
+### 7.2 Accessibility
+
+| Requirement | Test | AC |
+|------------|------|----|
+| All inputs have visible `<label>` elements | RTL: `getByLabelText` succeeds | NFR-A11Y-1 |
+| Text color contrast ≥ 4.5:1 | axe-core `color-contrast` rule (E2E-A11Y-07) | NFR-A11Y-2 |
+| Full keyboard navigation | E2E-A11Y-05: Tab through all interactive elements | NFR-A11Y-3 |
+| Touch targets ≥ 44 × 44 CSS px | axe-core `target-size` rule | NFR-A11Y-4 |
+| Visible focus indicators | axe-core `focus-visible` rule | NFR-A11Y-5 |
+| ARIA live region on preview | check `aria-live` attribute on preview panel | NFR-A11Y-6 |
+
+### 7.3 Security (Static Analysis)
+
+Run these checks in CI as part of the lint step:
+
+```bash
+# No dangerouslySetInnerHTML usage
+grep -r "dangerouslySetInnerHTML" src/ && exit 1 || echo "OK"
+
+# No eval() or new Function() usage
+grep -rE "eval\(|new Function\(" src/ && exit 1 || echo "OK"
+
+# No hardcoded secrets (basic check)
+grep -rE "(password|secret|api.?key)\s*=" src/ --include="*.ts" --include="*.tsx" && exit 1 || echo "OK"
+```
+
+---
+
+## 8. Test Data Strategy
+
+### 8.1 Shared Fixtures
+
+```typescript
+// e2e/fixtures/resumes.ts
+
+export const minimalResume = {
+  id: 'test-id-minimal',
+  template: 'modern' as const,
+  personalInfo: {
+    fullName: 'Jane Doe',
+    email: 'jane@example.com',
+    phone: '', location: '', website: '', linkedin: '', github: '', summary: '',
   },
+  experiences: [], education: [], skills: [], projects: [], certifications: [],
+  accentColor: '#2563eb',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+}
+
+export const fullResume = {
+  id: 'test-id-full',
+  template: 'modern' as const,
+  personalInfo: {
+    fullName: 'Alex Johnson',
+    email: 'alex@example.com',
+    phone: '+1 555-0100',
+    location: 'San Francisco, CA',
+    website: 'https://alexjohnson.dev',
+    linkedin: 'https://linkedin.com/in/alexjohnson',
+    github: 'https://github.com/alexjohnson',
+    summary: 'Senior full-stack engineer with 10+ years of experience building scalable web applications.',
+  },
+  experiences: [
+    { id: 'exp-1', jobTitle: 'Staff Engineer', company: 'Acme Corp',
+      location: 'SF', startDate: '2020-01', endDate: '', currentlyWorking: true,
+      description: 'Led platform modernization initiative. Reduced p99 latency by 40%.' },
+    { id: 'exp-2', jobTitle: 'Senior Engineer', company: 'Beta Inc',
+      location: 'NY', startDate: '2016-03', endDate: '2019-12', currentlyWorking: false,
+      description: 'Owned the backend API layer serving 5M requests/day.' },
+  ],
+  education: [
+    { id: 'edu-1', school: 'MIT', degree: 'B.S.', field: 'Computer Science',
+      startDate: '2010-09', endDate: '2014-05', gpa: '3.9' },
+  ],
+  skills: [
+    { id: 'skill-1', name: 'TypeScript', level: 'expert' as const },
+    { id: 'skill-2', name: 'React', level: 'expert' as const },
+    { id: 'skill-3', name: 'PostgreSQL', level: 'advanced' as const },
+  ],
+  projects: [
+    { id: 'proj-1', title: 'Open Resume Fork', description: 'Extended open-source resume builder.',
+      link: 'https://github.com/alex/resume', technologies: ['TypeScript', 'Next.js'],
+      startDate: '2023-01', endDate: '' },
+  ],
+  certifications: [
+    { id: 'cert-1', name: 'AWS Solutions Architect', issuer: 'Amazon Web Services',
+      issueDate: '2022-06', expirationDate: '2025-06',
+      credentialUrl: 'https://aws.amazon.com/cert/abc123' },
+  ],
+  accentColor: '#2563eb',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+}
+
+// Resume that exceeds the 8192-byte compression threshold
+export const largeResume = {
+  ...fullResume,
+  id: 'test-id-large',
+  personalInfo: { ...fullResume.personalInfo, summary: 'A'.repeat(2000) },
+  experiences: Array.from({ length: 10 }, (_, i) => ({
+    id: `exp-large-${i}`,
+    jobTitle: `Senior Engineer ${i}`,
+    company: `Company ${i}`,
+    location: 'San Francisco, CA',
+    startDate: '2010-01',
+    endDate: '2012-01',
+    currentlyWorking: false,
+    description: `Detailed description for role ${i}. `.repeat(60),
+  })),
+}
+```
+
+### 8.2 localStorage Test Isolation
+
+All E2E tests must clear `localStorage` before each test to prevent state leakage:
+
+```typescript
+// playwright.config.ts or e2e/helpers/storage.ts
+test.beforeEach(async ({ page }) => {
+  await page.goto('/builder')
+  await page.evaluate(() => localStorage.clear())
+  await page.reload()
 })
 ```
 
-### Mock Strategy Summary
+Alternatively, use a blank storage state in the Playwright project config:
 
-| Dependency                 | Mock Approach                                                                                         |
-| -------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `localStorage`             | `vi.stubGlobal('localStorage', createLocalStorageMock())` in `src/test/setup.ts`                      |
-| `html2canvas`              | `vi.mock('html2canvas')` → returns stub canvas with `toDataURL()`                                     |
-| `jspdf`                    | `vi.mock('jspdf')` → captures constructor args, `addImage`, `save` calls                              |
-| `pako`                     | **Not mocked** — test actual compress/decompress behavior                                             |
-| `navigator.clipboard`      | `vi.stubGlobal('navigator', { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } })`      |
-| `window.location`          | `Object.defineProperty(window, 'location', { value: { origin: 'http://localhost:3000', hash: '' } })` |
-| `Date.now()` / system time | `vi.setSystemTime(new Date('2024-01-15'))` for deterministic timestamps                               |
-| `Math.random()`            | `vi.spyOn(Math, 'random').mockReturnValue(0.123456)` for deterministic IDs                            |
-| File downloads (E2E)       | Playwright `page.waitForEvent('download')`                                                            |
-| Clipboard (E2E)            | Playwright `page.evaluate(() => navigator.clipboard.readText())`                                      |
-
----
-
-## 9. CI Integration
-
-```yaml
-# .github/workflows/test.yml
-jobs:
-  unit-and-component:
-    steps:
-      - run: npm ci
-      - run: npm run type-check
-      - run: npm run lint
-      - run: npm run test -- --run --coverage
-      # Fails if coverage < thresholds in vitest.config.ts
-
-  build-and-e2e:
-    needs: unit-and-component
-    steps:
-      - run: npm run build
-      - run: npx playwright install --with-deps
-      - run: npm run test:e2e
-
-  lighthouse:
-    needs: build-and-e2e
-    steps:
-      - run: npx lhci autorun
-      # Assert: performance ≥ 90, accessibility ≥ 90, seo ≥ 90, best-practices ≥ 90
-
-  bundle-check:
-    steps:
-      - run: npm run build
-      - run: node scripts/check-bundle-size.js
-      # Assert: initial JS < 250KB gzipped (excludes lazy-loaded jsPDF/pako/html2canvas)
-
-  security-audit:
-    steps:
-      - run: npm audit --audit-level=high
-      - run: |
-          if grep -r "dangerouslySetInnerHTML" src/; then
-            echo "dangerouslySetInnerHTML found — FAIL"; exit 1
-          fi
+```typescript
+// playwright.config.ts
+use: {
+  storageState: { cookies: [], origins: [] },
+}
 ```
 
 ---
 
-## 10. Known Limitations & Documented Gaps
+## 9. Complete Test File Map
 
-| Gap ID    | Description                                                                                                                                                                                                                      | Spec AC            | Risk   | Recommended Mitigation                                                                                                                                     |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GAP-001` | **PDF text not selectable.** `generate-pdf.ts` uses `toDataURL('image/jpeg')` — text is rasterized as a JPEG image, not a text layer. F004-AC4 ("all text selectable and copyable") **cannot pass** with current implementation. | F004-AC4, F003-AC3 | High   | Switch to jsPDF's `text()` API for each template section, or use a React-PDF-based approach that generates proper PDF text. Document as P1 tech debt item. |
-| `GAP-002` | **ATS text extraction.** Same root cause as GAP-001. ATS scanners cannot extract text from a JPEG-embedded PDF.                                                                                                                  | F003-AC3           | High   | Same as GAP-001.                                                                                                                                           |
-| `GAP-003` | **Real 200ms preview timing in E2E.** CI machines have variable performance. The 200ms INP target (F002-AC1) is tested via unit fake-timers but cannot be reliably asserted at millisecond precision in E2E.                     | F002-AC1           | Medium | Assert in unit tests (mock timers). E2E uses `waitForFunction` with 500ms tolerance. Add Lighthouse INP measurement in CI.                                 |
-| `GAP-004` | **Print styles (F009) simulation fidelity.** `page.pdf()` in Playwright uses Chromium's headless print renderer, which may differ from a user's actual browser print dialog (especially Safari).                                 | F009-AC1, F009-AC2 | Low    | Supplement with manual QA checklist on Chrome/Safari/Firefox print preview before each release.                                                            |
-| `GAP-005` | **Drag-and-drop E2E reliability.** DnD Kit interactions via Playwright's `dragAndDrop()` can be flaky depending on the drag implementation.                                                                                      | F001-AC3           | Medium | Verify store state (not just visual order) after drag. Add retry logic. Consider exposing a test-only `reorderExperiences` action trigger.                 |
-| `GAP-006` | **Clipboard E2E in Firefox/WebKit.** `navigator.clipboard.readText()` requires user gesture permissions that Playwright cannot always grant in Firefox and WebKit.                                                               | F007-AC1           | Medium | Capture the URL from the toast notification text instead of clipboard in those browsers.                                                                   |
-| `GAP-007` | **Visual PDF-preview pixel parity (F002-AC4).** "Pixel-for-pixel identical" is aspirational — fonts, sub-pixel rendering, and JPEG compression introduce differences.                                                            | F002-AC4           | Medium | Use Playwright visual comparison with ≥5% threshold tolerance, or compare structural content rather than pixel diff.                                       |
+### Unit / Integration (`src/__tests__/`)
+
+| File | Layer | Modules Under Test | New? |
+|------|-------|--------------------|------|
+| `resume-schema.test.ts` | Unit | `src/lib/schemas/resume-schema.ts` | Exists |
+| `url-codec-extended.test.ts` | Unit | `src/lib/sharing/url-codec.ts` | Exists |
+| `pdf-generator.test.ts` | Unit | `src/lib/pdf/generate-pdf.ts` | Exists |
+| `cn.test.ts` | Unit | `src/lib/cn.ts` | Exists |
+| `constants.test.ts` | Unit | `src/lib/constants.ts` | Exists |
+| `templates.test.ts` | Unit | All 5 templates + renderer | Exists |
+| `color-picker.test.ts` | Integration | `src/components/ui/color-picker.tsx` | Exists |
+| `landing-page.test.ts` | Integration | `src/components/landing/*.tsx` | Exists |
+| `dark-mode.test.ts` | Integration | `src/components/shared/theme-*.tsx` | Exists |
+| `print-styles.test.ts` | Integration | Print CSS class verification | Exists |
+| `resume-store.test.ts` | Integration | `src/store/resume-store.ts` | Exists |
+| `auto-save.test.ts` | Integration | `src/hooks/use-auto-save.ts` | Exists |
+| `use-pdf-generator.test.ts` | Integration | `src/hooks/use-pdf-generator.ts` | Exists |
+| `shareable-link.test.ts` | Integration | `src/hooks/use-shareable-link.ts` | Exists |
+| `use-keyboard-shortcuts.test.ts` | Integration | `src/hooks/use-keyboard-shortcuts.ts` | Exists |
+| `use-media-query.test.ts` | Integration | `src/hooks/use-media-query.ts` | **New** |
+| `form-editor.test.ts` | Integration | `src/components/builder/sections/*.tsx` | Exists |
+| `preview-panel.test.ts` | Integration | `src/components/builder/preview-panel.tsx` | Exists |
+| `store-persistence.test.ts` | Integration | Store ↔ localStorage round-trips | Exists |
+| `json-import-export.test.ts` | Integration | `importFromJSON` / `exportAsJSON` | Exists |
+| `undo-redo.test.ts` | Integration | Undo/redo stack | Exists |
+| `multiple-resumes.test.ts` | Integration | `src/hooks/use-resume-list.ts` | Exists |
+| `monetization.test.ts` | Integration | `src/components/shared/affiliate-banner.tsx` | Exists |
+| `keyboard-shortcuts.test.ts` | Integration | Keyboard behavior at component level | Exists |
+| `property-based.test.ts` | Property | URL codec, JSON roundtrip, Zod, undo stack | **New** |
+
+### E2E (`e2e/`)
+
+| File | Flows Covered | New? |
+|------|---------------|------|
+| `home.spec.ts` | Landing page (AC-F006-*) | Exists (expand) |
+| `builder.spec.ts` | Form, preview, persistence, dark mode, undo, multi-resume, color, PDF, a11y, print | Exists (expand) |
+| `sharing.spec.ts` | Shareable links, network isolation (AC-F007-*) | Exists (expand) |
+| `templates.spec.ts` | Template gallery, template switching (AC-F003-*) | Exists (expand) |
+| `preview.spec.ts` | Read-only preview, CTA, invalid hash (AC-F007-*) | Exists (expand) |
+| `security.spec.ts` | HTTP security headers (NFR-SEC-*) | **New** |
+| `import-export.spec.ts` | JSON import/export (AC-F008-*) | **New** |
+
+---
+
+## 10. Running the Tests
+
+```bash
+# Unit + integration (watch mode during development)
+npm run test
+
+# Unit + integration (CI — single run with coverage report)
+npm run test -- --run --coverage
+
+# E2E tests (headless, CI)
+npm run test:e2e
+
+# E2E tests (headed, for debugging a single spec)
+npx playwright test e2e/sharing.spec.ts --headed
+
+# E2E — specific browser
+npx playwright test --project=firefox
+npx playwright test --project=webkit
+
+# Full CI sequence (mirrors GitHub Actions)
+npm run type-check && \
+npm run lint && \
+npm run test -- --run --coverage && \
+npm run build && \
+npm run test:e2e
+
+# Property-based tests (subset, verbose)
+npm run test -- --run --reporter=verbose src/__tests__/property-based.test.ts
+
+# Static security checks
+grep -r "dangerouslySetInnerHTML" src/ && echo "FAIL" || echo "PASS"
+grep -rE "eval\(|new Function\(" src/ && echo "FAIL" || echo "PASS"
+```
+
+---
+
+## 11. Spec → Test Traceability Matrix
+
+Every acceptance criterion maps to at least one test at each applicable layer.
+
+| Acceptance Criterion | Unit Test | Integration Test | E2E Test |
+|---------------------|-----------|-----------------|---------|
+| AC-F001-1 (preview within 200 ms) | — | `preview-panel.test.ts` | E2E-PREVIEW-01, E2E-PREVIEW-02 |
+| AC-F001-2 (Add Experience form) | `resume-schema.test.ts` | `resume-store.test.ts`, `form-editor.test.ts` | E2E-FORM-01 |
+| AC-F001-3 (drag reorder) | — | `resume-store.test.ts` (reorderExperiences) | E2E-FORM-03 |
+| AC-F001-4 (validation on download) | `resume-schema.test.ts` | `use-pdf-generator.test.ts` | E2E-FORM-07, E2E-FORM-08 |
+| AC-F001-5 (invalid email inline error) | `resume-schema.test.ts` | `form-editor.test.ts` | E2E-FORM-06 |
+| AC-F001-6 (currently working) | `resume-schema.test.ts` | `form-editor.test.ts`, `templates.test.ts` | E2E-FORM-04, E2E-FORM-05 |
+| AC-F002-1 (re-render 200 ms) | — | `preview-panel.test.ts` | E2E-PREVIEW-02 |
+| AC-F002-2 (desktop side-by-side) | — | — | E2E-BUILDER-01 |
+| AC-F002-3 (mobile bottom sheet) | — | — | E2E-BUILDER-02, E2E-BUILDER-03 |
+| AC-F002-4 (PDF matches preview) | — | — | E2E-PDF-01, E2E-PDF-04 |
+| AC-F003-1 (template switch) | — | `resume-store.test.ts` | E2E-TPL-03 |
+| AC-F003-2 (all sections render) | `templates.test.ts` | — | E2E-TPL-04 |
+| AC-F003-3 (text extractable) | `pdf-generator.test.ts` (print-based) | — | E2E-TPL-07, E2E-PDF-04 |
+| AC-F003-4 (no data loss on switch) | — | `resume-store.test.ts` | E2E-TPL-05 |
+| AC-F003-5 (multi-page flow) | — | — | E2E-TPL-06 |
+| AC-F004-1 (PDF within 2 s) | — | `use-pdf-generator.test.ts` | E2E-PDF-01 |
+| AC-F004-2 (PDF matches preview) | — | — | E2E-PDF-01, E2E-PDF-04 |
+| AC-F004-3 (zero network requests) | `pdf-generator.test.ts` | — | E2E-PDF-03, E2E-SHARE-09 |
+| AC-F004-4 (text selectable) | `pdf-generator.test.ts` (print engine used) | — | E2E-TPL-07, E2E-PDF-04 |
+| AC-F004-5 (filename format) | — | `use-pdf-generator.test.ts` | E2E-PDF-02 |
+| AC-F005-1 (1 s debounce) | — | `auto-save.test.ts` | E2E-PERSIST-01, E2E-PERSIST-02 |
+| AC-F005-2 (restore on return) | — | `store-persistence.test.ts` | E2E-PERSIST-01, E2E-PERSIST-06 |
+| AC-F005-3 (toast on quota error) | — | `auto-save.test.ts` | — |
+| AC-F005-4 (confirm before clear) | — | `resume-store.test.ts` | E2E-PERSIST-03, E2E-PERSIST-04, E2E-PERSIST-05 |
+| AC-F006-1 (hero headline) | — | `landing-page.test.ts` | E2E-HOME-01 |
+| AC-F006-2 (≥ 3 anti-paywall messages) | — | `landing-page.test.ts` | E2E-HOME-02 |
+| AC-F006-3 (CTA above fold) | — | `landing-page.test.ts` | E2E-HOME-03, E2E-HOME-04 |
+| AC-F006-4 (LCP < 2.5 s) | — | — | E2E-HOME-08 (Lighthouse CI) |
+| AC-F006-5 (meta tags) | — | `landing-page.test.ts` | E2E-HOME-05, E2E-HOME-06, E2E-HOME-07 |
+| AC-F007-1 (share URL generated) | — | `shareable-link.test.ts`, `resume-store.test.ts` | E2E-SHARE-01, E2E-SHARE-02 |
+| AC-F007-2 (preview reads URL correctly) | — | `resume-store.test.ts` | E2E-SHARE-04, E2E-SHARE-05, E2E-SHARE-10 |
+| AC-F007-3 (compression > 8 KB) | `url-codec-extended.test.ts` | `resume-store.test.ts` | E2E-SHARE-03 |
+| AC-F007-4 (read-only, CTA visible) | — | `preview-panel.test.ts` | E2E-SHARE-06, E2E-SHARE-07 |
+| AC-F007-5 (no server request) | — | — | E2E-SHARE-09 |
+| AC-F008-1 (valid JSON export) | — | `json-import-export.test.ts` | E2E-JSON-01, E2E-JSON-02 |
+| AC-F008-2 (JSON import loads data) | — | `json-import-export.test.ts` | E2E-JSON-03 |
+| AC-F008-3 (invalid JSON error; data preserved) | — | `json-import-export.test.ts` | E2E-JSON-04, E2E-JSON-05 |
+| AC-F008-4 (JSON conforms to schema) | `resume-schema.test.ts` | `json-import-export.test.ts` | E2E-JSON-02 |
+| AC-F009-1 (print hides UI chrome) | `print-styles.test.ts` | — | E2E-PRINT-01 |
+| AC-F009-2 (print matches PDF) | — | — | Visual / manual check |
+| AC-F010-1 (OS dark mode activates theme) | — | `dark-mode.test.ts` | E2E-DARK-01 |
+| AC-F010-2 (preview always white) | — | `dark-mode.test.ts`, `preview-panel.test.ts` | E2E-DARK-02 |
+| AC-F010-3 (toggle without reload) | — | `dark-mode.test.ts` | E2E-DARK-03 |
+| AC-F011-1 (second resume without losing first) | — | `multiple-resumes.test.ts` | E2E-MULTI-01 |
+| AC-F011-2 (list shows name/template/date) | — | `multiple-resumes.test.ts` | E2E-MULTI-02 |
+| AC-F011-3 (delete confirmation) | — | `multiple-resumes.test.ts` | E2E-MULTI-03, E2E-MULTI-04 |
+| AC-F012-1 (12 presets + hex input) | `constants.test.ts` | `color-picker.test.ts` | E2E-COLOR-01, E2E-COLOR-03 |
+| AC-F012-2 (color updates preview) | — | `color-picker.test.ts`, `resume-store.test.ts` | E2E-COLOR-02, E2E-COLOR-03 |
+| AC-F012-3 (low-contrast warning) | — | `color-picker.test.ts` | E2E-COLOR-04 |
+| AC-F013-1 (Ctrl+Z reverts) | — | `undo-redo.test.ts`, `use-keyboard-shortcuts.test.ts` | E2E-UNDO-01, E2E-UNDO-05 |
+| AC-F013-2 (Ctrl+Shift+Z re-applies) | — | `undo-redo.test.ts`, `use-keyboard-shortcuts.test.ts` | E2E-UNDO-02 |
+| AC-F013-3 (stack caps at 50) | `constants.test.ts` | `undo-redo.test.ts`, `property-based.test.ts` | — |
