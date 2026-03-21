@@ -1,0 +1,42 @@
+
+> free-resume-builder@0.1.0 test
+> vitest run
+
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mC:/Users/Kenny/projects/free-resume-builder-no-paywall-no-tricks[39m
+
+ [32m✓[39m src/__tests__/resume-schema.test.ts [2m ([22m[2m78 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+ [32m✓[39m src/__tests__/form-editor.test.ts [2m ([22m[2m39 tests[22m[2m)[22m[90m 14[2mms[22m[39m
+ [32m✓[39m src/__tests__/resume-store.test.ts [2m ([22m[2m36 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+ [32m✓[39m src/__tests__/store-persistence.test.ts [2m ([22m[2m23 tests[22m[2m)[22m[90m 18[2mms[22m[39m
+ [32m✓[39m src/__tests__/store-edge-cases.test.ts [2m ([22m[2m37 tests[22m[2m)[22m[90m 38[2mms[22m[39m
+ [32m✓[39m src/__tests__/keyboard-shortcuts.test.ts [2m ([22m[2m18 tests[22m[2m)[22m[90m 32[2mms[22m[39m
+ [32m✓[39m src/__tests__/use-keyboard-shortcuts.test.ts [2m ([22m[2m18 tests[22m[2m)[22m[90m 35[2mms[22m[39m
+ [32m✓[39m src/__tests__/use-pdf-generator.test.ts [2m ([22m[2m22 tests[22m[2m)[22m[90m 54[2mms[22m[39m
+ [32m✓[39m src/__tests__/constants.test.ts [2m ([22m[2m39 tests[22m[2m)[22m[90m 41[2mms[22m[39m
+ [32m✓[39m src/__tests__/personal-info-form.test.tsx [2m ([22m[2m39 tests[22m[2m)[22m[33m 369[2mms[22m[39m
+ [32m✓[39m src/__tests__/use-resume-list.test.ts [2m ([22m[2m20 tests[22m[2m)[22m[90m 52[2mms[22m[39m
+ [32m✓[39m src/__tests__/preview-panel.test.ts [2m ([22m[2m14 tests[22m[2m)[22m[33m 904[2mms[22m[39m
+ [32m✓[39m src/__tests__/url-codec-extended.test.ts [2m ([22m[2m18 tests[22m[2m)[22m[90m 14[2mms[22m[39m
+ [32m✓[39m src/__tests__/undo-redo.test.ts [2m ([22m[2m12 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/__tests__/pdf-generator.test.ts [2m ([22m[2m9 tests[22m[2m)[22m[90m 101[2mms[22m[39m
+ [32m✓[39m src/__tests__/shareable-link.test.ts [2m ([22m[2m10 tests[22m[2m)[22m[90m 32[2mms[22m[39m
+ [32m✓[39m src/__tests__/cn.test.ts [2m ([22m[2m23 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m src/__tests__/json-import-export.test.ts [2m ([22m[2m10 tests[22m[2m)[22m[90m 19[2mms[22m[39m
+ [32m✓[39m src/__tests__/skills-form.test.tsx [2m ([22m[2m16 tests[22m[2m)[22m[33m 449[2mms[22m[39m
+ [32m✓[39m src/__tests__/multiple-resumes.test.ts [2m ([22m[2m8 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/print-styles.test.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/auto-save.test.ts [2m ([22m[2m3 tests[22m[2m)[22m[90m 30[2mms[22m[39m
+ [32m✓[39m src/__tests__/templates.test.ts [2m ([22m[2m28 tests[22m[2m)[22m[33m 308[2mms[22m[39m
+ [32m✓[39m src/__tests__/color-picker.test.ts [2m ([22m[2m6 tests[22m[2m)[22m[90m 118[2mms[22m[39m
+ [32m✓[39m src/__tests__/experience-form.test.tsx [2m ([22m[2m21 tests[22m[2m)[22m[33m 714[2mms[22m[39m
+ [32m✓[39m src/__tests__/dark-mode.test.ts [2m ([22m[2m4 tests[22m[2m)[22m[33m 983[2mms[22m[39m
+ [32m✓[39m src/__tests__/landing-page.test.ts [2m ([22m[2m17 tests[22m[2m)[22m[33m 1878[2mms[22m[39m
+ [32m✓[39m src/__tests__/monetization.test.ts [2m ([22m[2m7 tests[22m[2m)[22m[90m 225[2mms[22m[39m
+ [32m✓[39m src/__tests__/template-gallery.test.ts [2m ([22m[2m25 tests[22m[2m)[22m[33m 4642[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m29 passed[39m[22m[90m (29)[39m
+[2m      Tests [22m [1m[32m606 passed[39m[22m[90m (606)[39m
+[2m   Start at [22m 11:35:09
+[2m   Duration [22m 6.28s[2m (transform 7.75s, setup 4.87s, collect 16.26s, tests 11.12s, environment 20.53s, prepare 4.52s)[22m
+
