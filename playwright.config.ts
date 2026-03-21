@@ -31,5 +31,6 @@ export default defineConfig({
     command: 'npm run dev -- --port 3100',
     url: 'http://localhost:3100',
     reuseExistingServer: true,
+    timeout: 120000,
   },
 })
