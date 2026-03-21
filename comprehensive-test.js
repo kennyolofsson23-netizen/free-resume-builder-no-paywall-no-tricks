@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs')
+const path = require('path')
 
-console.log('🎯 COMPREHENSIVE FEATURE VERIFICATION\n');
+console.log('🎯 COMPREHENSIVE FEATURE VERIFICATION\n')
 
 const features = [
   {
@@ -88,32 +88,34 @@ const features = [
     name: 'F015: Affiliate & Ad Monetization',
     files: ['src/components/shared/affiliate-banner.tsx'],
   },
-];
+]
 
-let totalPass = 0;
-let totalFail = 0;
+let totalPass = 0
+let totalFail = 0
 
-features.forEach(feature => {
-  let pass = true;
-  const missing = [];
-  
-  feature.files.forEach(file => {
-    const fullPath = path.join(__dirname, file);
+features.forEach((feature) => {
+  let pass = true
+  const missing = []
+
+  feature.files.forEach((file) => {
+    const fullPath = path.join(__dirname, file)
     if (!fs.existsSync(fullPath)) {
-      pass = false;
-      missing.push(file);
+      pass = false
+      missing.push(file)
     }
-  });
-  
-  if (pass) {
-    console.log(`✅ ${feature.name}`);
-    totalPass++;
-  } else {
-    console.log(`❌ ${feature.name}`);
-    missing.forEach(f => console.log(`   Missing: ${f}`));
-    totalFail++;
-  }
-});
+  })
 
-console.log(`\n📊 Summary: ${totalPass}/${features.length} features complete`);
-console.log(`\nTest Results: ${totalPass === features.length ? '✅ PASS' : '⚠️  ISSUES FOUND'}`);
+  if (pass) {
+    console.log(`✅ ${feature.name}`)
+    totalPass++
+  } else {
+    console.log(`❌ ${feature.name}`)
+    missing.forEach((f) => console.log(`   Missing: ${f}`))
+    totalFail++
+  }
+})
+
+console.log(`\n📊 Summary: ${totalPass}/${features.length} features complete`)
+console.log(
+  `\nTest Results: ${totalPass === features.length ? '✅ PASS' : '⚠️  ISSUES FOUND'}`
+)
