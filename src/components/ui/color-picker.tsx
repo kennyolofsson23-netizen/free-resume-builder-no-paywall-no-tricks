@@ -141,7 +141,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
               type="text"
               value={hexInput}
               onChange={handleHexChange}
-              placeholder="#rrggbb"
+              placeholder="#2563eb"
               maxLength={7}
               className={cn(
                 'w-full rounded-md border px-3 py-1.5 text-sm font-mono',

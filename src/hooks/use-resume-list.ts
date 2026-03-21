@@ -40,7 +40,7 @@ export function useResumeList() {
     if (!currentResume) return
     const item: ResumeListItem = {
       id: currentResume.id,
-      name: currentResume.personalInfo.fullName || 'Untitled Resume',
+      name: currentResume.personalInfo.fullName || 'My Resume',
       template: currentResume.template,
       updatedAt: currentResume.updatedAt,
     }
