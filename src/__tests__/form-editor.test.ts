@@ -471,7 +471,7 @@ describe('Form Editor — Validation via Zod schemas', () => {
     })
     expect(result.success).toBe(false)
     if (!result.success) {
-      const websiteIssue = result.error.issues.find((i: { path: string[] }) =>
+      const websiteIssue = result.error.issues.find((i: { path: (string | number)[] }) =>
         i.path.includes('website')
       )
       expect(websiteIssue).toBeDefined()
@@ -525,7 +525,7 @@ describe('Form Editor — Validation via Zod schemas', () => {
     expect(result.success).toBe(false)
     if (!result.success) {
       const paths = result.error.issues.map(
-        (i: { path: string[] }) => i.path[0]
+        (i: { path: (string | number)[] }) => i.path[0]
       )
       expect(paths).toContain('jobTitle')
       expect(paths).toContain('company')
