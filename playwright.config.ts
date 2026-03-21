@@ -28,10 +28,9 @@ export default defineConfig({
   ],
 
   webServer: {
-    command:
-      "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\" && npm run build && npm run start -- --port 3100",
+    command: 'npm run build && npx next start -p 3100',
     url: 'http://localhost:3100',
     reuseExistingServer: !process.env.CI,
-    timeout: 180000,
+    timeout: 300000,
   },
 })
