@@ -379,6 +379,7 @@ export function EducationForm() {
 
   return (
     <div className="space-y-3">
+      <h3 className="text-sm font-semibold text-foreground">Education</h3>
       {education.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
           List your degrees, diplomas, bootcamps, or relevant coursework.

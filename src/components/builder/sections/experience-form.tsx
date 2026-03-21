@@ -411,6 +411,7 @@ export function ExperienceForm() {
 
   return (
     <div className="space-y-3">
+      <h3 className="text-sm font-semibold text-foreground">Experience</h3>
       {experiences.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
           Your work history belongs here — even one entry makes a real

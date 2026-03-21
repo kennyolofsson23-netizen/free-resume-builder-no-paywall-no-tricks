@@ -60,6 +60,7 @@ export function PersonalInfoForm() {
 
   return (
     <div className="space-y-4">
+      <h3 className="text-sm font-semibold text-foreground">Personal Info</h3>
       {/* Full Name */}
       <div className="space-y-1.5">
         <Label htmlFor="fullName" className="text-sm font-medium">

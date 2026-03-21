@@ -126,6 +126,7 @@ test.describe('Builder Page — Personal Info form', () => {
 test.describe('Builder Page — Experience section', () => {
   test('shows the Experience section', async ({ page }) => {
     await page.goto('/builder')
+    await page.getByRole('tab', { name: /experience/i }).click()
     await expect(
       page.getByRole('heading', { name: /experience/i })
     ).toBeVisible()
@@ -133,6 +134,7 @@ test.describe('Builder Page — Experience section', () => {
 
   test('can add an experience entry', async ({ page }) => {
     await page.goto('/builder')
+    await page.getByRole('tab', { name: /experience/i }).click()
     const addButton = page.getByRole('button', { name: /add experience/i })
     await addButton.click()
 
@@ -142,6 +144,7 @@ test.describe('Builder Page — Experience section', () => {
 
   test('can fill in a job title after adding experience', async ({ page }) => {
     await page.goto('/builder')
+    await page.getByRole('tab', { name: /experience/i }).click()
     await page.getByRole('button', { name: /add experience/i }).click()
 
     const jobTitleInput = page.getByLabel(/job title/i)
@@ -151,6 +154,7 @@ test.describe('Builder Page — Experience section', () => {
 
   test('can remove an experience entry', async ({ page }) => {
     await page.goto('/builder')
+    await page.getByRole('tab', { name: /experience/i }).click()
     await page.getByRole('button', { name: /add experience/i }).click()
     await expect(page.getByLabel(/job title/i)).toBeVisible()
 
@@ -170,11 +174,13 @@ test.describe('Builder Page — Experience section', () => {
 test.describe('Builder Page — Skills section', () => {
   test('shows the Skills section', async ({ page }) => {
     await page.goto('/builder')
+    await page.getByRole('tab', { name: /skills/i }).click()
     await expect(page.getByRole('heading', { name: /skills/i })).toBeVisible()
   })
 
   test('can add a skill', async ({ page }) => {
     await page.goto('/builder')
+    await page.getByRole('tab', { name: /skills/i }).click()
     await page.getByRole('button', { name: /add skill/i }).click()
 
     // A skill name input should appear
@@ -183,6 +189,7 @@ test.describe('Builder Page — Skills section', () => {
 
   test('can fill in skill name', async ({ page }) => {
     await page.goto('/builder')
+    await page.getByRole('tab', { name: /skills/i }).click()
     await page.getByRole('button', { name: /add skill/i }).click()
 
     const skillInput = page.getByLabel(/skill name/i).first()
@@ -198,6 +205,7 @@ test.describe('Builder Page — Skills section', () => {
 test.describe('Builder Page — Education section', () => {
   test('shows the Education section', async ({ page }) => {
     await page.goto('/builder')
+    await page.getByRole('tab', { name: /education/i }).click()
     await expect(
       page.getByRole('heading', { name: /education/i })
     ).toBeVisible()
@@ -205,6 +213,7 @@ test.describe('Builder Page — Education section', () => {
 
   test('can add an education entry', async ({ page }) => {
     await page.goto('/builder')
+    await page.getByRole('tab', { name: /education/i }).click()
     await page.getByRole('button', { name: /add education/i }).click()
 
     await expect(page.getByLabel(/school/i)).toBeVisible()
@@ -308,7 +317,8 @@ test.describe('Builder Page — Personal info preview roundtrip', () => {
     await page.getByLabel(/full name/i).fill('Preview User')
     await page.getByLabel(/email/i).fill('preview@example.com')
 
-    // Add experience
+    // Navigate to Experience tab and add an entry
+    await page.getByRole('tab', { name: /experience/i }).click()
     await page.getByRole('button', { name: /add experience/i }).click()
     await page.getByLabel(/job title/i).fill('Staff Engineer')
     await page.getByLabel(/company/i).fill('Acme Corp')

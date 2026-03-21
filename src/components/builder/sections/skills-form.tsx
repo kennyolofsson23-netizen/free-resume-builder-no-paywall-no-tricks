@@ -71,6 +71,7 @@ export function SkillsForm() {
 
   return (
     <div className="space-y-3">
+      <h3 className="text-sm font-semibold text-foreground">Skills</h3>
       {skills.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-6">
           List what you know — tools, languages, frameworks, and soft skills.
