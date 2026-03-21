@@ -152,17 +152,15 @@ describe('encodeResumeData / decodeResumeData — additional edge cases', () => 
     expect(decoded).toEqual(data)
   })
 
-  it('j: prefix for small data and c: prefix for large data is mutually exclusive', () => {
+  it('no prefix for small data and z: prefix for large data is mutually exclusive', () => {
     const small = { name: 'Test' }
     const large = { name: 'x'.repeat(SHARE_COMPRESSION_THRESHOLD + 100) }
 
     const encodedSmall = encodeResumeData(small)
     const encodedLarge = encodeResumeData(large)
 
-    expect(encodedSmall.startsWith('j:')).toBe(true)
-    expect(encodedLarge.startsWith('c:')).toBe(true)
-    expect(encodedSmall.startsWith('c:')).toBe(false)
-    expect(encodedLarge.startsWith('j:')).toBe(false)
+    expect(encodedSmall.startsWith('z:')).toBe(false)
+    expect(encodedLarge.startsWith('z:')).toBe(true)
   })
 
   it('decoded result preserves exact numeric precision', () => {

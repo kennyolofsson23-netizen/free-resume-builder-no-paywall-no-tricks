@@ -22,7 +22,19 @@ export function useKeyboardShortcuts({
         target.tagName
       )
 
-      const isMac = navigator.platform.toUpperCase().includes('MAC')
+      // navigator.userAgentData is the modern replacement for the deprecated
+      // navigator.platform. Cast via intersection type because the UA Client
+      // Hints API is not yet in all TypeScript lib versions.
+      const nav = navigator as Navigator & {
+        userAgentData?: { platform?: string }
+      }
+      const isMac = (
+        typeof nav.userAgentData?.platform === 'string'
+          ? nav.userAgentData.platform
+          : navigator.userAgent
+      )
+        .toLowerCase()
+        .includes('mac')
       const modKey = isMac ? e.metaKey : e.ctrlKey
 
       if (modKey && e.key === 'z' && !e.shiftKey) {

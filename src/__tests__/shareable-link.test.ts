@@ -15,14 +15,14 @@ describe('encodeResumeData / decodeResumeData — roundtrip', () => {
     },
   }
 
-  it('roundtrips small data with j: prefix', () => {
+  it('roundtrips small data without z: prefix (plain base64url)', () => {
     const encoded = encodeResumeData(sampleData)
-    expect(encoded.startsWith('j:')).toBe(true)
+    expect(encoded.startsWith('z:')).toBe(false)
     const decoded = decodeResumeData(encoded)
     expect(decoded).toEqual(sampleData)
   })
 
-  it('roundtrips large data with c: prefix (compressed)', () => {
+  it('roundtrips large data with z: prefix (compressed)', () => {
     // Build an object whose JSON representation exceeds the threshold
     const largeData = {
       id: 'large-123',
@@ -32,7 +32,7 @@ describe('encodeResumeData / decodeResumeData — roundtrip', () => {
       padding: 'x'.repeat(SHARE_COMPRESSION_THRESHOLD + 100),
     }
     const encoded = encodeResumeData(largeData)
-    expect(encoded.startsWith('c:')).toBe(true)
+    expect(encoded.startsWith('z:')).toBe(true)
     const decoded = decodeResumeData(encoded)
     expect(decoded).toEqual(largeData)
   })
@@ -41,15 +41,15 @@ describe('encodeResumeData / decodeResumeData — roundtrip', () => {
     expect(decodeResumeData('totally-invalid')).toBeNull()
   })
 
-  it('returns null for corrupted c: payload', () => {
-    // "c:" followed by garbage that is not valid deflate data
-    expect(decodeResumeData('c:!!!not-valid-base64!!!')).toBeNull()
+  it('returns null for corrupted z: payload', () => {
+    // "z:" followed by garbage that is not valid deflate data
+    expect(decodeResumeData('z:!!!not-valid-base64!!!')).toBeNull()
   })
 
-  it('returns null for corrupted j: payload', () => {
-    // "j:" followed by base64 that decodes to non-JSON
-    const b64 = btoa('not json at all')
-    expect(decodeResumeData('j:' + b64)).toBeNull()
+  it('returns null for corrupted plain base64url payload', () => {
+    // base64 that decodes to non-JSON
+    const b64 = btoa('not json at all').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+    expect(decodeResumeData(b64)).toBeNull()
   })
 
   it('returns null for empty string', () => {

@@ -1,11 +1,19 @@
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
-
 export interface GeneratePDFOptions {
   elementId?: string
   filename?: string
 }
 
+/**
+ * Downloads the resume as a text-selectable, ATS-parseable PDF using the
+ * browser's built-in print-to-PDF capability.
+ *
+ * The element identified by `elementId` must be present in the DOM before
+ * calling this function (guards against calling before the resume renders).
+ * Print styles in globals.css hide all UI chrome so only the resume prints.
+ *
+ * The `filename` is applied to document.title so browsers suggest it as the
+ * save-as filename in the print dialog.
+ */
 export async function generatePDF(
   options: GeneratePDFOptions = {}
 ): Promise<void> {
@@ -17,43 +25,13 @@ export async function generatePDF(
     throw new Error(`Element #${elementId} not found`)
   }
 
-  // Render element to canvas at 2× resolution for crisp output
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    allowTaint: false,
-    backgroundColor: '#ffffff',
-    logging: false,
-  })
+  // Suggest filename via document title (browsers use this in Save PDF dialog)
+  const prevTitle = document.title
+  document.title = filename.replace(/\.pdf$/i, '')
 
-  const imgData = canvas.toDataURL('image/jpeg', 0.95)
-
-  // US Letter: 8.5 × 11 inches = 612 × 792 points
-  const pdf = new jsPDF({
-    orientation: 'portrait',
-    unit: 'pt',
-    format: 'letter',
-  })
-
-  const pageWidth = pdf.internal.pageSize.getWidth()
-  const pageHeight = pdf.internal.pageSize.getHeight()
-
-  // Scale canvas to fit the page width
-  const ratio = pageWidth / canvas.width
-  const scaledHeight = canvas.height * ratio
-
-  // Add image, paginating if the content is taller than one page
-  let yOffset = 0
-  let remaining = scaledHeight
-
-  while (remaining > 0) {
-    pdf.addImage(imgData, 'JPEG', 0, yOffset, pageWidth, scaledHeight)
-    remaining -= pageHeight
-    if (remaining > 0) {
-      pdf.addPage()
-      yOffset -= pageHeight
-    }
+  try {
+    window.print()
+  } finally {
+    document.title = prevTitle
   }
-
-  pdf.save(filename)
 }

@@ -28,25 +28,36 @@ export function useShareableLink(): UseShareableLinkReturn {
   )
 
   const generateLink = async (): Promise<void> => {
+    // Step 1: encode (may throw if pako fails)
+    let url: string
     try {
-      // Prefer the new codec if resume is available; fall back to store method
-      let url: string
       if (resume && typeof window !== 'undefined') {
         const encoded = encodeResumeForURL(resume)
         url = `${window.location.origin}/preview#${encoded}`
       } else {
         url = generateShareableURL()
       }
+    } catch (err) {
+      console.error('[useShareableLink] Failed to encode resume for sharing:', err)
+      toast({
+        title: 'Could not generate share link',
+        description: 'Failed to encode your resume. Please try again.',
+        variant: 'destructive',
+      })
+      return
+    }
 
-      if (!url) {
-        toast({
-          title: 'Nothing to share yet',
-          description: 'Add some information to your resume first.',
-          variant: 'destructive',
-        })
-        return
-      }
+    if (!url) {
+      toast({
+        title: 'Nothing to share yet',
+        description: 'Add some information to your resume first.',
+        variant: 'destructive',
+      })
+      return
+    }
 
+    // Step 2: copy to clipboard (may throw on permission denial)
+    try {
       await navigator.clipboard.writeText(url)
       setIsCopied(true)
       toast({
