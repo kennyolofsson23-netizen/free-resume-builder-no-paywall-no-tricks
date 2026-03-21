@@ -524,7 +524,9 @@ describe('Form Editor — Validation via Zod schemas', () => {
     })
     expect(result.success).toBe(false)
     if (!result.success) {
-      const paths = result.error.issues.map((i: { path: string[] }) => i.path[0])
+      const paths = result.error.issues.map(
+        (i: { path: string[] }) => i.path[0]
+      )
       expect(paths).toContain('jobTitle')
       expect(paths).toContain('company')
     }

@@ -333,9 +333,9 @@ describe('ExperienceForm — field updates', () => {
       fireEvent.change(input, { target: { value: 'Senior Engineer' } })
     })
 
-    expect(
-      useResumeStore.getState().resume?.experiences[0]?.jobTitle
-    ).toBe('Senior Engineer')
+    expect(useResumeStore.getState().resume?.experiences[0]?.jobTitle).toBe(
+      'Senior Engineer'
+    )
   })
 
   it('typing in Company updates the store', () => {
@@ -353,9 +353,9 @@ describe('ExperienceForm — field updates', () => {
       fireEvent.change(input, { target: { value: 'Acme Inc' } })
     })
 
-    expect(
-      useResumeStore.getState().resume?.experiences[0]?.company
-    ).toBe('Acme Inc')
+    expect(useResumeStore.getState().resume?.experiences[0]?.company).toBe(
+      'Acme Inc'
+    )
   })
 })
 

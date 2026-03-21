@@ -113,7 +113,9 @@ describe('Resume Store — updateAccentColor does not push undo history', () => 
     const historyLengthBefore = useResumeStore.getState().pastStates.length
 
     useResumeStore.getState().updateAccentColor('#16a34a')
-    expect(useResumeStore.getState().pastStates).toHaveLength(historyLengthBefore)
+    expect(useResumeStore.getState().pastStates).toHaveLength(
+      historyLengthBefore
+    )
   })
 })
 
@@ -132,19 +134,25 @@ describe('Resume Store — updateAccentColor rejects invalid hex', () => {
   it('ignores 3-digit hex colors', () => {
     useResumeStore.getState().createNewResume()
     useResumeStore.getState().updateAccentColor('#abc')
-    expect(useResumeStore.getState().resume?.accentColor).toBe(DEFAULT_ACCENT_COLOR)
+    expect(useResumeStore.getState().resume?.accentColor).toBe(
+      DEFAULT_ACCENT_COLOR
+    )
   })
 
   it('ignores empty string', () => {
     useResumeStore.getState().createNewResume()
     useResumeStore.getState().updateAccentColor('')
-    expect(useResumeStore.getState().resume?.accentColor).toBe(DEFAULT_ACCENT_COLOR)
+    expect(useResumeStore.getState().resume?.accentColor).toBe(
+      DEFAULT_ACCENT_COLOR
+    )
   })
 
   it('ignores hex without # prefix', () => {
     useResumeStore.getState().createNewResume()
     useResumeStore.getState().updateAccentColor('2563eb')
-    expect(useResumeStore.getState().resume?.accentColor).toBe(DEFAULT_ACCENT_COLOR)
+    expect(useResumeStore.getState().resume?.accentColor).toBe(
+      DEFAULT_ACCENT_COLOR
+    )
   })
 
   it('accepts valid 6-digit uppercase hex', () => {
@@ -351,7 +359,9 @@ describe('Resume Store — reorderCertifications', () => {
     useResumeStore.setState({ pastStates: [] })
 
     const certs = useResumeStore.getState().resume!.certifications
-    useResumeStore.getState().reorderCertifications([certs[1]!.id, certs[0]!.id])
+    useResumeStore
+      .getState()
+      .reorderCertifications([certs[1]!.id, certs[0]!.id])
     expect(useResumeStore.getState().pastStates.length).toBeGreaterThan(0)
   })
 })

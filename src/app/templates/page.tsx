@@ -96,7 +96,9 @@ export default function TemplatesPage() {
 
       {/* Footer — outside <main> so it gets role="contentinfo" */}
       <footer className="bg-foreground text-muted py-8 text-center text-sm">
-        <p className="text-muted-foreground">Free Resume Builder — No paywall. No account. No tricks.</p>
+        <p className="text-muted-foreground">
+          Free Resume Builder — No paywall. No account. No tricks.
+        </p>
       </footer>
     </>
   )

@@ -361,9 +361,7 @@ describe('PersonalInfoForm — initial values from store', () => {
 
   it('email input reflects store value', () => {
     act(() => {
-      useResumeStore
-        .getState()
-        .updatePersonalInfo({ email: 'pre@example.com' })
+      useResumeStore.getState().updatePersonalInfo({ email: 'pre@example.com' })
     })
     render(React.createElement(PersonalInfoForm))
     const input = document.getElementById('email') as HTMLInputElement

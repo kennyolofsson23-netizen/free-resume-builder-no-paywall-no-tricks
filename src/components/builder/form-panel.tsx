@@ -63,7 +63,10 @@ export function FormPanel() {
       </div>
 
       {/* Tabbed sections */}
-      <Tabs defaultValue="personal" className="flex flex-1 flex-col overflow-hidden">
+      <Tabs
+        defaultValue="personal"
+        className="flex flex-1 flex-col overflow-hidden"
+      >
         {/* Scrollable tab bar */}
         <div className="shrink-0 border-b border-border bg-background overflow-x-auto">
           <TabsList className="inline-flex h-10 rounded-none bg-transparent p-0 w-max">
@@ -106,22 +109,40 @@ export function FormPanel() {
           </TabsList>
         </div>
 
-        <TabsContent value="personal" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+        <TabsContent
+          value="personal"
+          className="flex-1 overflow-y-auto mt-0 px-4 py-4"
+        >
           <PersonalInfoForm />
         </TabsContent>
-        <TabsContent value="experience" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+        <TabsContent
+          value="experience"
+          className="flex-1 overflow-y-auto mt-0 px-4 py-4"
+        >
           <ExperienceForm />
         </TabsContent>
-        <TabsContent value="education" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+        <TabsContent
+          value="education"
+          className="flex-1 overflow-y-auto mt-0 px-4 py-4"
+        >
           <EducationForm />
         </TabsContent>
-        <TabsContent value="skills" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+        <TabsContent
+          value="skills"
+          className="flex-1 overflow-y-auto mt-0 px-4 py-4"
+        >
           <SkillsForm />
         </TabsContent>
-        <TabsContent value="projects" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+        <TabsContent
+          value="projects"
+          className="flex-1 overflow-y-auto mt-0 px-4 py-4"
+        >
           <ProjectsForm />
         </TabsContent>
-        <TabsContent value="certifications" className="flex-1 overflow-y-auto mt-0 px-4 py-4">
+        <TabsContent
+          value="certifications"
+          className="flex-1 overflow-y-auto mt-0 px-4 py-4"
+        >
           <CertificationsForm />
         </TabsContent>
       </Tabs>

@@ -1,4 +1,9 @@
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion'
 
 const faqs = [
   {
@@ -46,7 +51,10 @@ export function FAQ() {
           Frequently Asked Questions
         </h2>
 
-        <Accordion type="multiple" className="rounded-lg border border-border bg-card px-6">
+        <Accordion
+          type="multiple"
+          className="rounded-lg border border-border bg-card px-6"
+        >
           {faqs.map((faq) => (
             <AccordionItem key={faq.question} value={faq.question}>
               <AccordionTrigger className="text-base font-semibold text-foreground">

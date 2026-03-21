@@ -54,7 +54,10 @@ vi.mock('html2canvas', () => ({
   }),
 }))
 
-let generatePDF: (options?: { elementId?: string; filename?: string }) => Promise<void>
+let generatePDF: (options?: {
+  elementId?: string
+  filename?: string
+}) => Promise<void>
 
 beforeAll(async () => {
   const mod = await import('@/lib/pdf/generate-pdf')

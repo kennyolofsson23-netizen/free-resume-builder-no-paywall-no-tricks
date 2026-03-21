@@ -70,7 +70,10 @@ export function TemplateShowcase() {
           aria-labelledby={`template-tab-${activeTemplate}`}
           className="overflow-hidden rounded-lg border border-border bg-white shadow-lg"
         >
-          <div className="relative overflow-hidden" style={{ paddingBottom: '129.4%' }}>
+          <div
+            className="relative overflow-hidden"
+            style={{ paddingBottom: '129.4%' }}
+          >
             <div
               className="absolute inset-0 overflow-hidden"
               style={{ pointerEvents: 'none' }}
@@ -93,8 +96,12 @@ export function TemplateShowcase() {
         {activeData && (
           <div className="mt-6 flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-foreground">{activeData.name}</h3>
-              <p className="text-sm text-muted-foreground">{activeData.description}</p>
+              <h3 className="font-semibold text-foreground">
+                {activeData.name}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {activeData.description}
+              </p>
             </div>
             <Link
               href={`/builder?template=${activeTemplate}`}

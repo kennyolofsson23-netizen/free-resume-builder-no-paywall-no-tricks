@@ -86,7 +86,10 @@ export function SectionEntry({
         </button>
 
         {/* Delete button with confirmation */}
-        <AlertDialog.Root open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialog.Root
+          open={showDeleteConfirm}
+          onOpenChange={setShowDeleteConfirm}
+        >
           <AlertDialog.Trigger asChild>
             <Button
               type="button"
@@ -106,7 +109,8 @@ export function SectionEntry({
                   Remove &ldquo;{displayTitle}&rdquo;?
                 </AlertDialog.Title>
                 <AlertDialog.Description className="text-sm text-muted-foreground">
-                  This entry will be permanently removed. You can use Ctrl+Z to undo if you change your mind.
+                  This entry will be permanently removed. You can use Ctrl+Z to
+                  undo if you change your mind.
                 </AlertDialog.Description>
               </div>
               <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
@@ -114,10 +118,7 @@ export function SectionEntry({
                   <Button variant="outline">Cancel</Button>
                 </AlertDialog.Cancel>
                 <AlertDialog.Action asChild>
-                  <Button
-                    variant="destructive"
-                    onClick={onDelete}
-                  >
+                  <Button variant="destructive" onClick={onDelete}>
                     Remove
                   </Button>
                 </AlertDialog.Action>

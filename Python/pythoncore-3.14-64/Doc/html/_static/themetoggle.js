@@ -3,17 +3,17 @@ const pygmentsDark = document.getElementById('pygments_dark_css')
 const themeSelectors = document.getElementsByClassName('theme-selector')
 
 function activateTheme(theme) {
-  localStorage.setItem('currentTheme', theme);
-  [...themeSelectors].forEach(e => e.value = theme)
+  localStorage.setItem('currentTheme', theme)
+  ;[...themeSelectors].forEach((e) => (e.value = theme))
   switch (theme) {
     case 'light':
       pydocthemeDark.media = 'not all'
       pygmentsDark.media = 'not all'
-      break;
+      break
     case 'dark':
       pydocthemeDark.media = 'all'
       pygmentsDark.media = 'all'
-      break;
+      break
     default:
       // auto
       pydocthemeDark.media = '(prefers-color-scheme: dark)'

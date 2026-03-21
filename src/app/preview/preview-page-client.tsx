@@ -55,7 +55,9 @@ export function PreviewPageClient() {
       <div className="min-h-screen bg-muted/30 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary border-r-transparent" />
-          <p className="mt-3 text-muted-foreground">Loading resume preview&hellip;</p>
+          <p className="mt-3 text-muted-foreground">
+            Loading resume preview&hellip;
+          </p>
         </div>
       </div>
     )

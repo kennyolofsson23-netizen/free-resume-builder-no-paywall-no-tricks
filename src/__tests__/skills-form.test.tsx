@@ -103,9 +103,7 @@ describe('SkillsForm — updating a skill', () => {
       fireEvent.change(input, { target: { value: 'TypeScript' } })
     })
 
-    expect(
-      useResumeStore.getState().resume?.skills[0]?.name
-    ).toBe('TypeScript')
+    expect(useResumeStore.getState().resume?.skills[0]?.name).toBe('TypeScript')
   })
 
   it('skill level selector shows Proficiency option as default', () => {
@@ -130,9 +128,7 @@ describe('SkillsForm — updating a skill', () => {
       fireEvent.change(select, { target: { value: 'expert' } })
     })
 
-    expect(
-      useResumeStore.getState().resume?.skills[0]?.level
-    ).toBe('expert')
+    expect(useResumeStore.getState().resume?.skills[0]?.level).toBe('expert')
   })
 
   it('skill level selector contains all 4 levels', () => {
