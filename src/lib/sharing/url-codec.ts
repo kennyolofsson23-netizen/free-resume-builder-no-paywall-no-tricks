@@ -54,7 +54,10 @@ export class DecodeSizeError extends Error {
 }
 
 export class DecodeFormatError extends Error {
-  constructor(message: string, public readonly cause?: unknown) {
+  constructor(
+    message: string,
+    public readonly cause?: unknown
+  ) {
     super(message)
     this.name = 'DecodeFormatError'
   }
@@ -77,7 +80,10 @@ export function decodeResumeFromURL(hash: string): object | null {
       try {
         bytes = fromBase64Url(hash.slice(2))
       } catch (err) {
-        throw new DecodeFormatError('Invalid base64url in compressed payload', err)
+        throw new DecodeFormatError(
+          'Invalid base64url in compressed payload',
+          err
+        )
       }
 
       let decompressed: string
@@ -95,7 +101,10 @@ export function decodeResumeFromURL(hash: string): object | null {
       try {
         return JSON.parse(decompressed) as object
       } catch (err) {
-        throw new DecodeFormatError('Decompressed payload is not valid JSON', err)
+        throw new DecodeFormatError(
+          'Decompressed payload is not valid JSON',
+          err
+        )
       }
     }
 
@@ -117,9 +126,16 @@ export function decodeResumeFromURL(hash: string): object | null {
     if (err instanceof DecodeSizeError) {
       console.warn('[url-codec] Compression-bomb guard triggered:', err.message)
     } else if (err instanceof DecodeFormatError) {
-      console.warn('[url-codec] Failed to decode resume from URL:', err.message, err.cause)
+      console.warn(
+        '[url-codec] Failed to decode resume from URL:',
+        err.message,
+        err.cause
+      )
     } else {
-      console.warn('[url-codec] Unexpected error decoding resume from URL:', err)
+      console.warn(
+        '[url-codec] Unexpected error decoding resume from URL:',
+        err
+      )
     }
     return null
   }
