@@ -28,7 +28,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run build && npx next start -p 3100',
+    command: 'node scripts/e2e-server.js',
     url: 'http://localhost:3100',
     reuseExistingServer: !process.env.CI,
     timeout: 300000,
