@@ -6,7 +6,15 @@
 const { execSync, spawn } = require('child_process')
 const path = require('path')
 
-const nextBin = path.join(__dirname, '..', 'node_modules', 'next', 'dist', 'bin', 'next')
+const nextBin = path.join(
+  __dirname,
+  '..',
+  'node_modules',
+  'next',
+  'dist',
+  'bin',
+  'next'
+)
 
 // Build the app first
 console.log('[e2e-server] Building Next.js app...')
