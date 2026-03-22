@@ -29,17 +29,18 @@ afterEach(() => {
 
 describe('useAutoSave', () => {
   it('calls saveToLocalStorage after debounce when resume changes', () => {
-    const saveSpy = vi.spyOn(useResumeStore.getState(), 'saveToLocalStorage')
-
-    // Create a resume to start
-    act(() => {
-      useResumeStore.getState().createNewResume()
-    })
-
+    // Render hook first so subscription is set up before store mutations
     const { result } = renderHook(() => useAutoSave(500))
 
     // Initially not saving
     expect(result.current.isSaving).toBe(false)
+
+    // Create a resume (this will be picked up by the hook's subscription)
+    act(() => {
+      useResumeStore.getState().createNewResume()
+    })
+
+    const saveSpy = vi.spyOn(useResumeStore.getState(), 'saveToLocalStorage')
 
     // Trigger a resume change
     act(() => {
@@ -56,13 +57,14 @@ describe('useAutoSave', () => {
   })
 
   it('debounces multiple rapid changes into a single save', () => {
-    const saveSpy = vi.spyOn(useResumeStore.getState(), 'saveToLocalStorage')
+    // Render hook first so subscription is set up before store mutations
+    renderHook(() => useAutoSave(500))
 
     act(() => {
       useResumeStore.getState().createNewResume()
     })
 
-    renderHook(() => useAutoSave(500))
+    const saveSpy = vi.spyOn(useResumeStore.getState(), 'saveToLocalStorage')
 
     // Make several rapid changes
     act(() => {
@@ -92,20 +94,22 @@ describe('useAutoSave', () => {
     expect(saveSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('shows toast warning when save fails', () => {
+  it('shows toast warning when save fails due to QuotaExceededError', () => {
+    // Render hook first so subscription is set up before store mutations
+    renderHook(() => useAutoSave(500))
+
     act(() => {
       useResumeStore.getState().createNewResume()
     })
 
-    // Make saveToLocalStorage throw
+    // Make saveToLocalStorage throw a QuotaExceededError DOMException
     vi.spyOn(
       useResumeStore.getState(),
       'saveToLocalStorage'
     ).mockImplementation(() => {
-      throw new Error('QuotaExceededError')
+      const err = new DOMException('QuotaExceededError', 'QuotaExceededError')
+      throw err
     })
-
-    renderHook(() => useAutoSave(500))
 
     act(() => {
       useResumeStore.getState().updatePersonalInfo({ fullName: 'Fail Test' })

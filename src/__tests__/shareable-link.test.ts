@@ -75,9 +75,22 @@ vi.mock('@/hooks/use-toast', () => ({
 import { useShareableLink } from '@/hooks/use-shareable-link'
 import { toast } from '@/hooks/use-toast'
 
+let originalClipboard: Clipboard
+
 beforeEach(() => {
   useResumeStore.setState({ resume: null, pastStates: [], futureStates: [] })
   vi.clearAllMocks()
+  // Save the original clipboard descriptor so we can restore it after each test
+  originalClipboard = navigator.clipboard
+})
+
+afterEach(() => {
+  // Restore the original clipboard to prevent global mutation from leaking across tests
+  Object.defineProperty(navigator, 'clipboard', {
+    value: originalClipboard,
+    writable: true,
+    configurable: true,
+  })
 })
 
 describe('useShareableLink', () => {

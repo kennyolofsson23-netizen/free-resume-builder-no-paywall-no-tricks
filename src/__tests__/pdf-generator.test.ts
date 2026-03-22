@@ -1,9 +1,9 @@
 /**
  * Tests for F004 — Instant PDF Download
  * Tests the actual generate-pdf.ts module.
- * The implementation uses window.print() to produce text-selectable PDFs.
+ * The implementation uses jsPDF + html2canvas to produce programmatic PDFs.
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest'
 import type { Resume } from '@/types/resume'
 
 const sampleResume: Resume = {
@@ -25,12 +25,40 @@ const sampleResume: Resume = {
   updatedAt: new Date().toISOString(),
 }
 
+// Mock html2canvas and jsPDF since jsdom doesn't support canvas rendering
+const mockSave = vi.fn()
+const mockAddImage = vi.fn()
+const mockToDataURL = vi.fn(() => 'data:image/png;base64,MOCK')
+const mockGetWidth = vi.fn(() => 595)
+const mockGetHeight = vi.fn(() => 842)
+
+vi.mock('html2canvas', () => ({
+  default: vi.fn(() =>
+    Promise.resolve({
+      toDataURL: mockToDataURL,
+      width: 800,
+      height: 1100,
+    })
+  ),
+}))
+
+vi.mock('jspdf', () => ({
+  default: vi.fn(() => ({
+    internal: {
+      pageSize: {
+        getWidth: mockGetWidth,
+        getHeight: mockGetHeight,
+      },
+    },
+    addImage: mockAddImage,
+    save: mockSave,
+  })),
+}))
+
 let generatePDF: (options?: {
   elementId?: string
   filename?: string
 }) => Promise<void>
-
-let mockPrint: ReturnType<typeof vi.fn>
 
 beforeAll(async () => {
   const mod = await import('@/lib/pdf/generate-pdf')
@@ -39,8 +67,9 @@ beforeAll(async () => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mockPrint = vi.fn()
-  window.print = mockPrint
+  mockToDataURL.mockReturnValue('data:image/png;base64,MOCK')
+  mockGetWidth.mockReturnValue(595)
+  mockGetHeight.mockReturnValue(842)
 })
 
 describe('generatePDF — core behavior', () => {
@@ -50,7 +79,7 @@ describe('generatePDF — core behavior', () => {
     ).rejects.toThrow('Element #nonexistent-element not found')
   })
 
-  it('calls window.print() when element exists', async () => {
+  it('calls html2canvas and pdf.save() when element exists', async () => {
     const el = document.createElement('div')
     el.id = 'resume-preview-container'
     document.body.appendChild(el)
@@ -60,65 +89,57 @@ describe('generatePDF — core behavior', () => {
       filename: 'Test_Resume.pdf',
     })
 
-    expect(mockPrint).toHaveBeenCalledOnce()
+    const html2canvas = (await import('html2canvas')).default
+    expect(html2canvas).toHaveBeenCalledOnce()
+    expect(mockSave).toHaveBeenCalledWith('Test_Resume.pdf')
     document.body.removeChild(el)
   })
 
-  it('does NOT call window.print() when element is missing', async () => {
+  it('does NOT call pdf.save() when element is missing', async () => {
     await expect(generatePDF({ elementId: 'does-not-exist' })).rejects.toThrow()
-    expect(mockPrint).not.toHaveBeenCalled()
+    expect(mockSave).not.toHaveBeenCalled()
   })
 
-  it('sets document.title to filename (without .pdf) before printing', async () => {
+  it('passes the correct filename to pdf.save()', async () => {
     const el = document.createElement('div')
-    el.id = 'resume-title-test'
+    el.id = 'resume-filename-test'
     document.body.appendChild(el)
 
-    let capturedTitle = ''
-    window.print = vi.fn().mockImplementation(() => {
-      capturedTitle = document.title
-    })
-
     await generatePDF({
-      elementId: 'resume-title-test',
+      elementId: 'resume-filename-test',
       filename: 'Jane_Smith_Resume.pdf',
     })
 
-    expect(capturedTitle).toBe('Jane_Smith_Resume')
+    expect(mockSave).toHaveBeenCalledWith('Jane_Smith_Resume.pdf')
     document.body.removeChild(el)
   })
 
-  it('restores original document.title after printing', async () => {
+  it('uses default filename "Resume.pdf" when no filename provided', async () => {
     const el = document.createElement('div')
-    el.id = 'resume-restore-test'
+    el.id = 'resume-default-filename-test'
     document.body.appendChild(el)
 
-    const originalTitle = document.title
+    await generatePDF({ elementId: 'resume-default-filename-test' })
 
-    await generatePDF({
-      elementId: 'resume-restore-test',
-      filename: 'Test.pdf',
-    })
-
-    expect(document.title).toBe(originalTitle)
+    expect(mockSave).toHaveBeenCalledWith('Resume.pdf')
     document.body.removeChild(el)
   })
 
-  it('restores document.title even if window.print throws', async () => {
+  it('calls addImage with PNG data from html2canvas', async () => {
     const el = document.createElement('div')
-    el.id = 'resume-throw-test'
+    el.id = 'resume-image-test'
     document.body.appendChild(el)
 
-    const originalTitle = document.title
-    window.print = vi.fn().mockImplementation(() => {
-      throw new Error('print failed')
-    })
+    await generatePDF({ elementId: 'resume-image-test', filename: 'Test.pdf' })
 
-    await expect(
-      generatePDF({ elementId: 'resume-throw-test', filename: 'Test.pdf' })
-    ).rejects.toThrow('print failed')
-
-    expect(document.title).toBe(originalTitle)
+    expect(mockAddImage).toHaveBeenCalledWith(
+      'data:image/png;base64,MOCK',
+      'PNG',
+      expect.any(Number),
+      expect.any(Number),
+      expect.any(Number),
+      expect.any(Number)
+    )
     document.body.removeChild(el)
   })
 })
@@ -175,17 +196,19 @@ describe('PDF is client-side only', () => {
   })
 })
 
-describe('PDF text selectability', () => {
-  it('uses window.print() (not image embedding) to produce text-selectable output', async () => {
-    // Verify the implementation is print-based, not canvas-based.
-    // A rasterized approach would call html2canvas; the print approach calls window.print().
+describe('PDF uses programmatic generation (not print dialog)', () => {
+  it('does not call window.print() — uses jsPDF programmatically instead', async () => {
+    const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {})
+
     const el = document.createElement('div')
-    el.id = 'resume-text-select-test'
+    el.id = 'resume-no-print-test'
     document.body.appendChild(el)
 
-    await generatePDF({ elementId: 'resume-text-select-test' })
+    await generatePDF({ elementId: 'resume-no-print-test' })
 
-    expect(mockPrint).toHaveBeenCalledOnce()
+    expect(printSpy).not.toHaveBeenCalled()
+    expect(mockSave).toHaveBeenCalledOnce()
     document.body.removeChild(el)
+    printSpy.mockRestore()
   })
 })

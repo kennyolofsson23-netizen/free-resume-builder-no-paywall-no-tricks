@@ -23,7 +23,7 @@ import {
 } from '@/lib/constants'
 
 function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  return crypto.randomUUID()
 }
 
 function createEmptyResume(): Resume {
@@ -226,7 +226,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       const map = new Map(state.resume.experiences.map((e) => [e.id, e]))
       const reordered = ids
         .map((id) => map.get(id))
-        .filter(Boolean) as Experience[]
+        .filter((e): e is Experience => e !== undefined)
       return {
         pastStates: pushHistory(state.pastStates, state.resume),
         futureStates: [],
@@ -297,7 +297,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       const map = new Map(state.resume.education.map((e) => [e.id, e]))
       const reordered = ids
         .map((id) => map.get(id))
-        .filter(Boolean) as Education[]
+        .filter((e): e is Education => e !== undefined)
       return {
         pastStates: pushHistory(state.pastStates, state.resume),
         futureStates: [],
@@ -467,7 +467,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       const map = new Map(state.resume.certifications.map((c) => [c.id, c]))
       const reordered = ids
         .map((id) => map.get(id))
-        .filter(Boolean) as Certification[]
+        .filter((c): c is Certification => c !== undefined)
       return {
         pastStates: pushHistory(state.pastStates, state.resume),
         futureStates: [],

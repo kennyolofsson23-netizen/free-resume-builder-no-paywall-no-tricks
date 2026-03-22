@@ -1,18 +1,15 @@
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+
 export interface GeneratePDFOptions {
   elementId?: string
   filename?: string
 }
 
 /**
- * Downloads the resume as a text-selectable, ATS-parseable PDF using the
- * browser's built-in print-to-PDF capability.
- *
- * The element identified by `elementId` must be present in the DOM before
- * calling this function (guards against calling before the resume renders).
- * Print styles in globals.css hide all UI chrome so only the resume prints.
- *
- * The `filename` is applied to document.title so browsers suggest it as the
- * save-as filename in the print dialog.
+ * Downloads the resume as a PDF using jsPDF + html2canvas.
+ * Renders the DOM element to a canvas, then embeds it into a PDF document
+ * and triggers a download — no browser print dialog is opened.
  */
 export async function generatePDF(
   options: GeneratePDFOptions = {}
@@ -25,13 +22,33 @@ export async function generatePDF(
     throw new Error(`Element #${elementId} not found`)
   }
 
-  // Suggest filename via document title (browsers use this in Save PDF dialog)
-  const prevTitle = document.title
-  document.title = filename.replace(/\.pdf$/i, '')
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    logging: false,
+  })
 
-  try {
-    window.print()
-  } finally {
-    document.title = prevTitle
+  const imgData = canvas.toDataURL('image/png')
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'px',
+    format: 'a4',
+  })
+
+  const pdfWidth = pdf.internal.pageSize.getWidth()
+  const pdfHeight = pdf.internal.pageSize.getHeight()
+  const canvasAspect = canvas.height / canvas.width
+  const imgHeight = pdfWidth * canvasAspect
+
+  // If the content fits on one page, add it directly; otherwise scale to fit
+  if (imgHeight <= pdfHeight) {
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight)
+  } else {
+    // Scale down to fit the page height
+    const scaledWidth = pdfHeight / canvasAspect
+    const xOffset = (pdfWidth - scaledWidth) / 2
+    pdf.addImage(imgData, 'PNG', xOffset, 0, scaledWidth, pdfHeight)
   }
+
+  pdf.save(filename)
 }

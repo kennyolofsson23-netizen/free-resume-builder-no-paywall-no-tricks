@@ -37,13 +37,22 @@ export function useAutoSave(debounceMs = 1000): UseAutoSaveResult {
       try {
         saveToLocalStorage()
         setLastSaved(new Date())
-      } catch {
-        toast({
-          title: 'Auto-save paused',
-          description:
-            "Your browser's storage may be full. Export your resume as JSON to keep a backup.",
-          variant: 'destructive',
-        })
+      } catch (err: unknown) {
+        const isStorageError =
+          err instanceof DOMException &&
+          (err.name === 'QuotaExceededError' ||
+            err.name === 'NS_ERROR_DOM_QUOTA_REACHED')
+        if (isStorageError) {
+          toast({
+            title: 'Auto-save paused',
+            description:
+              "Your browser's storage is full. Export your resume as JSON to keep a backup.",
+            variant: 'destructive',
+          })
+        } else {
+          // Re-throw unexpected errors so they are not silently swallowed
+          throw err
+        }
       } finally {
         setIsSaving(false)
       }
