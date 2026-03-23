@@ -237,7 +237,7 @@ describe('usePdfGenerator — successful download', () => {
     expect(mockGeneratePDF).toHaveBeenCalledOnce()
   })
 
-  it('passes elementId "resume-preview-container" to generatePDF', async () => {
+  it('passes resume object to generatePDF', async () => {
     const { result } = renderHook(() => usePdfGenerator())
 
     await act(async () => {
@@ -245,7 +245,7 @@ describe('usePdfGenerator — successful download', () => {
     })
 
     expect(mockGeneratePDF).toHaveBeenCalledWith(
-      expect.objectContaining({ elementId: 'resume-preview-container' })
+      expect.objectContaining({ resume: expect.objectContaining({ id: validResume.id }) })
     )
   })
 

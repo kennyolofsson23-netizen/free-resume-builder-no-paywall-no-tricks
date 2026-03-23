@@ -123,19 +123,24 @@ export function decodeResumeFromURL(hash: string): object | null {
       throw new DecodeFormatError('Plain payload is not valid JSON', err)
     }
   } catch (err) {
-    if (err instanceof DecodeSizeError) {
-      console.warn('[url-codec] Compression-bomb guard triggered:', err.message)
-    } else if (err instanceof DecodeFormatError) {
-      console.warn(
-        '[url-codec] Failed to decode resume from URL:',
-        err.message,
-        err.cause
-      )
-    } else {
-      console.warn(
-        '[url-codec] Unexpected error decoding resume from URL:',
-        err
-      )
+    if (process.env.NODE_ENV !== 'production') {
+      if (err instanceof DecodeSizeError) {
+        console.warn(
+          '[url-codec] Compression-bomb guard triggered:',
+          err.message
+        )
+      } else if (err instanceof DecodeFormatError) {
+        console.warn(
+          '[url-codec] Failed to decode resume from URL:',
+          err.message,
+          err.cause
+        )
+      } else {
+        console.warn(
+          '[url-codec] Unexpected error decoding resume from URL:',
+          err
+        )
+      }
     }
     return null
   }
