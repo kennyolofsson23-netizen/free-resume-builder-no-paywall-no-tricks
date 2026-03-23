@@ -50,8 +50,11 @@ export function useAutoSave(debounceMs = 1000): UseAutoSaveResult {
             variant: 'destructive',
           })
         } else {
-          // Re-throw unexpected errors so they are not silently swallowed
-          throw err
+          toast({
+            title: 'Auto-save Failed',
+            description: "Couldn't save your progress. Your browser may be in private mode.",
+            variant: 'destructive',
+          })
         }
       } finally {
         setIsSaving(false)

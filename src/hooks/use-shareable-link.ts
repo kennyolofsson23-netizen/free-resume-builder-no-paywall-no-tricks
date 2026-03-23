@@ -38,10 +38,12 @@ export function useShareableLink(): UseShareableLinkReturn {
         url = generateShareableURL()
       }
     } catch (err) {
-      console.error(
-        '[useShareableLink] Failed to encode resume for sharing:',
-        err
-      )
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(
+          '[useShareableLink] Failed to encode resume for sharing:',
+          err
+        )
+      }
       toast({
         title: 'Could not generate share link',
         description: 'Failed to encode your resume. Please try again.',

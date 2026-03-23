@@ -17,12 +17,12 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           )}
           ref={ref}
           aria-invalid={error ? 'true' : undefined}
-          aria-describedby={error ? `${props.id}-error` : undefined}
+          aria-describedby={error && props.id ? `${props.id}-error` : undefined}
           {...props}
         />
         {error && (
           <p
-            id={`${props.id}-error`}
+            id={props.id ? `${props.id}-error` : undefined}
             role="alert"
             className="mt-1 text-xs text-destructive"
           >
