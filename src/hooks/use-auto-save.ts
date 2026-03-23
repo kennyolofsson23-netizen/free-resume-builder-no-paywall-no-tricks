@@ -52,7 +52,8 @@ export function useAutoSave(debounceMs = 1000): UseAutoSaveResult {
         } else {
           toast({
             title: 'Auto-save Failed',
-            description: "Couldn't save your progress. Your browser may be in private mode.",
+            description:
+              "Couldn't save your progress. Your browser may be in private mode.",
             variant: 'destructive',
           })
         }
