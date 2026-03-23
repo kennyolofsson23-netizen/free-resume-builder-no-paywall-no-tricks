@@ -59,7 +59,7 @@ const sampleResume: Resume = {
 }
 
 // Track all jsPDF text() calls so we can assert on written content
-const mockTextCalls: Array<[string | string[], number, number, object?]> = []
+const mockTextCalls: Array<[string | string[], number, number, object | undefined]> = []
 const mockSave = vi.fn()
 const mockSetFont = vi.fn()
 const mockSetFontSize = vi.fn()
