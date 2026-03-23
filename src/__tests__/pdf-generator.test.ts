@@ -71,12 +71,7 @@ const mockAddPage = vi.fn()
 
 const mockJsPDFInstance = {
   text: vi.fn(
-    (
-      text: string | string[],
-      x: number,
-      y: number,
-      opts?: object
-    ) => {
+    (text: string | string[], x: number, y: number, opts?: object) => {
       mockTextCalls.push([text, x, y, opts])
     }
   ),
@@ -184,7 +179,10 @@ describe('generatePDF — A4 page dimensions', () => {
 
 describe('generatePDF — filename convention', () => {
   it('calls pdf.save() with the provided filename', async () => {
-    await generatePDF({ resume: sampleResume, filename: 'Jane_Smith_Resume.pdf' })
+    await generatePDF({
+      resume: sampleResume,
+      filename: 'Jane_Smith_Resume.pdf',
+    })
     expect(mockSave).toHaveBeenCalledWith('Jane_Smith_Resume.pdf')
   })
 

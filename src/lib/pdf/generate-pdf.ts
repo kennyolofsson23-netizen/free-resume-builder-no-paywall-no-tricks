@@ -19,9 +19,7 @@ export interface GeneratePDFOptions {
  * All content is written as actual text objects — every glyph is selectable
  * and copyable in any PDF viewer. No rasterisation via html2canvas.
  */
-export async function generatePDF(
-  options: GeneratePDFOptions
-): Promise<void> {
+export async function generatePDF(options: GeneratePDFOptions): Promise<void> {
   const { resume, filename = 'Resume.pdf' } = options
 
   const pdf = new jsPDF({

@@ -245,7 +245,9 @@ describe('usePdfGenerator — successful download', () => {
     })
 
     expect(mockGeneratePDF).toHaveBeenCalledWith(
-      expect.objectContaining({ resume: expect.objectContaining({ id: validResume.id }) })
+      expect.objectContaining({
+        resume: expect.objectContaining({ id: validResume.id }),
+      })
     )
   })
 
