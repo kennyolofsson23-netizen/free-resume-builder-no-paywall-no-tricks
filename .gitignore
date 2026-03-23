@@ -44,3 +44,5 @@ playwright/.cache/
 
 # Claude Code
 .claude/
+
+.vercel
