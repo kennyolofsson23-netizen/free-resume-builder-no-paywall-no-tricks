@@ -6,9 +6,9 @@
 const { execSync, spawn } = require('child_process')
 const path = require('path')
 
+const projectRoot = path.resolve(__dirname, '..')
 const nextBin = path.join(
-  __dirname,
-  '..',
+  projectRoot,
   'node_modules',
   'next',
   'dist',
@@ -18,13 +18,17 @@ const nextBin = path.join(
 
 // Build the app first
 console.log('[e2e-server] Building Next.js app...')
-execSync(`node ${JSON.stringify(nextBin)} build`, { stdio: 'inherit' })
+execSync(`node ${JSON.stringify(nextBin)} build`, {
+  stdio: 'inherit',
+  cwd: projectRoot,
+})
 
 // Start the production server
 console.log('[e2e-server] Starting Next.js server on port 3100...')
 const server = spawn('node', [nextBin, 'start', '-p', '3100'], {
   stdio: 'inherit',
   shell: false,
+  cwd: projectRoot,
 })
 
 server.on('error', (err) => {
