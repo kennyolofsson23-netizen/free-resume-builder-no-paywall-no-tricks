@@ -17,16 +17,23 @@ export function Hero() {
           </h1>
 
           <p id="tool-description" className="mb-4 text-xl text-slate-300">
-            This tool lets you build a professional resume in your browser for
-            free. Choose from five ATS-friendly templates, fill in your details,
-            and download a print-ready PDF — with no account, no email, and no
-            payment required at any step.
+            The <strong className="text-white">Free Resume Builder</strong> is an{' '}
+            <strong className="text-white">open-source, browser-based tool</strong>{' '}
+            that lets you create a professional resume in under 10 minutes. Choose
+            from <strong className="text-white">5 ATS-friendly templates</strong>,
+            fill in your details with a real-time preview, and{' '}
+            <strong className="text-white">download a print-ready PDF in seconds</strong>{' '}
+            — with no account, no email, and no payment required at any step.
           </p>
 
           <p className="mb-8 text-base text-slate-400">
-            All resume data is stored locally in your browser. Nothing is sent
-            to a server. The PDF is generated client-side and available for
-            instant download.
+            All resume data is stored locally in your browser using{' '}
+            <strong className="text-slate-300">local storage</strong> — nothing is
+            sent to a server. The PDF is generated{' '}
+            <strong className="text-slate-300">client-side</strong> using your
+            browser&apos;s built-in rendering engine and available for instant
+            download. Over <strong className="text-slate-300">98% of modern browsers</strong>{' '}
+            are supported.
           </p>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">

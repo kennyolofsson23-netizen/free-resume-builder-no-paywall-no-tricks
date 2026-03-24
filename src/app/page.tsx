@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import { Header } from '@/components/shared/header'
 import { Hero } from '@/components/landing/hero'
+import { HowItWorks } from '@/components/landing/how-it-works'
 import { FeatureGrid } from '@/components/landing/feature-grid'
 import { TemplateShowcase } from '@/components/landing/template-showcase'
+import { ComparisonTable } from '@/components/landing/comparison-table'
 import { TrustSignals } from '@/components/landing/trust-signals'
 import { FAQ } from '@/components/landing/faq'
 import { Footer } from '@/components/landing/footer'
@@ -34,8 +36,10 @@ export default function HomePage() {
       <Header />
       <main id="main-content" className="min-h-screen">
         <Hero />
+        <HowItWorks />
         <FeatureGrid />
         <TemplateShowcase />
+        <ComparisonTable />
         <TrustSignals />
         <FAQ />
         <Footer />

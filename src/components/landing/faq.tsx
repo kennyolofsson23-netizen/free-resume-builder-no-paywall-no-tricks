@@ -114,6 +114,65 @@ export function FAQ() {
           ))}
         </Accordion>
 
+        {/* SSR-visible FAQ answers for AI crawlers — Radix accordion renders
+            answers with hidden="" so crawlers cannot read them */}
+        <div className="sr-only" aria-hidden="true">
+          <dl>
+            <dt>Is this actually free, or is there a catch?</dt>
+            <dd>
+              No catch. No credit card. No trial period that auto-renews. The
+              <strong> PDF download is free</strong>. All five templates are
+              free. Sharing your resume is free. We make money through optional
+              partner links — never by charging you.
+            </dd>
+            <dt>Do I need to create an account?</dt>
+            <dd>
+              No. Open the builder and start typing. Your work saves
+              automatically to your browser&apos;s <strong>local storage</strong>
+              , so it&apos;s still there when you come back — no login required.
+            </dd>
+            <dt>Is my resume data private?</dt>
+            <dd>
+              Yes. Your resume lives entirely <strong>in your browser</strong>.
+              We have no server, no database, and no way to access your data.
+              When you close the tab, your information stays on your own device
+              only.
+            </dd>
+            <dt>What if I close the tab or lose my internet connection?</dt>
+            <dd>
+              Your resume is <strong>automatically saved</strong> to your
+              browser as you type. When you return to the page — even after
+              closing your laptop — it picks up exactly where you left off. No
+              internet needed after the initial load.
+            </dd>
+            <dt>Will my resume get past applicant tracking systems (ATS)?</dt>
+            <dd>
+              Yes. All five templates are <strong>ATS-compatible</strong>: the
+              text is fully selectable, sections use standard headings, and
+              nothing is rendered as an image. Your resume will parse correctly
+              through systems like <strong>Taleo</strong>,{' '}
+              <strong>Greenhouse</strong>, <strong>Lever</strong>, and{' '}
+              <strong>Workday</strong>.
+            </dd>
+            <dt>How is this different from Zety or Resume.io?</dt>
+            <dd>
+              <strong>Zety</strong> charges $29.99/month and{' '}
+              <strong>Resume.io</strong> charges $7.99/month to download your
+              PDF. You only find out at the last step, after you&apos;ve
+              invested real time. We never do that — the{' '}
+              <strong>download is always free</strong>, no matter what.
+            </dd>
+            <dt>Can I share my resume with someone else?</dt>
+            <dd>
+              Yes. Hit the Share button in the builder and a link is generated
+              instantly. Anyone with the link can view your resume — read-only,
+              no account needed. All the data is{' '}
+              <strong>encoded in the URL itself</strong>, so nothing is ever
+              sent to a server.
+            </dd>
+          </dl>
+        </div>
+
         <p className="mt-8 text-center text-sm text-muted-foreground">
           Built by{' '}
           <a

@@ -21,8 +21,9 @@ export function FeatureGrid() {
               See every change instantly
             </h3>
             <p className="text-muted-foreground">
-              Your resume preview updates as you type. What you see is exactly
-              what you&apos;ll download — no surprises.
+              Your resume preview updates <strong>in real time</strong> as you
+              type. What you see is exactly what you&apos;ll download — no
+              surprises.
             </p>
           </div>
 
@@ -34,8 +35,9 @@ export function FeatureGrid() {
               One click. Your PDF. Done.
             </h3>
             <p className="text-muted-foreground">
-              Hit Download and get your file in seconds. No waiting. No email
-              confirmation. No &ldquo;upgrade to download&rdquo; wall.
+              Hit Download and get your <strong>PDF in under 5 seconds</strong>.
+              No waiting. No email confirmation. No &ldquo;upgrade to
+              download&rdquo; wall.
             </p>
           </div>
 
@@ -47,8 +49,9 @@ export function FeatureGrid() {
               5 ATS-friendly templates, all free
             </h3>
             <p className="text-muted-foreground">
-              Modern, Classic, Minimal, Creative, Professional — all built to
-              pass applicant tracking systems. Switch templates in one click.
+              <strong>Modern, Classic, Minimal, Creative, Professional</strong>{' '}
+              — all built to pass applicant tracking systems. Switch templates in
+              one click without losing any data.
             </p>
           </div>
 
@@ -60,8 +63,9 @@ export function FeatureGrid() {
               Your resume stays on your device
             </h3>
             <p className="text-muted-foreground">
-              We have no server. Your data never leaves your browser — not while
-              you type, not when you download, not ever.
+              We have <strong>no server and no database</strong>. Your data never
+              leaves your browser — not while you type, not when you download,
+              not ever.
             </p>
           </div>
 
@@ -73,8 +77,9 @@ export function FeatureGrid() {
               Zero sign-up friction
             </h3>
             <p className="text-muted-foreground">
-              Open the builder and start typing. No account, no email, no
-              password. Your progress saves automatically.
+              Open the builder and start typing. <strong>No account, no email, no
+              password</strong>. Your progress saves automatically to local
+              storage.
             </p>
           </div>
 
@@ -87,7 +92,7 @@ export function FeatureGrid() {
             </h3>
             <p className="text-muted-foreground">
               Once the page loads, you can disconnect and keep building.
-              Everything runs locally in your browser.
+              Everything runs <strong>100% client-side</strong> in your browser.
             </p>
           </div>
         </div>
