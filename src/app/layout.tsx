@@ -13,7 +13,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Free Resume Builder — No Paywall, No Tricks',
+    default: 'Free Resume Builder â€” No Paywall, No Tricks',
     template: '%s | Free Resume Builder',
   },
   description:
@@ -36,14 +36,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    title: 'Free Resume Builder — No Paywall, No Tricks',
+    title: 'Free Resume Builder â€” No Paywall, No Tricks',
     description:
       'Build a professional resume in minutes. 5 ATS-friendly templates. Instant PDF download. No account needed.',
     siteName: 'Free Resume Builder',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Resume Builder — No Paywall, No Tricks',
+    title: 'Free Resume Builder â€” No Paywall, No Tricks',
     description:
       'Build a professional resume in minutes. No account, no paywall, no tricks.',
   },
@@ -60,6 +60,36 @@ export const metadata: Metadata = {
   },
 }
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Free Resume Builder — No Paywall, No Tricks',
+  description:
+    'Build a professional resume for free. 5 ATS-friendly templates, real-time PDF preview, instant download. No email required. No account. No paywall.',
+  url: 'https://free-resume-builder-no-paywall-no-tricks.usetools.dev',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Any',
+  browserRequirements: 'Requires JavaScript',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  featureList: [
+    '5 ATS-friendly resume templates',
+    'Real-time PDF preview',
+    'Instant PDF download',
+    'No account required',
+    'No paywall',
+    'Dark mode support',
+  ],
+  creator: {
+    '@type': 'Organization',
+    name: 'usetools.dev',
+    url: 'https://usetools.dev',
+  },
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -67,6 +97,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
+      <head>
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="font-sans antialiased">
         <script
           dangerouslySetInnerHTML={{

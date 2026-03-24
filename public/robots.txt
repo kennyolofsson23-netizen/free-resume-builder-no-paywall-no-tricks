@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://free-resume-builder-no-paywall-no-tricks.usetools.dev/sitemap.xml

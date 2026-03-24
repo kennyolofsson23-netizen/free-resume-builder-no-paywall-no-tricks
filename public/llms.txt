@@ -1,0 +1,25 @@
+# Free Resume Builder — No Paywall, No Tricks
+
+> Build a professional resume for free. No email required. No account. No paywall.
+
+## Description
+
+A fully free, open-access resume builder that lets job seekers create and download
+professional, ATS-friendly resumes as PDFs without hitting a paywall or sign-up wall.
+Unlike Zety and similar tools that lock PDF downloads behind subscriptions, this tool
+delivers the full experience — build, preview, download — at zero cost.
+
+## Features
+
+- 5 ATS-friendly resume templates (Modern, Classic, Minimal, Creative, Executive)
+- Real-time PDF preview as you type
+- Instant PDF download — no account required
+- No email capture, no paywall, no hidden fees
+- Dark mode support
+- Responsive design — works on desktop and mobile
+- Export to PDF in one click
+- Pre-filled example resume for quick start
+
+## URL
+
+https://free-resume-builder-no-paywall-no-tricks.usetools.dev
