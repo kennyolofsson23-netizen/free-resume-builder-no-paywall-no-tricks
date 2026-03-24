@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 import { ThemeProvider } from '@/components/shared/theme-provider'
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Free Resume Builder' }],
   creator: 'Free Resume Builder',
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://freeresumebuilder.app'
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://free-resume-builder-no-paywall-no-tricks.usetools.dev'
   ),
   openGraph: {
     type: 'website',
@@ -82,6 +83,12 @@ export default function RootLayout({
         <a href="#main-content" className="sr-only focus:not-sr-only">
           Skip to main content
         </a>
+        <Script
+          defer
+          data-domain="usetools.dev"
+          src="https://plausible.io/js/script.js"
+          strategy="afterInteractive"
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
