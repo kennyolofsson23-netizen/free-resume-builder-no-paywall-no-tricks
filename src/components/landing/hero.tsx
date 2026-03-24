@@ -16,12 +16,17 @@ export function Hero() {
             Free Resume Builder — No Paywall, No Tricks
           </h1>
 
-          <p className="mb-8 text-xl text-slate-300">
-            Five professional templates. Real-time preview. One-click PDF
-            download.
-            <br />
-            No email. No account. No &ldquo;$1.95 trial&rdquo; that quietly
-            becomes $29.99/month.
+          <p className="mb-4 text-xl text-slate-300">
+            This tool lets you build a professional resume in your browser for
+            free. Choose from five ATS-friendly templates, fill in your details,
+            and download a print-ready PDF — with no account, no email, and no
+            payment required at any step.
+          </p>
+
+          <p className="mb-8 text-base text-slate-400">
+            All resume data is stored locally in your browser. Nothing is sent
+            to a server. The PDF is generated client-side and available for
+            instant download.
           </p>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">

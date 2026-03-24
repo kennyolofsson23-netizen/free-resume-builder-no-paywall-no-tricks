@@ -13,11 +13,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Free Resume Builder â€” No Paywall, No Tricks',
+    default: 'Free Resume Builder — No Paywall, No Tricks',
     template: '%s | Free Resume Builder',
   },
   description:
-    "Build a professional resume for free. 5 ATS-friendly templates, real-time PDF preview, instant download. No email required. No account. No paywall. Unlike Zety, we don't lock your PDF behind a subscription.",
+    'Free resume builder with 5 ATS-friendly templates, real-time PDF preview, and instant download. No account, no email, no paywall — ever.',
   keywords: [
     'free resume builder',
     'resume builder no paywall',
@@ -36,16 +36,27 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    title: 'Free Resume Builder â€” No Paywall, No Tricks',
+    title: 'Free Resume Builder — No Paywall, No Tricks',
     description:
       'Build a professional resume in minutes. 5 ATS-friendly templates. Instant PDF download. No account needed.',
     siteName: 'Free Resume Builder',
+    images: [
+      {
+        url: 'https://free-resume-builder-no-paywall-no-tricks.usetools.dev/og-image.png',
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  alternates: {
+    canonical: 'https://free-resume-builder-no-paywall-no-tricks.usetools.dev',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Resume Builder â€” No Paywall, No Tricks',
+    title: 'Free Resume Builder — No Paywall, No Tricks',
     description:
       'Build a professional resume in minutes. No account, no paywall, no tricks.',
+    images: ['https://free-resume-builder-no-paywall-no-tricks.usetools.dev/og-image.png'],
   },
   robots: {
     index: true,
