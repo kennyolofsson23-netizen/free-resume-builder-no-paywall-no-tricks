@@ -7,7 +7,6 @@ import { BuilderToolbar } from '@/components/builder/builder-toolbar'
 import { FormPanel } from '@/components/builder/form-panel'
 import { PreviewPanel } from '@/components/builder/preview-panel'
 import { MobilePreviewSheet } from '@/components/builder/mobile-preview-sheet'
-import { AffiliateBanner } from '@/components/shared/affiliate-banner'
 
 export function BuilderLayout() {
   const isMobile = useIsMobile()
@@ -39,10 +38,6 @@ export function BuilderLayout() {
           >
             <div className="flex-1 overflow-hidden">
               <FormPanel />
-            </div>
-            {/* Affiliate banner in sidebar below form */}
-            <div className="shrink-0 p-3 border-t border-border">
-              <AffiliateBanner />
             </div>
           </div>
 
