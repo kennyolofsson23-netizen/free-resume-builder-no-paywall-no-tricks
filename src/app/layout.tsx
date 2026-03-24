@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Free Resume Builder' }],
   creator: 'Free Resume Builder',
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://free-resume-builder-no-paywall-no-tricks.usetools.dev'
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://resume.usetools.dev'
   ),
   openGraph: {
     type: 'website',
@@ -42,21 +42,21 @@ export const metadata: Metadata = {
     siteName: 'Free Resume Builder',
     images: [
       {
-        url: 'https://free-resume-builder-no-paywall-no-tricks.usetools.dev/og-image.png',
+        url: 'https://resume.usetools.dev/og-image.png',
         width: 1200,
         height: 630,
       },
     ],
   },
   alternates: {
-    canonical: 'https://free-resume-builder-no-paywall-no-tricks.usetools.dev',
+    canonical: 'https://resume.usetools.dev',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Free Resume Builder — No Paywall, No Tricks',
     description:
       'Build a professional resume in minutes. No account, no paywall, no tricks.',
-    images: ['https://free-resume-builder-no-paywall-no-tricks.usetools.dev/og-image.png'],
+    images: ['https://resume.usetools.dev/og-image.png'],
   },
   robots: {
     index: true,
@@ -77,7 +77,7 @@ const webAppSchema = {
   name: 'Free Resume Builder — No Paywall, No Tricks',
   description:
     'Build a professional resume for free. 5 ATS-friendly templates, real-time PDF preview, instant download. No email required. No account. No paywall.',
-  url: 'https://free-resume-builder-no-paywall-no-tricks.usetools.dev',
+  url: 'https://resume.usetools.dev',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Any',
   browserRequirements: 'Requires JavaScript',

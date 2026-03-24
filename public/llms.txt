@@ -22,4 +22,4 @@ delivers the full experience — build, preview, download — at zero cost.
 
 ## URL
 
-https://free-resume-builder-no-paywall-no-tricks.usetools.dev
+https://resume.usetools.dev

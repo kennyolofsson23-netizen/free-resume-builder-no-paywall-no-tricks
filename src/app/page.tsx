@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: 'Free Resume Builder — No Paywall, No Tricks',
     description:
       'Build a resume in minutes. 5 ATS-friendly templates. Instant PDF download. No account, no email, no paywall.',
-    images: [{ url: 'https://free-resume-builder-no-paywall-no-tricks.usetools.dev/og-image.png', width: 1200, height: 630 }],
+    images: [{ url: 'https://resume.usetools.dev/og-image.png', width: 1200, height: 630 }],
   },
 }
 
