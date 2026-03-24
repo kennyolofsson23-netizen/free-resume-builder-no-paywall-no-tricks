@@ -16,7 +16,7 @@ export function Hero() {
             Free Resume Builder — No Paywall, No Tricks
           </h1>
 
-          <p className="mb-4 text-xl text-slate-300">
+          <p id="tool-description" className="mb-4 text-xl text-slate-300">
             This tool lets you build a professional resume in your browser for
             free. Choose from five ATS-friendly templates, fill in your details,
             and download a print-ready PDF — with no account, no email, and no

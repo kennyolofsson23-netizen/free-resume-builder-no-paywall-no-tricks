@@ -71,7 +71,7 @@ export const metadata: Metadata = {
   },
 }
 
-const jsonLd = {
+const webAppSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'Free Resume Builder — No Paywall, No Tricks',
@@ -81,6 +81,10 @@ const jsonLd = {
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Any',
   browserRequirements: 'Requires JavaScript',
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['#tool-description'],
+  },
   offers: {
     '@type': 'Offer',
     price: '0',
@@ -100,6 +104,55 @@ const jsonLd = {
     url: 'https://usetools.dev',
   },
 }
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'usetools.dev',
+  url: 'https://usetools.dev',
+  sameAs: ['https://github.com/kennyolofsson23-netizen'],
+}
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'Is this resume builder actually free?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — the Free Resume Builder is completely free. The PDF download is free, all five templates are free, and there is no trial period, credit card requirement, or hidden paywall at any step.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do I need to create an account to use the resume builder?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No account is required. Open the builder and start typing immediately. Your work saves automatically to your browser\'s local storage, so it persists between sessions without any login.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Are the resume templates ATS-compatible?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'All five templates are ATS-friendly: text is fully selectable, sections use standard headings, and nothing is rendered as an image. Your resume will parse correctly through systems like Taleo, Greenhouse, Lever, and Workday.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is my resume data kept private?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Your resume data lives entirely in your browser. There is no server, no database, and no way for anyone to access your information. When you close the tab, your data stays on your own device only.',
+      },
+    },
+  ],
+}
+
+const jsonLd = [webAppSchema, organizationSchema, faqSchema]
 
 export default function RootLayout({
   children,
